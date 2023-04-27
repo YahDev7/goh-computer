@@ -1,0 +1,161 @@
+use("gohcomputer")
+//FALTA PENSAR COMO SE TIENE QUE GENERAR EL DOCUMENTO CUANDO EMITE COMPRA POR WEB 
+/* db.products.insertOne({
+    "subcategoria_id": 123,
+    "usuario_id": 456,
+    "enterprise":2
+    "codigo": "ABC123",
+    "nombre": "Componente ABC",
+    "descripcion": "Descripción del componente ABC",
+    "palabra_clave": "componente, ABC",
+    "precio_compra_dolar": 10.5,
+    "igv": 0.18,
+    "precio_compra_dolar_igv": 12.39,
+    "precio_compra_soles": 42.0,
+    "ganancia": 5.0,
+    "precio_venta": 47.0,
+    "codfabricante": "FAB456",
+    "url_pro": "https://ejemplo.com/producto",
+    "url_fab": "https://ejemplo.com/fabricante",
+    "promocion": true,
+    "precio_promocompra_dolar": 9.5,
+    "igvpromo": 0.18,
+    "precio_promocompra_dolar_igv": 11.21,
+    "precio_promocompra_soles": 38.0,
+    "ganancia_promo": 4.0,
+    "precio_promoventa": 42.0,
+    "fechafinpromo": "2023-12-31T23:59:59Z",
+    "garantia": "3 meses",
+    "stock": 100,
+    "estado": "A",
+    "ventas": 0,
+    "userEdit": 789,
+    "unidad": "PRODUCTO",
+    "marca": "MarcaABC",
+    "imagenes":[
+        {
+            "imagenCom": "imagenABC.jpg",
+            "url_imagenCom": "https://ejemplo.com/imagenABC.jpg"
+        },
+        {
+             "imagenCom": "imagenABC.jpg",
+            "url_imagenCom": "https://ejemplo.com/imagenABC.jpg"
+        },
+        {
+            "imagenCom": "imagenABC.jpg",
+           "url_imagenCom": "https://ejemplo.com/imagenABC.jpg"
+       }
+    ]
+    }
+)
+
+db.products.updateOne(
+  { _id: ObjectId("6151a7d8c651a91a9aef9e81") },
+  { $set: { nombre: "Componente XYZ" } }
+)
+*/
+
+
+
+
+
+
+
+
+/* 
+db.documento.insertOne({
+    "persona_id": 1,
+    "usuario_id": 1,
+    "customer_id": 1,
+    "caja_id": 1,
+    "enterprise_id":2
+    "tipo_documento": "tipo de documento",
+    "serie": "serie del documento",
+    "nro_documento": "numero del documento",
+    "fecha": "2023-04-24T00:00:00Z",
+    "sub_total": 100.00,
+    "descuento_total": 10.00,
+    "igv": 18.00,
+    "total_pagar": 108.00,
+    "estado": "PENDIENTE",
+    "tipo_compra_venta": "tipo de compra o venta",
+    "detalle":[
+        {
+            "componente_id": 1,
+            "cantidad": 1,
+            "precio_unid": 50.00,
+            "descuento_unitario": 5.00,
+            "importe": 45.00
+         },
+         {
+            "componente_id": 2,
+            "cantidad": 1,
+            "precio_unid": 50.00,
+            "descuento_unitario": 5.00,
+            "importe": 45.00
+         }
+         
+    ]
+ }
+ ) */
+
+/*  db.depositopedido.insertOne({
+    "id_pedido": 1,
+    "nro_operacion": 123456,
+    "metodo_pago": "transferencia",
+    "monto_deposito": 500,
+    "estado": "espera",
+    "fecha_deposito": "2022-04-24 10:00:00"
+  }
+  ) */
+
+
+
+ db.moneda.insertOne({
+        "nombre":"dolar" ,
+        "valor":3.80 
+
+ })
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  /*   db.pedidos.insertOne({
+        "persona_id": 12345,
+        "fecha": "2023-04-24T10:00:00Z",
+        "total": 500,
+        "estado": "espera",
+        "detalle":[
+            {
+                "pedido_id": 123,
+                "producto_id": 567,
+                "cantidad": 2,
+                "precio_unitario": 50,
+                "subtotal": 100
+              }
+        ]
+}) */
+
