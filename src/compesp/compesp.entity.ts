@@ -14,15 +14,15 @@ export class Compesp {
     id_espec:number;
     
     @Column({nullable:false}) //unico
-    componente_id:number;
+    producto_id:string;
 
     @Column({nullable:false}) //unico
     nombre:string;
 
+    @Column({nullable:false,length:2}) //unico
+    estado:string;
+
     @ManyToOne(()=>Enterprises,enterprise=>enterprise.compes)
     enterprise:Enterprises
-/*  ENTERPRISE
-   @ManyToOne(()=>Enterprises,enterprise=>enterprise.customer_id)
-    enterprise:Enterprises
- */
+
 }

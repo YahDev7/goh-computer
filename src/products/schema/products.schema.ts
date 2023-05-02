@@ -12,9 +12,9 @@ export class Products {
     usuario_id: number;
     
     @Prop()
-    enterprise: number;
+    enterprise_id: number;
     
-    @Prop({required:true})
+    @Prop({required:true,unique:true})
     codigo: string;
     
     @Prop({required:true})
@@ -29,8 +29,8 @@ export class Products {
     @Prop({required:true})
     precio_compra_dolar: number;
     
-    @Prop({default:Date.now(),required:true})
-    igv: Date;
+    @Prop({required:true})
+    igv: number;
     
     @Prop({required:true})
     precio_compra_dolar_igv: number;
@@ -44,7 +44,7 @@ export class Products {
     @Prop({required:true})
     precio_venta: number;
     
-    @Prop({required:true,length:10})
+    @Prop({required:true,length:10,unique:true})
     codfabricante: string;
     
     @Prop()

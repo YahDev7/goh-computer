@@ -5,7 +5,7 @@ import { Entity,Column,PrimaryGeneratedColumn, OneToMany, ManyToOne, ManyToMany 
 export class Especificaciones {
    
     @PrimaryGeneratedColumn() //primary key y autoincrement
-    id:string  
+    id:number  
 
     @Column({nullable:false}) //unico
     enterprise_id:number;
@@ -13,10 +13,10 @@ export class Especificaciones {
     @Column({length:10,nullable:false}) //tipo fecha y agregale la fecha actual
     title:string;
 
+    @Column({length:2}) //tipo fecha y agregale la fecha actual
+    estado:string;
+
     @ManyToOne(()=>Enterprises,enterprise=>enterprise.especifi)
     enterprise:Enterprises
-/*  ENTERPRISE
-   @ManyToOne(()=>Enterprises,enterprise=>enterprise.customer_id)
-    enterprise:Enterprises
- */
+
 }

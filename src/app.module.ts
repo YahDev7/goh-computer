@@ -1,9 +1,10 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
+import {ConfigModule} from '@nestjs/config'
+import { enviroments } from './eviroment';
+import { MongooseModule } from '@nestjs/mongoose';
+import * as Joi from 'joi';
 
-import { AppController } from './app.controller';
-import { AppService } from './app.service';
-import { EnterpriseService } from './enterprise/enterprise.service';
 import { EnterpriseModule } from './enterprise/enterprise.module';
 import { CategoriaModule } from './categoria/categoria.module';
 import { SubcategoriaModule } from './subcategoria/subcategoria.module';
@@ -17,21 +18,35 @@ import { CompespModule } from './compesp/compesp.module';
 import { ProductsModule } from './products/products.module';
 import { DocumentoModule } from './documento/documento.module';
 import { DepositoPedModule } from './deposito-ped/deposito-ped.module';
-import { MongooseModule } from '@nestjs/mongoose';
+import config from './config';
 
 @Module({
-  imports: [TypeOrmModule.forRoot({
+  imports: [ConfigModule.forRoot({
+    envFilePath:enviroments[process.env.NODE_ENV]||'.env',
+    load:[config],
+    isGlobal:true, //para que a todos los servicios sin tener la necesidad de llamar en cada archivo
+    validationSchema:Joi.object({//validar que variables de entorno tenego que tener al hacer deploy        
+      API_KEY:Joi.string().required(),
+      DATABASE_HOST:Joi.string().required(),
+      DATABASE_NAME:Joi.string().required(),
+      DATABASE_MONGODB:Joi.string().required(),
+      DATABASE_PORT:Joi.number().required(),
+      DATABASE_USERNAME:Joi.string().required(),
+      DATABASE_PASSWORD:Joi.string().required(),
+      JWTSECRET:Joi.string().required(),
+    })
+  }), TypeOrmModule.forRoot({
       type:'postgres',
-      host:'localhost',
-      port:5432,
-      username:'postgres',
-      password:'wiel postgre',
-      database:'gohcomputer',
+      host:process.env.DATABASE_HOST,
+      port:parseInt(process.env.DATABASE_PORT),
+      username:process.env.DATABASE_USERNAME,
+      password:process.env.DATABASE_PASSWORD,
+      database:process.env.DATABASE_NAME,
       entities:[__dirname + '/**/*.entity{.ts,.js}'],
-      synchronize:true, /* para que este sincronizadp con lo mencionado anteriormente */
+      //synchronize:true, /* para que este sincronizadp con lo mencionado anteriormente */
       logging: true,
       autoLoadEntities: true,
-  }),MongooseModule.forRoot('mongodb+srv://yahiesdev:yahiesmongodb@goh.6zmhouc.mongodb.net/gohcomputer'),
+  }),MongooseModule.forRoot(process.env.DATABASE_MONGODB),
     EnterpriseModule,
     CategoriaModule,
     SubcategoriaModule,

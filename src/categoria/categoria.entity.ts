@@ -35,9 +35,7 @@ export class Categoria {
 
     @OneToMany(()=>SubCategoria,enterprise=>enterprise.cat)
     subcat:SubCategoria[]
-/*  USUARIO
-  @OneToMany(()=>Users,user=>user.enterprise_id) //esto viene de post.entity
-    user_id:Users[];*/
+
 }
 
 

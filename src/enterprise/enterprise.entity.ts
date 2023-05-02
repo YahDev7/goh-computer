@@ -15,7 +15,7 @@ export class Enterprises {
     @PrimaryGeneratedColumn() //primary key y autoincrement
     id:number; /* Columnas */
     
-    @Column({length:20,unique:true,nullable:false}) //unico
+    @Column({length:40,unique:true,nullable:false}) //unico
     nombre:string;
 
     @Column({length:11,unique:true,nullable:false}) //unico
