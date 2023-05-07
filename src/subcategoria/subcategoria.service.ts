@@ -1,37 +1,42 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { ObjectId } from 'mongodb';
+import { Model } from 'mongoose';
+import { InjectModel } from '@nestjs/mongoose';
 
-import { SubCategoria } from './subcategoria.entity';
 import { SubCategoriaDto, UpdateSubCategoriaDto } from './dto/subcategoria.dto';
 import { EnterpriseService } from 'src/enterprise/enterprise.service';
+import { SubCategoria, SubCategoriaDocument } from './schema/subcategoria.schema';
 
 @Injectable()
 export class SubcategoriaService {
 
     constructor(
-        @InjectRepository(SubCategoria)
-        private SubCategoriaRepository:Repository<SubCategoria>,
+        @InjectModel(SubCategoria.name) private SubCategoriaModule:Model<SubCategoriaDocument> ,
         private EnterpriseService:EnterpriseService
         ){}
     
         async get():Promise<SubCategoria[]|HttpException>{
             try {
-                const res= await this.SubCategoriaRepository.find();
+                const res= await this.SubCategoriaModule.find();
                 console.log(res)
-                if(res.length===0) throw {err:true,message:'No hay datos que mostrar'} 
+                if(res.length===0) return new HttpException('No hay datos que mostrar',HttpStatus.NOT_FOUND) 
+
                  return res
             } catch (error) {
                 return new HttpException('Ocurrio un error al guardar '+error.message||error,HttpStatus.NOT_FOUND)   
             }
         }
     
-        async getId(id:number):Promise<SubCategoria|HttpException>{
+        async getId(id:string):Promise<SubCategoria|HttpException>{
             try {
                 
-                const found=await this.SubCategoriaRepository.findOne({where:{id,estado:'A'}})
-                if(!found) throw {err:true,message:'No se encontor esta subcategoria'} 
-                return found;
+                let est= await this.SubCategoriaModule.findOne({_id:id,estado:'D'});
+            if(est)return new HttpException('No se encontro registro',HttpStatus.NOT_FOUND)   
+
+            let found=await this.SubCategoriaModule.findOne({_id:id});
+            if(!found) return new HttpException('No se encontro registro',HttpStatus.NOT_FOUND); 
+
+            return found
             } catch (error) {
                 return new HttpException('Ocurrio un error al buscar por id '+error.message||error,HttpStatus.NOT_FOUND)     
             }
@@ -45,7 +50,7 @@ export class SubcategoriaService {
           if(res instanceof HttpException) throw res
            // if(res) throw {err:true,message:'No se encontraron subcategorias de esta empresa'} 
 
-            const found=await this.SubCategoriaRepository.find({where:{enterprise_id,estado:'A'}})
+            const found=await this.SubCategoriaModule.find({enterprise_id,estado:'A'})
             if(found.length===0) throw {err:true,message:'No se encontraron subcategorias de esta empresa'} 
             return found;
         } catch (error) {
@@ -57,22 +62,28 @@ export class SubcategoriaService {
        async post(body:SubCategoriaDto):Promise<SubCategoria|Object>{
             try {
     
-                const insert=this.SubCategoriaRepository.create(body);
+                let {categoria_id} =body
+                categoria_id=new ObjectId(categoria_id)
+
+                const insert=this.SubCategoriaModule.create({...body,categoria_id});
                 if(!insert) return new HttpException('Ocurrio un error al guardar ',HttpStatus.NOT_FOUND)
-                return this.SubCategoriaRepository.save(insert)
+                return {err:false,message:"Se guardo con éxito"}
             } catch (error) {
                 console.log(error)
             return new HttpException('Ocurrio un error al guardar '+error.message||error,HttpStatus.NOT_FOUND)
             }
         }
-        async update(id:number,body:UpdateSubCategoriaDto):Promise<SubCategoria|HttpException>{
+        async update(id:number,body:UpdateSubCategoriaDto):Promise<SubCategoria|HttpException|Object>{
             try {
         
-               const found=await this.SubCategoriaRepository.findOne({where:{id,estado:'A'}})
+                const found=await this.SubCategoriaModule.findOne({_id:id,estado:'A'})
                 if(!found) throw {err:true,message:'No se encontor esta empresa'} 
         
-                let resUpdate=Object.assign(found,body);
-                return this.SubCategoriaRepository.save(resUpdate);
+                const update=await this.SubCategoriaModule.updateOne({_id:id}, { $set: body });
+                console.log(update)
+                if(update.modifiedCount===0) return new HttpException('No se logro actualizar',HttpStatus.NOT_FOUND); 
+    
+                return {err:false,message:"Se actualizo con éxito"}  
             
             } catch (error) {
                 return new HttpException('Ocurrio un error al guardar '+error.message||error,HttpStatus.NOT_FOUND)   
@@ -82,13 +93,16 @@ export class SubcategoriaService {
         async delete(id:number):Promise<Object>{
             try {
                 
-                const found=await this.SubCategoriaRepository.findOne({where:{id,estado:'A'}})
-                if(!found) throw {err:true,message:'No se encontor esta empresa'} 
+                const found=await this.SubCategoriaModule.findOne({_id:id})
+                if(!found) throw {err:true,message:'No se encontor esta categoria'} 
+    
+                let est= await this.SubCategoriaModule.findOne({_id:id,estado:'D'});
+                if(est)return new HttpException('No se encontro registro a eliminar',HttpStatus.NOT_FOUND)  
         
-                let resUpdate=Object.assign(found,{estado:'D'});
-                const resfinal= await this.SubCategoriaRepository.save(resUpdate);
-               
-                return {err:false,message:'Enterprise eliminado'}
+                const update=await this.SubCategoriaModule.updateOne({_id:id}, { $set: { estado: 'D' } });
+                if(!update) return new HttpException('ocurrio un error al eliminar',HttpStatus.NOT_FOUND); 
+    
+                return {err:false,message:"Se elimino con éxito"}
             } catch (error) {
                 return new HttpException('Ocurrio un error al eliminar '+error.message||error,HttpStatus.NOT_FOUND)   
             }
@@ -99,7 +113,7 @@ export class SubcategoriaService {
         async deleteImg(id:number):Promise<Object>{ //probar
             try {
                 
-                const found=await this.SubCategoriaRepository.findOne({where:{id,estado:'A'}})
+                const found=await this.SubCategoriaModule.findOne({_id:id,estado:'A'})
                 if(!found) throw {err:true,message:'No se encontor esta subcategoria'} 
         
                if(!found.imagen) throw {err:true,message:'no hay img que eliminar'}
@@ -110,4 +124,29 @@ export class SubcategoriaService {
             }
         
         }
+
+
+        async getBycat(id:string):Promise<Object>{ //probar
+            try {
+             /*    let est= await this.SubCategoriaModule.findOne({_id:id,estado:'D'});
+                if(est)return new HttpException('No se encontro registro',HttpStatus.NOT_FOUND)  */  
+    
+                const found=await this.SubCategoriaModule.find({categoria_id:new ObjectId(id),estado:'A'})
+                if(found.length===0) throw {err:true,message:'No se encontor ninguna subcategoria por esta categoria'} 
+
+                return found;
+        
+            } catch (error) {
+                return new HttpException('Ocurrio un error al eliminar '+error.message||error,HttpStatus.NOT_FOUND)   
+            }
+        
+        }
+
+
+
+
+        /* GOH */
+       /*  async getIdByCat(){
+            let res =await this.
+        } */
 }

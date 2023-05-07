@@ -35,4 +35,34 @@ export class ProductsController {
     delete(@Param('id') id:string){
         return this.productsService.delete(id)
     }
+
+
+
+
+    /* GOHCOMPUTER */
+    @Get('/gohcomputer/main')
+    getMain(){
+        return this.productsService.getMain()
+    }
+
+    @Get('/gohcomputer/destacados')
+    getDestacados(){
+        return this.productsService.getDestacados()
+    }
+
+    @Get('/gohcomputer/news')
+    getNews(){
+        return this.productsService.getNews()
+    }
+
+    @Get('/gohcomputer/getByIdProd/:id')
+    getByIdProd(@Param('id') id :string){
+        console.log(id)
+        return this.productsService.getByIdProd(id)
+    }
+
+    @Get('/gohcomputer/getBySubcat/:id')
+    getBySubcat(@Param('id') id :string){
+        return this.productsService.getBySubcat(id)
+    }
 }

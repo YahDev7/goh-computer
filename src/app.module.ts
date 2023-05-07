@@ -18,6 +18,7 @@ import { CompespModule } from './compesp/compesp.module';
 import { ProductsModule } from './products/products.module';
 import { DocumentoModule } from './documento/documento.module';
 import { DepositoPedModule } from './deposito-ped/deposito-ped.module';
+import { CarritoModule } from './carrito/carrito.module';
 import config from './config';
 
 @Module({
@@ -59,7 +60,8 @@ import config from './config';
     CompespModule,
     ProductsModule,
     DocumentoModule,
-    DepositoPedModule]
+    DepositoPedModule,
+    CarritoModule]
  /*  controllers: [AppController],
   providers: [AppService, EnterpriseService], */
 })

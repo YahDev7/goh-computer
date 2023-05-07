@@ -14,7 +14,7 @@ export class CategoriaController {
     }
 
     @Get(':id')
-    async getId(@Param('id', ParseIntPipe) id:number){
+    async getId(@Param('id', ParseIntPipe) id:string){
         return this.categoriaService.getId(id)
     }
     @Get('/enterprise/:id')
@@ -38,4 +38,19 @@ export class CategoriaController {
     async deleteimg(@Param('id', ParseIntPipe) id:number){
         return this.categoriaService.deleteImg(id)
     }
+
+
+
+    @Get('/gohcomputer/all')
+    async getcatGoh() {
+        return this.categoriaService.get()
+    }
+
+    @Get('/gohcomputer/onecat/:id')
+    async getonecat(@Param('id') id:string) {
+        return this.categoriaService.getId(id)
+    }
+    
+
+    
 }

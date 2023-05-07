@@ -1,10 +1,11 @@
 import { IsArray, IsEmpty, IsNotEmpty, IsNumber, IsString, Length, MaxLength } from 'class-validator';
 import {PartialType} from '@nestjs/mapped-types'
+import { ObjectId } from 'mongodb';
 
 export class ProductDto {
   @IsNotEmpty()
-  @IsNumber()
-  subcategoria_id: number;
+  @IsString()
+  subcategoria_id: ObjectId;
 
   @IsNotEmpty()
   @IsNumber()
@@ -37,6 +38,10 @@ export class ProductDto {
   @IsNotEmpty()
   @IsNumber()
   precio_compra_dolar: number;
+  
+  @IsNotEmpty()
+  @IsNumber()
+  valor_dolar: number;
   
   @IsNumber()
   @IsNotEmpty()
@@ -122,6 +127,6 @@ export class ProductDto {
   marca: string;
 
   @IsArray()
-  imagenes: string[];
+  imagenes: Object[];
 }
 export class UpdateProductDto extends PartialType(ProductDto) {} 

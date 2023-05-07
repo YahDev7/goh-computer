@@ -16,7 +16,7 @@ export class SubcategoriaController {
     }
 
     @Get(':id')
-    async getId(@Param('id', ParseIntPipe) id:number){
+    async getId(@Param('id', ParseIntPipe) id:string){
         return this.subcategoriaService.getId(id)
     }
 
@@ -41,6 +41,13 @@ export class SubcategoriaController {
     @Delete('/deleteimg/:id')
     async deleteimg(@Param('id', ParseIntPipe) id:number){
         return this.subcategoriaService.deleteImg(id)
+    }
+
+
+    /* GOH */
+    @Get('/gohcomputer/bycategoria/:idcat')
+    async getBycat(@Param('idcat') idcat:string) {
+        return this.subcategoriaService.getBycat(idcat)
     }
 
 }

@@ -1,5 +1,6 @@
 import { IsNotEmpty, IsNumber, IsString, MaxLength } from 'class-validator';
 import {PartialType} from '@nestjs/mapped-types'
+import { ObjectId } from 'mongodb';
 
 export class SubCategoriaDto {
   @IsNumber()
@@ -10,9 +11,9 @@ export class SubCategoriaDto {
   @IsNotEmpty()
   enterprise_id: number;
 
-  @IsNumber()
+  @IsString()
   @IsNotEmpty()
-  categoria_id: number;
+  categoria_id: ObjectId;
 
   @IsString()
   @MaxLength(100)

@@ -1,12 +1,13 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { HydratedDocument } from 'mongoose';
+import { ObjectId } from 'mongodb';
 
 export type ProductsDocument = HydratedDocument<Products>;
 
 @Schema()
 export class Products {
     @Prop()
-    subcategoria_id: number;
+    subcategoria_id: ObjectId;
     
     @Prop()
     usuario_id: number;
@@ -28,6 +29,9 @@ export class Products {
     
     @Prop({required:true})
     precio_compra_dolar: number;
+
+    @Prop({required:true})
+    valor_dolar: number;
     
     @Prop({required:true})
     igv: number;
@@ -98,8 +102,8 @@ export class Products {
     @Prop({required:true})
     marca: string;
     
-    @Prop([String])
-    imagenes: string[];
+    @Prop([Object])
+    imagenes: Object[];
 }
 
 export const ProductsSchema = SchemaFactory.createForClass(Products);

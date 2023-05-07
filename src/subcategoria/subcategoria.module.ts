@@ -1,13 +1,19 @@
 import { Module } from '@nestjs/common';
 import { SubcategoriaService } from './subcategoria.service';
 import { SubcategoriaController } from './subcategoria.controller';
-import { TypeOrmModule } from '@nestjs/typeorm';
-import { SubCategoria } from './subcategoria.entity';
 import { EnterpriseModule } from 'src/enterprise/enterprise.module';
+import { MongooseModule } from '@nestjs/mongoose';
+import { SubCategoria, SubCategoriaSchema } from './schema/subcategoria.schema';
 
 @Module({
-  imports:[TypeOrmModule.forFeature([SubCategoria]),EnterpriseModule],
+  imports:[MongooseModule.forFeature([
+    {
+      name:SubCategoria.name,
+      schema:SubCategoriaSchema,
+    }
+  ]),EnterpriseModule],
   providers: [SubcategoriaService],
-  controllers: [SubcategoriaController]
+  controllers: [SubcategoriaController],
+  exports:[SubcategoriaService]
 })
 export class SubcategoriaModule {}
