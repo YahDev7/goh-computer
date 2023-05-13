@@ -43,6 +43,17 @@ export class ProductDto {
   @IsNumber()
   valor_dolar: number;
   
+  @IsNotEmpty()
+  @IsNumber()
+  precio_compra_dolar_con_IGV:number;
+
+  @IsNotEmpty()
+  @IsNumber()
+  precio_promocompra_dolar_con_igv:number;
+
+  @IsArray()
+  especificaciones:Object[]
+  
   @IsNumber()
   @IsNotEmpty()
   igv: number;
@@ -113,9 +124,6 @@ export class ProductDto {
 
   @IsNumber()
   ventas: number;
-
-  @IsNotEmpty()
-  userEdit: string;
 
   @MaxLength(10)
   @IsString()

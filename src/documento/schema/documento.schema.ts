@@ -1,25 +1,27 @@
 
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { HydratedDocument } from 'mongoose';
+import { ObjectId } from 'mongodb';
 
 export type DocumentoDocument = HydratedDocument<Documento>;
 
 @Schema()
 export class Documento{
+
     @Prop()
-    persona_id: number;
-    
-    @Prop()
-    usuario_id: number;
+    user_id: number;
     
     @Prop()
     customer_id: number;
+
+    @Prop()
+    provider_id: number;
     
     @Prop()
     caja_id: number;
     
     @Prop({required:true})
-    enterprise_id: string;
+    enterprise_id: number;
     
     @Prop({required:true})
     tipo_documento: string;
@@ -45,14 +47,14 @@ export class Documento{
     @Prop({required:true})
     total_pagar: number;
     
-    @Prop({required:true,length:10})
+    @Prop({required:true,minlength:1,maxlength:10})
     estado: string;
     
     @Prop({required:true})
     tipo_compra_venta: string;
     
-    @Prop([String])
-    detalle: string[];
+    @Prop([Object])
+    detalle: Object[];
 }
 
 export const DocumentoSchema = SchemaFactory.createForClass(Documento);

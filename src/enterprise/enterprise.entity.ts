@@ -3,7 +3,7 @@ import { Categoria } from "src/categoria/categoria.entity";
 import { Compesp } from "src/compesp/compesp.entity";
 import { Customer } from "src/customer/customer.entity";
 import { Especificaciones } from "src/especificaciones/especificaciones.entity";
-import { Movimiento } from "src/movimiento/movimiento.entity";
+/* import { Movimiento } from "src/movimiento/movimiento.entity"; */
 import { Provider } from "src/provider/provider.entity";
 import { SubCategoria } from "src/subcategoria/subcategoria.entity";
 import { User } from "src/user/user.entity";
@@ -51,9 +51,7 @@ export class Enterprises {
     @OneToMany(()=>Customer,customer=>customer.enterprise) //esto viene de post.entity
     customer:Customer[];
 
-    @OneToMany(()=>Movimiento,movimiento=>movimiento.enterprise) //esto viene de post.entity
-    //@JoinColumn({name:"enterprises_id"})
-    movimiento:Movimiento[]; 
+
 
     @OneToMany(()=>SubCategoria,subcat=>subcat.enterprise) //esto viene de post.entity
     subcat:SubCategoria[];

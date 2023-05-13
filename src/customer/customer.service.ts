@@ -29,7 +29,7 @@ export class CustomerService {
             try {
                 
                 const found=await this.CustomerRepository.findOne({where:{id,estado:'A'}})
-                if(!found) throw {err:true,message:'No se encontor esta categoria'} 
+                if(!found) throw {err:true,message:'No se encontor este customer'} 
                 return found;
             } catch (error) {
                 return new HttpException('Ocurrio un error al buscar por id '+error.message||error,HttpStatus.NOT_FOUND)     

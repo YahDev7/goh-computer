@@ -1,0 +1,34 @@
+import { Body, Controller, Get, Param, ParseIntPipe, Post } from '@nestjs/common';
+import { MovimientoMService } from './movimiento-m.service';
+import { MovimientoMDto } from './dto/movimiento-m.dto';
+
+@Controller('movimiento-m')
+export class MovimientoMController {
+
+    constructor(
+        private MovimientoMService:MovimientoMService
+    ){}
+
+    @Get()
+    get(){
+        return this.MovimientoMService.get()
+    }
+
+    @Get(':id')
+    getId(@Param('id') id:string ){
+        return this.MovimientoMService.getId(id)
+    }
+    @Get('/enterprise/:id')
+    async getByEnterprise(@Param('id', ParseIntPipe) id:number){
+        return this.MovimientoMService.getByEnterprise(id)
+    }
+
+    @Get('/customer/:id')
+    async getByCustomer(@Param('id', ParseIntPipe) id:number){
+        return this.MovimientoMService.getByCustomer(id)
+    }
+    @Post()
+    post(@Body() body:MovimientoMDto){
+        return this.MovimientoMService.save(body)
+        }
+}

@@ -1,23 +1,17 @@
-import { Caja } from "src/caja/caja.entity";
+/* import { Caja } from "src/caja/caja.entity";
 import { Enterprises } from "src/enterprise/enterprise.entity";
 import { Entity,Column,PrimaryGeneratedColumn, OneToMany, ManyToOne, ManyToMany, JoinColumn } from "typeorm"
-@Entity({name:'movimiento'})/* permite convertir esta clase en una tabla y el nombre de la tabla */
+@Entity({name:'movimiento'})
 export class Movimiento {
    
     @PrimaryGeneratedColumn() //primary key y autoincrement
-    id:number; /* Columnas */
+    id:number; 
 
     @Column({nullable:false}) //unico
     documento_id:number;
     
     @Column({nullable:false}) //unico
     enterprise_id:number;
-
-    @Column() //unico
-    user_id:number;
-
-    @Column() //unico
-    customer_id:number;
 
     @Column() //unico
     caja_id:number;
@@ -29,13 +23,13 @@ export class Movimiento {
     tipo:string
     
     @Column({nullable:false})//opcional
-    forma_pago:string;
+    metodo_pago:string;
     
     @Column({length:100,nullable:false}) //unico
     nro_operacion:string  
 
     @Column({ type: 'decimal', precision: 10, scale: 2, nullable: false }) //unico
-    pago_con:number  
+    monto_deposito:number  
 
     @Column({ type: 'decimal', precision: 10, scale: 2, nullable: false }) //unico
     monto_pagar:number  
@@ -58,3 +52,4 @@ export class Movimiento {
     @ManyToOne(()=>Caja,caja=>caja.mov)
     caja:Caja
 }
+ */

@@ -8,6 +8,7 @@ import { EnterpriseModule } from 'src/enterprise/enterprise.module';
 @Module({
   imports:[TypeOrmModule.forFeature([Customer]),EnterpriseModule],
   providers: [CustomerService],
-  controllers: [CustomerController]
+  controllers: [CustomerController],
+  exports:[CustomerService]
 })
 export class CustomerModule {}

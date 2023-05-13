@@ -11,14 +11,16 @@ import { SubcategoriaModule } from './subcategoria/subcategoria.module';
 import { UserModule } from './user/user.module';
 import { CustomerModule } from './customer/customer.module';
 import { ProviderModule } from './provider/provider.module';
-import { MovimientoModule } from './movimiento/movimiento.module';
+/* import { MovimientoModule } from './movimiento/movimiento.module'; */
 import { CajaModule } from './caja/caja.module';
 import { EspecificacionesModule } from './especificaciones/especificaciones.module';
 import { CompespModule } from './compesp/compesp.module';
 import { ProductsModule } from './products/products.module';
 import { DocumentoModule } from './documento/documento.module';
-import { DepositoPedModule } from './deposito-ped/deposito-ped.module';
+/* import { DepositoPedModule } from './deposito-ped/deposito-ped.module'; */
 import { CarritoModule } from './carrito/carrito.module';
+import { MovimientoMModule } from './movimiento-m/movimiento-m.module';
+import { LoginModule } from './login/login.module';
 import config from './config';
 
 @Module({
@@ -54,14 +56,15 @@ import config from './config';
     UserModule,
     CustomerModule,
     ProviderModule,
-    MovimientoModule,
     CajaModule,
     EspecificacionesModule,
     CompespModule,
     ProductsModule,
     DocumentoModule,
-    DepositoPedModule,
-    CarritoModule]
+   /*  DepositoPedModule, */
+    CarritoModule,
+    MovimientoMModule,
+    LoginModule]
  /*  controllers: [AppController],
   providers: [AppService, EnterpriseService], */
 })

@@ -44,6 +44,15 @@ export class ProductsController {
     getMain(){
         return this.productsService.getMain()
     }
+    @Get('/gohcomputer/search/:search')
+    search(@Param('search') search :string){
+        console.log(search)
+        return this.productsService.search(search)
+    }
+    @Get('/gohcomputer/allpromo')
+    getAll(){
+        return this.productsService.getPromo()
+    }
 
     @Get('/gohcomputer/destacados')
     getDestacados(){

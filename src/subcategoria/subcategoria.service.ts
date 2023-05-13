@@ -18,7 +18,6 @@ export class SubcategoriaService {
         async get():Promise<SubCategoria[]|HttpException>{
             try {
                 const res= await this.SubCategoriaModule.find();
-                console.log(res)
                 if(res.length===0) return new HttpException('No hay datos que mostrar',HttpStatus.NOT_FOUND) 
 
                  return res
@@ -46,7 +45,6 @@ export class SubcategoriaService {
        async getByEnterprise(enterprise_id:number):Promise<SubCategoria[]|HttpException>{
         try {
           let res =await this.EnterpriseService.getId(enterprise_id);
-          console.log(res)
           if(res instanceof HttpException) throw res
            // if(res) throw {err:true,message:'No se encontraron subcategorias de esta empresa'} 
 
@@ -69,7 +67,6 @@ export class SubcategoriaService {
                 if(!insert) return new HttpException('Ocurrio un error al guardar ',HttpStatus.NOT_FOUND)
                 return {err:false,message:"Se guardo con éxito"}
             } catch (error) {
-                console.log(error)
             return new HttpException('Ocurrio un error al guardar '+error.message||error,HttpStatus.NOT_FOUND)
             }
         }
@@ -80,7 +77,6 @@ export class SubcategoriaService {
                 if(!found) throw {err:true,message:'No se encontor esta empresa'} 
         
                 const update=await this.SubCategoriaModule.updateOne({_id:id}, { $set: body });
-                console.log(update)
                 if(update.modifiedCount===0) return new HttpException('No se logro actualizar',HttpStatus.NOT_FOUND); 
     
                 return {err:false,message:"Se actualizo con éxito"}  

@@ -1,5 +1,5 @@
 import { Enterprises } from 'src/enterprise/enterprise.entity';
-import { Movimiento } from 'src/movimiento/movimiento.entity';
+/* import { Movimiento } from 'src/movimiento/movimiento.entity'; */
 import { User } from 'src/user/user.entity';
 import { Entity, Column, PrimaryGeneratedColumn, ManyToOne, OneToMany } from 'typeorm';
 /* import { Usuario } from './usuario.entity'; */
@@ -36,6 +36,6 @@ export class Caja {
   @ManyToOne(()=>Enterprises,enterprise=>enterprise.caja)
   enterprise:Enterprises
 
-  @OneToMany(() => Movimiento,mov=>mov.caja)
-  mov: Movimiento[];
+/*   @OneToMany(() => Movimiento,mov=>mov.caja)
+  mov: Movimiento[]; */
 }

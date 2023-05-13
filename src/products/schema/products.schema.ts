@@ -40,6 +40,15 @@ export class Products {
     precio_compra_dolar_igv: number;
     
     @Prop({required:true})
+    precio_compra_dolar_con_IGV:number;
+
+    @Prop({required:false})
+    precio_promocompra_dolar_con_igv:number;
+
+    @Prop([Object])
+    especificaciones:Object[]
+
+    @Prop({required:true})
     precio_compra_soles: number;
     
     @Prop({required:true})
@@ -92,9 +101,6 @@ export class Products {
     
     @Prop()
     ventas: number;
-    
-    @Prop({required:true})
-    userEdit: string; //CUESTINABLE
     
     @Prop({required:true,length:10})
     unidad: string;

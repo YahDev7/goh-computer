@@ -1,4 +1,4 @@
-import { IsNotEmpty, IsOptional, IsEmail, Length, IsNumberString } from 'class-validator';
+import { IsNotEmpty, IsOptional, IsEmail, Length, IsNumberString, MaxLength } from 'class-validator';
 import { Type } from 'class-transformer';
 import {PartialType} from '@nestjs/mapped-types'
 
@@ -60,8 +60,7 @@ export class CustomerDto {
   @Length(1, 20)
   pass: string;
 
-  @IsOptional()
-  @Length(2, 2)
+  @MaxLength(2)
   estado?: string;
 }
 export class UpdateCustomerDto extends PartialType(CustomerDto) {}

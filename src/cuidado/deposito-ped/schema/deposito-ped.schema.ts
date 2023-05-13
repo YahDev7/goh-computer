@@ -1,15 +1,16 @@
-
+/* 
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { HydratedDocument } from 'mongoose';
+import { ObjectId } from 'mongodb';
 
 export type DepositoPedDocument = HydratedDocument<DepositoPed>;
 
 @Schema()
 export class DepositoPed {
-    @Prop({required:true})
-    id_pedido: number;
+    @Prop({required:true,unique:true})
+    id_pedido: ObjectId;
     
-    @Prop({required:true})
+    @Prop({required:true, unique:true})
     nro_operacion: string;
     
     @Prop({required:true})
@@ -27,3 +28,4 @@ export class DepositoPed {
 
 export const DepositoPedSchema = SchemaFactory.createForClass(DepositoPed);
 
+ */
