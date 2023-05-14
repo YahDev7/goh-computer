@@ -1,6 +1,7 @@
 import { Body, Controller,Get, Post,Put,Param,ParseIntPipe, Delete } from '@nestjs/common';
 import { ProductsService } from './products.service';
 import { ProductDto } from './dto/products.dto';
+import { ObjectId } from 'mongodb';
 
 @Controller('products')
 export class ProductsController {
@@ -19,7 +20,7 @@ export class ProductsController {
         return this.productsService.getId(id)
     }
     @Get('/enterprise/:id')
-    async getByEnterprise(@Param('id', ParseIntPipe) id:number){
+    async getByEnterprise(@Param('id') id:ObjectId){
         return this.productsService.getByEnterprise(id)
     }
     @Post()
@@ -65,7 +66,7 @@ export class ProductsController {
     }
 
     @Get('/gohcomputer/getByIdProd/:id')
-    getByIdProd(@Param('id') id :string){
+    getByIdProd(@Param('id') id :ObjectId){
         console.log(id)
         return this.productsService.getByIdProd(id)
     }

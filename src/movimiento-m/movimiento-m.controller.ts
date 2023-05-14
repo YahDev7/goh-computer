@@ -1,6 +1,7 @@
 import { Body, Controller, Get, Param, ParseIntPipe, Post } from '@nestjs/common';
 import { MovimientoMService } from './movimiento-m.service';
 import { MovimientoMDto } from './dto/movimiento-m.dto';
+import { ObjectId } from 'mongodb';
 
 @Controller('movimiento-m')
 export class MovimientoMController {
@@ -19,12 +20,12 @@ export class MovimientoMController {
         return this.MovimientoMService.getId(id)
     }
     @Get('/enterprise/:id')
-    async getByEnterprise(@Param('id', ParseIntPipe) id:number){
+    async getByEnterprise(@Param('id') id:ObjectId){
         return this.MovimientoMService.getByEnterprise(id)
     }
 
     @Get('/customer/:id')
-    async getByCustomer(@Param('id', ParseIntPipe) id:number){
+    async getByCustomer(@Param('id') id:ObjectId){
         return this.MovimientoMService.getByCustomer(id)
     }
     @Post()

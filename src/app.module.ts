@@ -13,8 +13,8 @@ import { CustomerModule } from './customer/customer.module';
 import { ProviderModule } from './provider/provider.module';
 /* import { MovimientoModule } from './movimiento/movimiento.module'; */
 import { CajaModule } from './caja/caja.module';
-import { EspecificacionesModule } from './especificaciones/especificaciones.module';
-import { CompespModule } from './compesp/compesp.module';
+/* import { EspecificacionesModule } from './especificaciones/especificaciones.module'; */
+/* import { CompespModule } from './compesp/compesp.module'; */
 import { ProductsModule } from './products/products.module';
 import { DocumentoModule } from './documento/documento.module';
 /* import { DepositoPedModule } from './deposito-ped/deposito-ped.module'; */
@@ -30,26 +30,26 @@ import config from './config';
     isGlobal:true, //para que a todos los servicios sin tener la necesidad de llamar en cada archivo
     validationSchema:Joi.object({//validar que variables de entorno tenego que tener al hacer deploy        
       API_KEY:Joi.string().required(),
-      DATABASE_HOST:Joi.string().required(),
-      DATABASE_NAME:Joi.string().required(),
+      //DATABASE_HOST:Joi.string().required(),
+     // DATABASE_NAME:Joi.string().required(),
       DATABASE_MONGODB:Joi.string().required(),
-      DATABASE_PORT:Joi.number().required(),
-      DATABASE_USERNAME:Joi.string().required(),
-      DATABASE_PASSWORD:Joi.string().required(),
+      //DATABASE_PORT:Joi.number().required(),
+      //DATABASE_USERNAME:Joi.string().required(),
+     // DATABASE_PASSWORD:Joi.string().required(),
       JWTSECRET:Joi.string().required(),
     })
-  }), TypeOrmModule.forRoot({
+  }),/* , TypeOrmModule.forRoot({
       type:'postgres',
       host:process.env.DATABASE_HOST,
       port:parseInt(process.env.DATABASE_PORT),
       username:process.env.DATABASE_USERNAME,
       password:process.env.DATABASE_PASSWORD,
       database:process.env.DATABASE_NAME,
-      entities:[__dirname + '/**/*.entity{.ts,.js}'],
-      //synchronize:true, /* para que este sincronizadp con lo mencionado anteriormente */
+      entities:[__dirname + '/**.entity{.ts,.js}'],
+      //synchronize:true,  para que este sincronizadp con lo mencionado anteriormente 
       logging: true,
       autoLoadEntities: true,
-  }),MongooseModule.forRoot(process.env.DATABASE_MONGODB),
+  }), */MongooseModule.forRoot(process.env.DATABASE_MONGODB),
     EnterpriseModule,
     CategoriaModule,
     SubcategoriaModule,
@@ -57,8 +57,8 @@ import config from './config';
     CustomerModule,
     ProviderModule,
     CajaModule,
-    EspecificacionesModule,
-    CompespModule,
+   /*  EspecificacionesModule, */
+   /*  CompespModule, */
     ProductsModule,
     DocumentoModule,
    /*  DepositoPedModule, */

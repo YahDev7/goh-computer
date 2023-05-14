@@ -1,4 +1,4 @@
-import { Module } from '@nestjs/common';
+/* import { Module } from '@nestjs/common';
 import { CompespService } from './compesp.service';
 import { CompespController } from './compesp.controller';
 import { TypeOrmModule } from '@nestjs/typeorm';
@@ -11,3 +11,4 @@ import { ProductsModule } from 'src/products/products.module';
   controllers: [CompespController]
 })
 export class CompespModule {}
+ */

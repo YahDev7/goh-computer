@@ -1,4 +1,4 @@
-import { Body, Controller, Delete, Get, Param, ParseIntPipe, Post, Put } from '@nestjs/common';
+/* import { Body, Controller, Delete, Get, Param, ParseIntPipe, Post, Put } from '@nestjs/common';
 import { CompespService } from './compesp.service';
 import { CompEspDto, UpdateCompEspDto } from './dto/compesp.dto';
 
@@ -35,3 +35,4 @@ export class CompespController {
         return this.CompesService.delete(id)
     }
 }
+ */

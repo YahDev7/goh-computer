@@ -4,6 +4,7 @@ import { EnterpriseService } from 'src/enterprise/enterprise.service';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { Categoria, CategoriaDocument } from './schema/categoria.schema';
+import { ObjectId } from 'mongodb';
 
 @Injectable()
 export class CategoriaService {
@@ -23,7 +24,7 @@ constructor(
         }
     }
 
-    async getId(id:string):Promise<Categoria|HttpException>{
+    async getId(id:ObjectId):Promise<Categoria|HttpException>{
         try {
             
             let est= await this.CategoriaModule.findOne({_id:id,estado:'D'});
@@ -39,7 +40,7 @@ constructor(
    }
 
   
-   async getByEnterprise(enterprise_id:number):Promise<Categoria[]|HttpException>{
+   async getByEnterprise(enterprise_id:ObjectId):Promise<Categoria[]|HttpException>{
         try {
         let res =await this.EnterpriseService.getId(enterprise_id);
         if(res instanceof HttpException) throw res
@@ -78,7 +79,7 @@ constructor(
         }
     }
 
-    async delete(id:number):Promise<Object>{
+    async delete(id:ObjectId):Promise<Object>{
         try {
             
             const found=await this.CategoriaModule.findOne({_id:id})
@@ -97,7 +98,7 @@ constructor(
     
     }
 
-    async deleteImg(id:number):Promise<Object>{ //probar
+    async deleteImg(id:ObjectId):Promise<Object>{ //probar
         try {
             
             const found=await this.CategoriaModule.findOne({id,estado:'A'})

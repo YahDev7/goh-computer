@@ -1,4 +1,4 @@
-import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
+/* import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Compesp } from './compesp.entity';
@@ -52,19 +52,7 @@ export class CompespService {
             return new HttpException('Ocurrio un error al buscar por id '+error.message||error,HttpStatus.NOT_FOUND)     
             
         }
-            
-        /*  try {
-        let res =await this.ProductosService.getId({id});
-        console.log(res)
-        if(res instanceof HttpException) throw res
-        // if(res) throw {err:true,message:'No se encontraron subcategorias de esta empresa'} 
 
-            const found=await this.CompespRepository.find({where:{enterprise_id,estado:'A'}})
-            if(found.length===0) throw {err:true,message:'No se encontraron subcategorias de esta empresa'} 
-            return found;
-        } catch (error) {
-            return new HttpException('Ocurrio un error al buscar por id '+error.message||error,HttpStatus.NOT_FOUND)     
-        } */
     }
     
        async post(body:CompEspDto):Promise<Compesp|Object>{
@@ -108,3 +96,4 @@ export class CompespService {
         
         }
 }
+ */

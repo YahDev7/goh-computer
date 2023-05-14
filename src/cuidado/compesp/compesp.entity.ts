@@ -1,11 +1,11 @@
-import { Enterprises } from "src/enterprise/enterprise.entity";
-import { Entity,Column,PrimaryGeneratedColumn, OneToMany, ManyToOne, ManyToMany } from "typeorm"
+/* import { Enterprises } from "src/enterprise/enterprise.entity"; */
 
-@Entity({name:'compesp'})/* permite convertir esta clase en una tabla y el nombre de la tabla */
+/*import { Entity,Column,PrimaryGeneratedColumn, OneToMany, ManyToOne, ManyToMany } from "typeorm"
+ @Entity({name:'compesp'})/
 export class Compesp {
    
     @PrimaryGeneratedColumn() //primary key y autoincrement
-    id:number; /* Columnas */
+    id:number; 
 
     @Column({nullable:false}) //unico
     enterprise_id:number;
@@ -20,9 +20,10 @@ export class Compesp {
     nombre:string;
 
     @Column({nullable:false,length:2}) //unico
-    estado:string;
+    estado:string; */
 
-    @ManyToOne(()=>Enterprises,enterprise=>enterprise.compes)
-    enterprise:Enterprises
+/*     @ManyToOne(()=>Enterprises,enterprise=>enterprise.compes)
+    enterprise:Enterprises 
 
 }
+*/

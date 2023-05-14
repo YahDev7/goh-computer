@@ -1,4 +1,4 @@
-import { Module } from '@nestjs/common';
+/* import { Module } from '@nestjs/common';
 import { EspecificacionesService } from './especificaciones.service';
 import { EspecificacionesController } from './especificaciones.controller';
 import { Especificaciones } from './especificaciones.entity';
@@ -11,3 +11,4 @@ import { EnterpriseModule } from 'src/enterprise/enterprise.module';
   controllers: [EspecificacionesController]
 })
 export class EspecificacionesModule {}
+ */

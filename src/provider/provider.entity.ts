@@ -1,4 +1,4 @@
-import { Enterprises } from "src/enterprise/enterprise.entity";
+import { ObjectId } from "mongodb";
 import { Entity,Column,PrimaryGeneratedColumn, OneToMany, ManyToOne, ManyToMany } from "typeorm"
 
 @Entity({name:'provider'})/* permite convertir esta clase en una tabla y el nombre de la tabla */
@@ -8,7 +8,7 @@ export class Provider {
     id:number; /* Columnas */
 
     @Column({nullable:false}) //unico
-    enterprise_id:number;
+    enterprise_id:ObjectId;
     
     @Column({unique:true,length:8}) //unico
     dni_ruc:string
@@ -37,6 +37,6 @@ export class Provider {
     @Column({length:2}) //tipo fecha y agregale la fecha actual
     estado:string;
 
-    @ManyToOne(()=>Enterprises,enterprise=>enterprise.provider)
-    enterprise:Enterprises
+/*     @ManyToOne(()=>Enterprises,enterprise=>enterprise.provider)
+    enterprise:Enterprises */
 }

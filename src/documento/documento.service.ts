@@ -152,7 +152,7 @@ export class DocumentoService {
         }
     }
 
-    async getByEnterprise(enterprise_id:number){
+    async getByEnterprise(enterprise_id:ObjectId){
         try {
 
             let resEnterprise=await this.EnterpriseService.getId(enterprise_id)
@@ -166,7 +166,7 @@ export class DocumentoService {
         }
     }
 
-    async getByDate(enterprise_id:number,fi,ff){
+    async getByDate(enterprise_id:ObjectId,fi,ff){
         try {
 
             let resEnterprise=await this.EnterpriseService.getId(enterprise_id)
@@ -185,7 +185,7 @@ export class DocumentoService {
         }
     }
 
-    async getByUser(user_id:number){//ESPECIFICAR EMPRESA
+    async getByUser(user_id:ObjectId){//ESPECIFICAR EMPRESA
         try {
 
             let resUser=await this.EnterpriseService.getId(user_id)
@@ -199,7 +199,7 @@ export class DocumentoService {
         }
     }
 
-    async getByCustomer(customer_id:number){//ESPECIFICAR EMPRESA
+    async getByCustomer(customer_id:ObjectId){//ESPECIFICAR EMPRESA
         try {
 
            /*  let resCustomer=await this.EnterpriseService.getId(customer_id)

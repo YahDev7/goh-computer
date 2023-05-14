@@ -42,7 +42,7 @@ export class SubcategoriaService {
        }
 
        
-       async getByEnterprise(enterprise_id:number):Promise<SubCategoria[]|HttpException>{
+       async getByEnterprise(enterprise_id:ObjectId):Promise<SubCategoria[]|HttpException>{
         try {
           let res =await this.EnterpriseService.getId(enterprise_id);
           if(res instanceof HttpException) throw res

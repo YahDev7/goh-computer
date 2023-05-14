@@ -1,6 +1,7 @@
 import { Body, Controller, Delete, Get, Param, ParseIntPipe, Post, Put } from '@nestjs/common';
 import { SubcategoriaService } from './subcategoria.service';
 import { SubCategoriaDto, UpdateSubCategoriaDto } from './dto/subcategoria.dto';
+import { ObjectId } from 'mongodb';
 
 
 @Controller('subcategoria')
@@ -21,7 +22,7 @@ export class SubcategoriaController {
     }
 
     @Get('/enterprise/:id')
-    async getByEnterprise(@Param('id', ParseIntPipe) id:number){
+    async getByEnterprise(@Param('id') id:ObjectId){
         return this.subcategoriaService.getByEnterprise(id)
     }
 

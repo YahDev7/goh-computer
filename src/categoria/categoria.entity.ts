@@ -1,13 +1,12 @@
-import { Enterprises } from "src/enterprise/enterprise.entity";
-import { SubCategoria } from "src/subcategoria/subcategoria.entity";
+/* import { SubCategoria } from "src/subcategoria/subcategoria.entity";
 import { User } from "src/user/user.entity";
 import { Entity,Column,PrimaryGeneratedColumn, OneToMany, ManyToOne } from "typeorm"
 
-@Entity({name:'categoria'})/* permite convertir esta clase en una tabla y el nombre de la tabla */
+@Entity({name:'categoria'})
 export class Categoria {
    
     @PrimaryGeneratedColumn() //primary key y autoincrement
-    id:number; /* Columnas */
+    id:number; 
 
     @Column({nullable:false}) //unico
     usuario_id:number;
@@ -38,4 +37,4 @@ export class Categoria {
 
 }
 
-
+ */

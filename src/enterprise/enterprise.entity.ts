@@ -1,19 +1,19 @@
-import { Caja } from "src/caja/caja.entity";
+/* import { Caja } from "src/caja/caja.entity";
 import { Categoria } from "src/categoria/categoria.entity";
 import { Compesp } from "src/compesp/compesp.entity";
 import { Customer } from "src/customer/customer.entity";
 import { Especificaciones } from "src/especificaciones/especificaciones.entity";
-/* import { Movimiento } from "src/movimiento/movimiento.entity"; */
+
 import { Provider } from "src/provider/provider.entity";
 import { SubCategoria } from "src/subcategoria/subcategoria.entity";
 import { User } from "src/user/user.entity";
 import { Entity,Column,PrimaryGeneratedColumn, OneToMany, JoinColumn } from "typeorm"
 
-@Entity({name:'enterprises'})/* permite convertir esta clase en una tabla y el nombre de la tabla */
+@Entity({name:'enterprises'})
 export class Enterprises {
    
     @PrimaryGeneratedColumn() //primary key y autoincrement
-    id:number; /* Columnas */
+    id:number; 
     
     @Column({length:40,unique:true,nullable:false}) //unico
     nombre:string;
@@ -74,3 +74,4 @@ export class Enterprises {
 }
 
 
+ */

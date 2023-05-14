@@ -1,12 +1,13 @@
-import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
+/* import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Especificaciones } from './especificaciones.entity';
 import { EspecificacionesDto, UpdateEspecificacionesDto } from './dto/especificaciones.dto';
 import { EnterpriseService } from 'src/enterprise/enterprise.service';
-
+import { ObjectId } from 'mongodb'; */
+/*
 @Injectable()
-export class EspecificacionesService {
+ export class EspecificacionesService {
 
     constructor(
         @InjectRepository(Especificaciones)
@@ -38,14 +39,14 @@ export class EspecificacionesService {
         }
 
    }
-   async getByEnterprise(enterprise_id:number):Promise<Especificaciones[]|HttpException>{
+   async getByEnterprise(enterprise_id:string):Promise<Especificaciones[]|HttpException>{
     try {
     let res =await this.EnterpriseService.getId(enterprise_id);
     console.log(res)
     if(res instanceof HttpException) throw res
     // if(res) throw {err:true,message:'No se encontraron subcategorias de esta empresa'} 
 
-        const found=await this.EnterpriseRepository.find({where:{enterprise_id,estado:'A'}})
+        const found=await this.EnterpriseRepository.find({enterprise_id,estado:'A'})
         if(found.length===0) throw {err:true,message:'No se encontraron subcategorias de esta empresa'} 
         return found;
     } catch (error) {
@@ -93,4 +94,4 @@ async delete(id:number):Promise<Object>{
     }
 
 }
-}
+} */

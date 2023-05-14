@@ -1,6 +1,7 @@
 import { IsNotEmpty, IsOptional, IsEmail, Length, IsNumberString, MaxLength } from 'class-validator';
 import { Type } from 'class-transformer';
 import {PartialType} from '@nestjs/mapped-types'
+import { ObjectId } from 'mongodb';
 
 export class CustomerDto {
  /*  @IsOptional()
@@ -9,11 +10,11 @@ export class CustomerDto {
 
   @IsNotEmpty()
   @Type(() => Number)
-  enterprise_id: number;
+  enterprise_id: ObjectId;
 
   @IsNotEmpty()
   @Type(() => Number)
-  user_id: number;
+  user_id: ObjectId;
 
   @IsNotEmpty()
   @Length(8, 8)

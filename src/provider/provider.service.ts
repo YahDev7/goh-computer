@@ -2,13 +2,19 @@ import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { EnterpriseService } from 'src/enterprise/enterprise.service';
-import { Provider } from './provider.entity';
+
+import { ObjectId } from 'mongodb';
+import { Provider, ProviderDocument } from './schema/schema.provider';
+import { Model } from 'mongoose';
+import { InjectModel } from '@nestjs/mongoose';
 @Injectable()
 export class ProviderService {
 
     constructor(
-        @InjectRepository(Provider)
-        private ProviderRepository:Repository<Provider>,
+    @InjectModel(Provider.name) private ProviderModule:Model<ProviderDocument> ,
+
+    /*     @InjectRepository(Provider)
+        private ProviderModule:Repository<Provider>, */
         private EnterpriseService:EnterpriseService
 
         
@@ -16,7 +22,7 @@ export class ProviderService {
     
         async get():Promise<Provider[]|HttpException>{
             try {
-                const res= await this.ProviderRepository.find();
+                const res= await this.ProviderModule.find();
                 console.log(res)
                 if(res.length===0) throw {err:true,message:'No hay datos que mostrar'} 
                  return res
@@ -25,9 +31,9 @@ export class ProviderService {
             }
         }
     
-       async getId(id:number):Promise<Provider|HttpException>{
+       async getId(id:ObjectId):Promise<Provider|HttpException>{
             try {
-                const found=await this.ProviderRepository.findOne({where:{id,estado:'A'}})
+                const found=await this.ProviderModule.findOne({_id:id,estado:'A'})
                 console.log(found)
 
                 if(!found) throw {err:true,message:'error al buscar este provider'} 
@@ -44,7 +50,7 @@ export class ProviderService {
           if(res instanceof HttpException) throw res
            // if(res) throw {err:true,message:'No se encontraron subcategorias de esta empresa'} 
     
-            const found=await this.ProviderRepository.find({where:{enterprise_id,estado:'A'}})
+            const found=await this.ProviderModule.find({where:{enterprise_id,estado:'A'}})
             if(found.length===0) throw {err:true,message:'No se encontro esta empresa'} 
             return found;
         } catch (error) {
@@ -55,7 +61,7 @@ export class ProviderService {
        async verifyUnique(param: {[key: string]: any}):Promise<User>{ //param es un obj con keys "string" y sus valores de cualquier tipo
         try {
             
-            const verify=await this.ProviderRepository.findOne({where:param}) 
+            const verify=await this.ProviderModule.findOne({where:param}) 
             return verify;
         } catch (error) {
             
@@ -110,9 +116,9 @@ export class ProviderService {
                 const res=await this.verifyAll(body);
                 if(res.err) throw res;
 
-                const insert=this.ProviderRepository.create(body);
+                const insert=this.ProviderModule.create(body);
                 if(!insert) return new HttpException('Ocurrio un error al guardar ',HttpStatus.NOT_FOUND)
-                return this.ProviderRepository.save(insert)
+                return this.ProviderModule.save(insert)
             } catch (error) {
                 console.log(error)
             return new HttpException('Ocurrio un error al guardar '+error.message||error,HttpStatus.NOT_FOUND)
@@ -121,13 +127,13 @@ export class ProviderService {
         async update(id:number,body:UpdateUserDto ):Promise<User|HttpException>{
             try {
         
-               const found=await this.ProviderRepository.findOne({where:{id,estado:'A'}})
+               const found=await this.ProviderModule.findOne({where:{id,estado:'A'}})
                 if(!found) throw {err:true,message:'No se encontor este user'} 
                 const res=await this.verifyAllUpdate(body,id);
                 console.log(res)
                 if(res.err) throw res;
                 let resUpdate=Object.assign(found,body);
-                return this.ProviderRepository.save(resUpdate);
+                return this.ProviderModule.save(resUpdate);
             
             } catch (error) {
                 return new HttpException('Ocurrio un error al guardar '+error.message||error,HttpStatus.NOT_FOUND)   
@@ -137,11 +143,11 @@ export class ProviderService {
         async delete(id:number):Promise<Object>{
             try {
                 
-                const found=await this.ProviderRepository.findOne({where:{id,estado:'A'}})
+                const found=await this.ProviderModule.findOne({where:{id,estado:'A'}})
                 if(!found) throw {err:true,message:'No se encontor esta empresa'} 
         
                 let resUpdate=Object.assign(found,{estado:'D'});
-                const resfinal= await this.ProviderRepository.save(resUpdate);
+                const resfinal= await this.ProviderModule.save(resUpdate);
                
                 return {err:false,message:'Enterprise eliminado'}
             } catch (error) {

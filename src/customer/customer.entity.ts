@@ -1,15 +1,13 @@
-import { Entity,Column,PrimaryGeneratedColumn, OneToMany, ManyToOne, ManyToMany } from "typeorm"
+/* import { Entity,Column,PrimaryGeneratedColumn, OneToMany, ManyToOne, ManyToMany } from "typeorm"
 import { Enterprises } from "src/enterprise/enterprise.entity";
 import { User } from "src/user/user.entity";
 
-/* import { Exclude } from 'class-transformer';
-import { Movimientos } from "src/movimientos/movimientos.entity"; */
 
-@Entity({name:'customer'})/* permite convertir esta clase en una tabla y el nombre de la tabla */
+@Entity({name:'customer'})
 export class Customer {
    
     @PrimaryGeneratedColumn() //primary key y autoincrement
-    id:number; /* Columnas */
+    id:number; 
 
     @Column({nullable:false}) //unico
     enterprise_id:number;
@@ -61,3 +59,4 @@ export class Customer {
     user:User
  
 }
+ */

@@ -4,16 +4,16 @@ import { ObjectId } from 'mongodb';
 
 export class DocumentoDTO {
   @IsNumber()
-  user_id: number;
+  user_id: ObjectId;
 
   @IsNumber()
-  customer_id: number;
+  customer_id: ObjectId;
 
   @IsNumber()
-  caja_id: number;
+  caja_id: ObjectId;
 
   @IsNotEmpty()
-  enterprise_id: number;
+  enterprise_id: ObjectId;
 
   @IsString()
   @IsNotEmpty()
@@ -64,16 +64,16 @@ export class DocumentoDTO {
 
 export class DocumentoCompraDTO {
   @IsNumber()
-  user_id: number;
+  user_id: ObjectId;
 
   @IsNumber()
-  provider_id: number;
+  provider_id: ObjectId;
 
   @IsNumber()
-  caja_id: number;
+  caja_id: ObjectId;
 
   @IsNotEmpty()
-  enterprise_id: number;
+  enterprise_id: ObjectId;
 
   @IsString()
   @IsNotEmpty()
@@ -122,13 +122,13 @@ export class DocumentoCompraDTO {
 
 export class DocumentoByCustomerDTO {
   @IsNumber()
-  customer_id: number;
+  customer_id: ObjectId;
   
   @IsNumber()
-  caja_id: number;
+  caja_id: ObjectId;
 
   @IsNotEmpty()
-  enterprise_id: number;
+  enterprise_id: ObjectId;
 
   @IsString()
   @IsNotEmpty()

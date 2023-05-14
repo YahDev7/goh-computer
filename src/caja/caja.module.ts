@@ -2,10 +2,16 @@ import { Module } from '@nestjs/common';
 import { CajaService } from './caja.service';
 import { CajaController } from './caja.controller';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { Caja } from './caja.entity';
+import { MongooseModule } from '@nestjs/mongoose';
+import { Caja, CajaSchema } from './schema/schema.caja';
 
 @Module({
-  imports:[TypeOrmModule.forFeature([Caja])],
+  imports:[MongooseModule.forFeature([
+    {
+      name:Caja.name,
+      schema:CajaSchema,
+    }
+  ]) /* TypeOrmModule.forFeature([Caja]) */],
   providers: [CajaService],
   controllers: [CajaController]
 })

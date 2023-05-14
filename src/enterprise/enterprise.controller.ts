@@ -1,6 +1,7 @@
 import { Body, Controller, Get, Param, ParseIntPipe, Post,Put,Delete } from '@nestjs/common';
 import { EnterpriseService } from './enterprise.service';
 import { EnterpriseDto } from './dto/enterprise.dto';
+import { ObjectId } from 'mongodb';
 
 @Controller('enterprise')
 export class EnterpriseController {
@@ -14,7 +15,7 @@ export class EnterpriseController {
     }
 
     @Get(':id')
-    async getId(@Param('id', ParseIntPipe) id:number){
+    async getId(@Param('id') id:ObjectId){
         return this.enterpriseService.getId(id)
     }
 

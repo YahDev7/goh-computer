@@ -42,7 +42,7 @@ export class ProductsService {
             return new HttpException('Ocurrio un error al listar'+error,HttpStatus.NOT_FOUND) 
         }
     }
-    async getByEnterprise(enterprise_id:number):Promise<Products[]|HttpException>{
+    async getByEnterprise(enterprise_id:ObjectId):Promise<Products[]|HttpException>{
         try {
         let res =await this.EnterpriseService.getId(enterprise_id);
         if(res instanceof HttpException) throw res
@@ -269,7 +269,7 @@ export class ProductsService {
           ])
               return res
     }
-    async getByIdProd(id:string){
+    async getByIdProd(id:ObjectId){
            try {
             let res= await this.productssModule.aggregate([
                 { $match: { _id:new ObjectId(id) , stock: { $gt: 0 }, estado: 'A' } },

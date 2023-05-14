@@ -1,10 +1,11 @@
 import { IsNotEmpty, IsString, IsEmail, IsNumber, Length } from 'class-validator';
 import {PartialType} from '@nestjs/mapped-types'
+import { ObjectId } from 'mongodb';
 
 export class CreateUserDto {
   @IsNotEmpty()
   @IsNumber()
-  enterprise_id: number;
+  enterprise_id: ObjectId;
 
   @IsNotEmpty()
   @IsString()

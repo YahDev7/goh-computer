@@ -42,7 +42,7 @@ export class MovimientoMService {
             return new HttpException('Ocurrio un error al listar'+error,HttpStatus.NOT_FOUND) 
         }
     }
-    async getByEnterprise(enterprise_id:number):Promise<MovimientoM[]|HttpException>{
+    async getByEnterprise(enterprise_id:ObjectId):Promise<MovimientoM[]|HttpException>{
         try {
             let res =await this.EnterpriseService.getId(enterprise_id);
             if(res instanceof HttpException) throw res
@@ -74,7 +74,7 @@ export class MovimientoMService {
         }
     }
 
-    async getByCustomer(customer_id:number):Promise<MovimientoM[]|HttpException>{
+    async getByCustomer(customer_id:ObjectId):Promise<MovimientoM[]|HttpException>{
         try {
             let res =await this.CustomerService.getId(customer_id);
             if(res instanceof HttpException) throw res

@@ -1,7 +1,7 @@
-import { Enterprises } from "src/enterprise/enterprise.entity";
+/* /* import { Enterprises } from "src/enterprise/enterprise.entity"; 
 import { Entity,Column,PrimaryGeneratedColumn, OneToMany, ManyToOne, ManyToMany } from "typeorm"
 
-@Entity({name:'especificaciones'})/* permite convertir esta clase en una tabla y el nombre de la tabla */
+@Entity({name:'especificaciones'})
 export class Especificaciones {
    
     @PrimaryGeneratedColumn() //primary key y autoincrement
@@ -14,9 +14,10 @@ export class Especificaciones {
     title:string;
 
     @Column({length:2}) //tipo fecha y agregale la fecha actual
-    estado:string;
+    estado:string; */
 
-    @ManyToOne(()=>Enterprises,enterprise=>enterprise.especifi)
+/*     @ManyToOne(()=>Enterprises,enterprise=>enterprise.especifi)
     enterprise:Enterprises
 
 }
+ */
