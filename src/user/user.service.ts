@@ -1,12 +1,14 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import { CreateUserDto, UpdateUserDto } from './dto/user.dto';
+import { CreateUserDto, LoginUserDto, UpdateUserDto } from './dto/user.dto';
 import { EnterpriseService } from 'src/enterprise/enterprise.service';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { User, UserDocument } from './schema/schema.user';
 import { ObjectId } from 'mongodb';
+import { compare, hash } from 'bcrypt';
+import { JwtService } from '@nestjs/jwt';
 
 @Injectable()
 export class UserService {
@@ -14,6 +16,7 @@ export class UserService {
     constructor(
         //@InjectRepository(User)
         @InjectModel(User.name) private UserModule:Model<UserDocument> ,
+        private jwtService:JwtService, 
 
        // private UserModule:Repository<User>,
         private EnterpriseService:EnterpriseService
@@ -24,7 +27,6 @@ export class UserService {
         async get():Promise<User[]|HttpException>{
             try {
                 const res= await this.UserModule.find();
-                console.log(res)
                 if(res.length===0) throw {err:true,message:'No hay datos que mostrar'} 
                  return res
             } catch (error) {
@@ -109,18 +111,22 @@ export class UserService {
 
        async post(body:CreateUserDto):Promise<User|Object>{
             try {
-                const{enterprise_id}=body
-                let resEnterprise =await this.EnterpriseService.getId(enterprise_id);
-                console.log(resEnterprise)
-                if(resEnterprise instanceof HttpException) throw resEnterprise
+                const{enterprise_id,password}=body
+              /*   let resEnterprise =await this.EnterpriseService.getId(enterprise_id);
+                if(resEnterprise instanceof HttpException) throw resEnterprise */
 
-                const res=await this.verifyAll(body);
-                if(res.err) throw res;
+             /*    const res=await this.verifyAll(body);
+                if(res.err) throw res; */
 
+                let newenterprise_id=new ObjectId(enterprise_id)
 
+                let passhash=await hash(password,10)
+
+                body={...body,enterprise_id:newenterprise_id,password:passhash}
                 const insert=this.UserModule.create(body);
                 if(!insert) return new HttpException('Ocurrio un error al guardar ',HttpStatus.NOT_FOUND)
-                return {err:false,message:"Se guardo con éxito"}
+                    return insert
+                //return {err:false,message:"Se guardo con éxito"}
 
               /*   const insert=this.UserModule.create(body);
                 if(!insert) return new HttpException('Ocurrio un error al guardar ',HttpStatus.NOT_FOUND)
@@ -169,5 +175,35 @@ export class UserService {
                 return new HttpException('Ocurrio un error al eliminar '+error.message||error,HttpStatus.NOT_FOUND)   
             }
         
+        }
+
+        async login(body:LoginUserDto){
+            try {
+                let {email,password} =body
+
+                const finduser=await this.UserModule.findOne({email})
+                if(!finduser) throw {err:true,message:"Errror de autentication"}
+
+                let comparepass=await compare(password,finduser.password)
+                if(!comparepass) throw {err:true,message:"Errror de autentication"}
+
+                let payload={
+                    id:finduser._id,
+                    nombre:finduser.nombre,
+                    enterprise_id:finduser.enterprise_id,
+                    rol:finduser.rol
+                }
+                let token=this.jwtService.sign(payload)
+
+                const data={
+                    user:finduser,
+                    token
+                }
+                    return data 
+            } catch (error) {
+                console.log(error)
+                return new HttpException('Error de autentication '+error.message||error,HttpStatus.NOT_FOUND)   
+                
+            }
         }
 }

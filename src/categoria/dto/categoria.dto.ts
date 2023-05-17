@@ -1,14 +1,15 @@
 import { IsNotEmpty, IsNumber, IsOptional, IsString, MaxLength } from 'class-validator';
 import {PartialType} from '@nestjs/mapped-types'
+import { ObjectId } from 'mongodb';
 export class CategoriaDto {
 
-  @IsNumber()
+  @IsString()
   @IsNotEmpty()
-  usuario_id: number;
+  usuario_id: ObjectId;
 
-  @IsNumber()
+  @IsString()
   @IsNotEmpty()
-  enterprise_id: number;
+  enterprise_id: ObjectId;
 
   @IsString()
   @MaxLength(100)
@@ -17,7 +18,7 @@ export class CategoriaDto {
   @IsString()
   @MaxLength(70)
   imagen: string;
-
+ 
   @IsString()
   @MaxLength(500)
   url_imagen: string;

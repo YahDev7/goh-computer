@@ -1,16 +1,18 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
-import { CustomerDto, UpdateCustomerDto } from './dto/customer.dto';
+import { CustomerDto, LoginCustomerDto, UpdateCustomerDto } from './dto/customer.dto';
 import { EnterpriseService } from 'src/enterprise/enterprise.service';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { Customer, CustomeraDocument } from './schema/schema.customer';
 import { ObjectId } from 'mongodb';
+import { compare, hash } from 'bcrypt';
+import { JwtService } from '@nestjs/jwt';
 
 @Injectable()
 export class CustomerService {
     constructor(
             @InjectModel(Customer.name) private CustomerModule:Model<CustomeraDocument> ,
-
+            private jwtService:JwtService, 
        /*  @InjectRepository(Customer)
         private CustomerModule:Repository<Customer>, */
             private EnterpriseService:EnterpriseService
@@ -20,7 +22,6 @@ export class CustomerService {
         async get():Promise<Customer[]|HttpException>{
             try {
                 const res= await this.CustomerModule.find();
-                console.log(res)
                 if(res.length===0) throw {err:true,message:'No hay datos que mostrar'} 
                  return res
             } catch (error) {
@@ -31,7 +32,7 @@ export class CustomerService {
         async getId(id:ObjectId):Promise<Customer|HttpException>{
             try {
                 
-                const found=await this.CustomerModule.findOne({id,estado:'A'})
+                const found=await this.CustomerModule.findOne({_id:id,estado:'A'})
                 if(!found) throw {err:true,message:'No se encontor este customer'} 
                 return found;
             } catch (error) {
@@ -104,17 +105,33 @@ export class CustomerService {
 
        async post(body:CustomerDto):Promise<Customer|Object>{
             try {
-                const res=await this.verifyAll(body);
-                if(res.err) throw res;
+               // const res=await this.verifyAll(body);
+                //if(res.err) throw res;
 
-                let {enterprise_id,user_id} =body
+
+              /*   let {enterprise_id,user_id,pass} =body
                 enterprise_id=new ObjectId(enterprise_id)
                 user_id=new ObjectId(user_id)
+                
+                let passhash=await hash(pass,10)
+                
+                body={...body,pass:passhash,enterprise_id,user_id}
+                console.log(body)
+                return this.CustomerModule.create(body) */
+                
+                let {enterprise_id,pass} =body
+                enterprise_id=new ObjectId(enterprise_id)
+               
+                
+                let passhash=await hash(pass,10)
+                
+                body={...body,pass:passhash,enterprise_id}
+                return this.CustomerModule.create(body)
 
-
-            const save=await this.CustomerModule.create({...body,enterprise_id,user_id});
+           /*  const save=await this.CustomerModule.create({...body,enterprise_id,user_id});
             if(!save) throw {err:true,message:'No se guardardo'}
-            return {err:false,message:"Se guardo con éxito"}
+            return {err:false,message:"Se guardo con éxito"} */
+
             } catch (error) {
                 console.log(error)
             return new HttpException('Ocurrio un error al guardar '+error.message||error,HttpStatus.NOT_FOUND)
@@ -154,4 +171,38 @@ export class CustomerService {
             }
         
         }
+
+        async login(body:LoginCustomerDto){
+            try {
+                let {email,pass} =body
+
+                const finduser=await this.CustomerModule.findOne({email})
+                if(!finduser) throw {err:true,message:"Errror de autentication"}
+
+                let comparepass=await compare(pass,finduser.pass)
+                if(!comparepass) throw {err:true,message:"Errror de autentication"}
+
+                let payload={
+                    id:finduser._id,
+                    nombre:finduser.nombres,
+                    enterprise_id:finduser.enterprise_id
+                }
+                let token=this.jwtService.sign(payload)
+
+                const data={
+                    user:finduser,
+                    token
+                }
+                    return data 
+            } catch (error) {
+                console.log(error)
+                return new HttpException('Error de autentication '+error.message||error,HttpStatus.NOT_FOUND)   
+                
+            }
+        }
+
+
+
+
+        
 }

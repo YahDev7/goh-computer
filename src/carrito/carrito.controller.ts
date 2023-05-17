@@ -12,7 +12,7 @@ export class CarritoController {
         return this.carrService.jwt(body)
     }
 
-@UseGuards(AuthGuard('jwt'))
+@UseGuards(AuthGuard('jwtcarr'))
     @Post('gohcomputer/get')
     async getCarrToken(@Req() req){
         const token = req.headers.authorization.split(' ')[1];

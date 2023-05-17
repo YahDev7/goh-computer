@@ -10,19 +10,20 @@ export class Customer {
   @Prop({ required: true })
   enterprise_id: ObjectId;
 
-  @Prop({ required: true })
+  @Prop()
   user_id: ObjectId;
 
-  @Prop({ unique: true })
+  @Prop() /* validar por dni */
   dni: string;
 
+  
   @Prop({ required: true })
-  nombres: string;
+  nombres: string; 
 
-  @Prop({ required: true })
+  @Prop()
   ap_paterno: string;
 
-  @Prop({ required: true })
+  @Prop()
   ap_materno: string;
 
   @Prop()
@@ -46,7 +47,7 @@ export class Customer {
   @Prop({ required: true })
   pass: string;
 
-  @Prop()
+  @Prop({required:true})
   estado: string;
 }
 

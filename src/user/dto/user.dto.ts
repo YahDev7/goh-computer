@@ -2,9 +2,20 @@ import { IsNotEmpty, IsString, IsEmail, IsNumber, Length } from 'class-validator
 import {PartialType} from '@nestjs/mapped-types'
 import { ObjectId } from 'mongodb';
 
+
+export class LoginUserDto {
+  @IsNotEmpty()
+  @IsEmail()
+  email: string;
+
+  @IsNotEmpty()
+  @Length(1, 20)
+  password: string;
+}
+
 export class CreateUserDto {
   @IsNotEmpty()
-  @IsNumber()
+  @IsString()
   enterprise_id: ObjectId;
 
   @IsNotEmpty()

@@ -1,7 +1,10 @@
-import { Body, Controller, Delete, Get, Param, ParseIntPipe, Post, Put } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Param, ParseIntPipe, Post, Put, UseGuards } from '@nestjs/common';
 import { CustomerService } from './customer.service';
-import { CustomerDto, UpdateCustomerDto } from './dto/customer.dto';
+import { CustomerDto, LoginCustomerDto, UpdateCustomerDto } from './dto/customer.dto';
 import { ObjectId } from 'mongodb';
+import { LoginDto, RegisterDto } from './dto/login.dto';
+import { AuthGuard } from '@nestjs/passport';
+import { JwtAuthGuard } from './guards/guard.customer'; 
 
 @Controller('customer')
 export class CustomerController {
@@ -9,6 +12,8 @@ export class CustomerController {
     constructor(
         private customerService:CustomerService
     ){}
+   /*  @UseGuards(AuthGuard('jwtlogin'))  */
+   @UseGuards(JwtAuthGuard)
     @Get()
     async get(){
         return this.customerService.get()
@@ -35,4 +40,13 @@ export class CustomerController {
     async delete(@Param('id', ParseIntPipe) id:number){
         return this.customerService.delete(id)
     }
+
+    @Post('gohcomputer/register')
+    register(@Body() body:CustomerDto){
+        return this.customerService.post(body)
+    }
+    @Post('gohcomputer/login')
+    login(@Body() body:LoginCustomerDto){
+        return this.customerService.login(body)
+    } 
 }

@@ -2,130 +2,11 @@ import { IsNotEmpty, IsNumber, IsString, Length, MaxLength, MinLength, ValidateN
 import { Type } from 'class-transformer';
 import { ObjectId } from 'mongodb';
 
-export class DocumentoDTO {
-  @IsNumber()
-  user_id: ObjectId;
-
-  @IsNumber()
-  customer_id: ObjectId;
-
-  @IsNumber()
-  caja_id: ObjectId;
-
-  @IsNotEmpty()
-  enterprise_id: ObjectId;
-
-  @IsString()
-  @IsNotEmpty()
-  tipo_documento: string;
-
-  @IsString()
-  @IsNotEmpty()
-  serie: string;
-
-  @IsString()
-  @IsNotEmpty()
-  nro_documento: string;
-
-  @Type(() => Date)
-  @IsNotEmpty()
-  fecha: Date;
-
-  @IsNotEmpty()
-  @IsNumber()
-  sub_total: number;
-
-  @IsNumber()
-  descuento_total: number;
-
-  @IsNotEmpty()
-  @IsNumber()
-  igv: number;
-
-  @IsNotEmpty()
-  @IsNumber()
-  total_pagar: number;
-
-  @MaxLength(15)
-  @MinLength(1)
-  @IsNotEmpty()
-  estado: string;
-
-  @IsString()
-  @IsNotEmpty()
-  tipo_compra_venta: string;
-
-  @IsNotEmpty()
-/*   @ValidateNested({ each: true }) */
-  detalle: Object[];
-}
-
-
-
-export class DocumentoCompraDTO {
-  @IsNumber()
-  user_id: ObjectId;
-
-  @IsNumber()
-  provider_id: ObjectId;
-
-  @IsNumber()
-  caja_id: ObjectId;
-
-  @IsNotEmpty()
-  enterprise_id: ObjectId;
-
-  @IsString()
-  @IsNotEmpty()
-  tipo_documento: string;
-
-  @IsString()
-  @IsNotEmpty()
-  serie: string;
-
-  @IsString()
-  @IsNotEmpty()
-  nro_documento: string;
-
-  @Type(() => Date)
-  @IsNotEmpty()
-  fecha: Date;
-
-  @IsNotEmpty()
-  @IsNumber()
-  sub_total: number;
-
-  @IsNumber()
-  descuento_total: number;
-
-  @IsNotEmpty()
-  @IsNumber()
-  igv: number;
-
-  @IsNotEmpty()
-  @IsNumber()
-  total_pagar: number;
-
-  @MaxLength(15)
-  @MinLength(1)
-  @IsNotEmpty()
-  estado: string;
-
-  @IsString()
-  @IsNotEmpty()
-  tipo_compra_venta: string;
-
-  @IsNotEmpty()
-/*   @ValidateNested({ each: true }) */
-  detalle: Object[];
-}
+import {PartialType} from '@nestjs/mapped-types'
 
 export class DocumentoByCustomerDTO {
-  @IsNumber()
+  @IsString()
   customer_id: ObjectId;
-  
-  @IsNumber()
-  caja_id: ObjectId;
 
   @IsNotEmpty()
   enterprise_id: ObjectId;
@@ -174,3 +55,74 @@ export class DocumentoByCustomerDTO {
 /*   @ValidateNested({ each: true }) */
   detalle: Object[];
 }
+
+export class DocumentoDTO extends PartialType(DocumentoByCustomerDTO)  {
+  @IsString()
+  user_id: ObjectId;
+
+  @IsString()
+  caja_id: ObjectId;
+}
+
+
+
+export class DocumentoCompraDTO extends PartialType(DocumentoByCustomerDTO) {
+
+  @IsString()
+  provider_id: ObjectId;
+}
+
+/* export class DocumentoByCustomerDTO {
+  @IsString()
+  customer_id: ObjectId;
+  
+  @IsString()
+  caja_id: ObjectId;
+
+  @IsNotEmpty()
+  enterprise_id: ObjectId;
+
+  @IsString()
+  @IsNotEmpty()
+  tipo_documento: string;
+
+  @IsString()
+  @IsNotEmpty()
+  serie: string;
+
+  @IsString()
+  @IsNotEmpty()
+  nro_documento: string;
+
+  @Type(() => Date)
+  @IsNotEmpty()
+  fecha: Date;
+
+  @IsNotEmpty()
+  @IsNumber()
+  sub_total: number;
+
+  @IsNumber()
+  descuento_total: number;
+
+  @IsNotEmpty()
+  @IsNumber()
+  igv: number;
+
+  @IsNotEmpty()
+  @IsNumber()
+  total_pagar: number;
+
+  @MaxLength(15)
+  @MinLength(1)
+  @IsNotEmpty()
+  estado: string;
+
+  @IsString()
+  @IsNotEmpty()
+  tipo_compra_venta: string;
+
+  @IsNotEmpty()
+
+  detalle: Object[];
+} */

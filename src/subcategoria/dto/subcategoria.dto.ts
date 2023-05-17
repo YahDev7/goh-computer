@@ -3,13 +3,13 @@ import {PartialType} from '@nestjs/mapped-types'
 import { ObjectId } from 'mongodb';
 
 export class SubCategoriaDto {
-  @IsNumber()
+  @IsString()
   @IsNotEmpty()
-  usuario_id: number;
+  usuario_id: ObjectId;
 
-  @IsNumber()
+  @IsString()
   @IsNotEmpty()
-  enterprise_id: number;
+  enterprise_id: ObjectId;
 
   @IsString()
   @IsNotEmpty()

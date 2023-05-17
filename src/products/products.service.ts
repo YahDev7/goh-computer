@@ -62,7 +62,8 @@ export class ProductsService {
 
             const save=await this.productssModule.create({...body,subcategoria_id});
             if(!save) throw {err:true,message:'No se guardardo'}
-            return {err:false,message:"Se guardo con éxito"}
+            return save
+            /* return {err:false,message:"Se guardo con éxito"} */
         } catch (error) {
             return new HttpException('Ocurrio un error al guardar'+error.message||error,HttpStatus.NOT_FOUND); 
         }

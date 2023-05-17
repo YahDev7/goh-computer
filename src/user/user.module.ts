@@ -5,6 +5,10 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { EnterpriseModule } from 'src/enterprise/enterprise.module';
 import { MongooseModule } from '@nestjs/mongoose';
 import { User, UserSchema } from './schema/schema.user';
+import { JwtModule } from '@nestjs/jwt';
+import { ConfigType } from '@nestjs/config';
+import config from 'src/config';
+import { JwtLoginUserStrategy } from './strategy/strategy.user';
 
 @Module({
   imports:[MongooseModule.forFeature([
@@ -12,9 +16,21 @@ import { User, UserSchema } from './schema/schema.user';
       name:User.name,
       schema:UserSchema,
     }
-  ]),EnterpriseModule
+  ]),
+  JwtModule.registerAsync({
+    inject:[config.KEY],
+    useFactory:(cofigService:ConfigType<typeof config>)=>{
+      return{
+        secret:cofigService.jwtSecret,//variables de entorno
+        signOptions:{
+          expiresIn:'10d'
+        }
+      }
+    },
+  }),
+  EnterpriseModule
     /* TypeOrmModule.forFeature([User]),EnterpriseModule */],
-  providers: [UserService],
+  providers: [UserService,JwtLoginUserStrategy],
   controllers: [UserController],
   exports:[UserService]
 })

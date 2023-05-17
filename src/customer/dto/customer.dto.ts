@@ -3,20 +3,28 @@ import { Type } from 'class-transformer';
 import {PartialType} from '@nestjs/mapped-types'
 import { ObjectId } from 'mongodb';
 
+export class LoginCustomerDto {
+  @IsNotEmpty()
+  @IsEmail()
+  @Length(1, 30)
+  email: string;
+
+  @IsNotEmpty()
+  @Length(1, 20)
+  pass: string;
+}
 export class CustomerDto {
  /*  @IsOptional()
   @Type(() => Number)
   id?: number; */
 
   @IsNotEmpty()
-  @Type(() => Number)
   enterprise_id: ObjectId;
 
-  @IsNotEmpty()
-  @Type(() => Number)
+  @IsOptional()
   user_id: ObjectId;
 
-  @IsNotEmpty()
+  @IsOptional()
   @Length(8, 8)
   dni: string;
 
@@ -54,13 +62,14 @@ export class CustomerDto {
 
   @IsNotEmpty()
   @IsEmail()
-  @Length(1, 20)
+  @Length(1, 30)
   email: string;
 
   @IsNotEmpty()
   @Length(1, 20)
   pass: string;
 
+  @IsNotEmpty()
   @MaxLength(2)
   estado?: string;
 }

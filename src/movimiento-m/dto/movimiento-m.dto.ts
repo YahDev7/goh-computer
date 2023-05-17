@@ -1,4 +1,4 @@
-import { IsNotEmpty, IsNumber, IsString, MaxLength } from 'class-validator';
+import { IsNotEmpty, IsNumber, IsOptional, IsString, MaxLength } from 'class-validator';
 import { ObjectId } from 'mongodb';
 
 export class MovimientoMDto {
@@ -7,12 +7,13 @@ export class MovimientoMDto {
   @IsNotEmpty()
   documento_id: ObjectId;
 
-  @IsNumber()
+  @IsString()
   @IsNotEmpty()
-  enterprise_id: number;
+  enterprise_id: ObjectId;
 
-  @IsNumber()
-  caja_id: number;
+  @IsOptional()
+  @IsString()
+  caja_id: ObjectId;
 
   @IsString()
   fecha: Date;
@@ -25,7 +26,7 @@ export class MovimientoMDto {
   @IsNotEmpty()
   metodo_pago: string;
 
-  @IsString()
+  @IsString() 
   @MaxLength(100)
   @IsNotEmpty()
   nro_operacion: string;

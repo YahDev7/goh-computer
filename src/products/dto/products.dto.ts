@@ -8,12 +8,12 @@ export class ProductDto {
   subcategoria_id: ObjectId;
 
   @IsNotEmpty()
-  @IsNumber()
-  usuario_id: number;
+  @IsString()
+  usuario_id: ObjectId;
 
   @IsNotEmpty()
-  @IsNumber()
-  enterprise_id: number;
+  @IsString()
+  enterprise_id: ObjectId;
 
   @IsNotEmpty()
   @IsNotEmpty()

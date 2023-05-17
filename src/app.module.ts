@@ -23,7 +23,7 @@ import { MovimientoMModule } from './movimiento-m/movimiento-m.module';
 import { LoginModule } from './login/login.module';
 import config from './config';
 
-@Module({
+@Module({ 
   imports: [ConfigModule.forRoot({
     envFilePath:enviroments[process.env.NODE_ENV]||'.env',
     load:[config],

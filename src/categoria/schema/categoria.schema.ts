@@ -1,4 +1,5 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
+import { ObjectId } from 'mongodb';
 import { HydratedDocument } from 'mongoose';
 
 export type CategoriaDocument = HydratedDocument<Categoria>;
@@ -6,10 +7,10 @@ export type CategoriaDocument = HydratedDocument<Categoria>;
 @Schema()
 export class Categoria{
   @Prop({ required: true})
-  usuario_id: number;
+  usuario_id: ObjectId;
 
   @Prop({ required: true })
-  enterprise_id: number;
+  enterprise_id: ObjectId;
 
   @Prop({ required: true, maxlength: 100, unique: true })
   nombre: string;

@@ -100,8 +100,9 @@ export class EnterpriseService {
 
            const insert=this.EnterpriseModule.create(body);
            if(!insert) return new HttpException('Ocurrio un error al guardar ',HttpStatus.NOT_FOUND)
-           
-           return {err:false,message:"Se guardo con éxito"}
+        
+           return insert
+           /* return {err:false,message:"Se guardo con éxito"} */
         } catch (error) {
             console.log(error)
           return new HttpException('Ocurrio un error al guardar '+error.message||error,HttpStatus.NOT_FOUND)

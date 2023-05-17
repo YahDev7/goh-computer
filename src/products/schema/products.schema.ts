@@ -10,10 +10,10 @@ export class Products {
     subcategoria_id: ObjectId;
     
     @Prop()
-    usuario_id: number;
+    usuario_id: ObjectId;
     
     @Prop()
-    enterprise_id: number;
+    enterprise_id: ObjectId;
     
     @Prop({required:true,unique:true})
     codigo: string;

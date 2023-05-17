@@ -2,12 +2,11 @@ import {Injectable,Inject } from "@nestjs/common";
 import { PassportStrategy } from "@nestjs/passport";
 import { ConfigType } from '@nestjs/config';
 import { ExtractJwt,Strategy } from "passport-jwt";
-
-import { PayLoadToken } from "../dto/carrito.dto";
 import config from "src/config";
 
+
 @Injectable()
-export class JwtStrategy extends PassportStrategy(Strategy,'jwtcarr')  {
+export class JwtLoginUserStrategy extends PassportStrategy(Strategy,'jwtloginuser')  {
     constructor(
         @Inject(config.KEY) configService: ConfigType<typeof config>){
         super({
@@ -16,8 +15,9 @@ export class JwtStrategy extends PassportStrategy(Strategy,'jwtcarr')  {
                 secretOrKey:configService.jwtSecret,
             });
     }
-    validate(payload:PayLoadToken){//esta funcion se ejecuta por defecto es lo que hace un strategy
+    validate(payload){//esta funcion se ejecuta por defecto es lo que hace un strategy
        //console.log(payload)
+       //podemos desencriptar para ver de donde vieiene esa peticion
         return payload;
     }
 }

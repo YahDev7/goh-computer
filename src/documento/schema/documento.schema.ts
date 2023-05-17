@@ -9,19 +9,19 @@ export type DocumentoDocument = HydratedDocument<Documento>;
 export class Documento{
 
     @Prop()
-    user_id: number;
+    user_id: ObjectId;
     
     @Prop()
-    customer_id: number;
+    customer_id: ObjectId;
 
     @Prop()
-    provider_id: number;
+    provider_id: ObjectId;
     
     @Prop()
-    caja_id: number;
+    caja_id: ObjectId;
     
     @Prop({required:true})
-    enterprise_id: number;
+    enterprise_id: ObjectId;
     
     @Prop({required:true})
     tipo_documento: string;

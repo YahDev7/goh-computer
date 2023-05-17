@@ -1,4 +1,4 @@
-import{IsString,IsNumber,IsNotEmpty, IsStrongPassword,IsEmail,MinLength,IsDateString,Length } from 'class-validator';
+import{IsString,IsNumber,IsNotEmpty, IsStrongPassword,IsEmail,MinLength,IsDateString,Length, MaxLength } from 'class-validator';
 
 import {PartialType} from '@nestjs/mapped-types'
 export class EnterpriseDto{
@@ -31,7 +31,7 @@ export class EnterpriseDto{
     pass: string;
   
     @IsString()
-    @Length(2, 2)
+    @MaxLength(1)
     estado: string;
 
     @IsNotEmpty()

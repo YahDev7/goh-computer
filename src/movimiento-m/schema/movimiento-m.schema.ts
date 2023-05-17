@@ -11,10 +11,10 @@ export class MovimientoM {
   documento_id: ObjectId;
 
   @Prop({ required: true })
-  enterprise_id: number;
+  enterprise_id: ObjectId;
 
   @Prop()
-  caja_id: number;
+  caja_id: ObjectId;
 
   @Prop({ type: Date, default: Date.now })
   fecha: Date;

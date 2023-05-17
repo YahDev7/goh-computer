@@ -8,10 +8,10 @@ export type SubCategoriaDocument = HydratedDocument<SubCategoria>;
 @Schema()
 export class SubCategoria {
   @Prop({ required: true })
-  usuario_id: number;
+  usuario_id: ObjectId;
 
   @Prop({ required: true })
-  enterprise_id: number;
+  enterprise_id: ObjectId;
 
   @Prop({ required: true })
   categoria_id: ObjectId;
