@@ -188,9 +188,9 @@ export class CustomerService {
                     enterprise_id:finduser.enterprise_id
                 }
                 let token=this.jwtService.sign(payload)
-
+                let {_id,enterprise_id,nombres,...user}=finduser
                 const data={
-                    user:finduser,
+                    user:{_id,enterprise_id,nombres},
                     token
                 }
                     return data 

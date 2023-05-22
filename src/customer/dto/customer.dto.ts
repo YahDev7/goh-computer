@@ -31,11 +31,11 @@ export class CustomerDto {
   @IsNotEmpty()
   nombres: string;
 
-  @IsNotEmpty()
+  @IsOptional()
   @Length(1, 20)
   ap_paterno: string;
 
-  @IsNotEmpty()
+  @IsOptional()
   @Length(1, 20)
   ap_materno: string;
 
