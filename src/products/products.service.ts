@@ -293,7 +293,7 @@ export class ProductsService {
                          idcomp: '$_id',
                          subcategoria_id:{$arrayElemAt: ['$subcat._id', 0]},
                         garantia: 1,
-                        url_fab: 1,
+                        url_pro: 1,
                         nomcomp: '$nombre',
 /*                         fechafinpromo: { $dateToString: { format: '%d-%m-%Y', date: '$fechafinpromo' } },
  */                        descomp: '$descripcion',
@@ -344,7 +344,7 @@ export class ProductsService {
               idcomp: '$_id',
               subcategoria_id:{$arrayElemAt: ['$subcat._id', 0]},
               garantia: 1,
-              url_fab: 1,
+              url_pro: 1,
               nomcomp: '$nombre',
               /* fechafinpromo: { $dateToString: { format: '%d-%m-%Y', date: '$fechafinpromo' } }, */
               descomp: '$descripcion',
