@@ -151,6 +151,14 @@ export class ProductsService {
                   }
                 },
                 {
+                  $lookup: {
+                    from: "categorias",
+                    localField: "subcat.categoria_id",
+                    foreignField: "_id",
+                    as: "cat"
+                  }
+                },
+                {
                   $addFields: {
                     precio_promoventa: { $ifNull: ['$precio_promoventa', 0] },
                   }
@@ -166,7 +174,7 @@ export class ProductsService {
                     stock: 1,
                     subcatnombre:{$arrayElemAt: ['$subcat.nombre', 0]} ,
                     subcatimg:{$arrayElemAt: ['$subcat.imagen', 0]} ,
-                    nomcat: {$arrayElemAt: ['$subcat.nombre', 0]} ,
+                    nomcat: {$arrayElemAt: ['$cat.nombre', 0]} ,
                     idcat: {$arrayElemAt: ['$subcat.categoria_id', 0]} ,
                     imagenes:'$imagenes',
                     precio_promoventa:1
@@ -208,6 +216,14 @@ export class ProductsService {
               }
             },
             {
+              $lookup: {
+                from: "categorias",
+                localField: "subcat.categoria_id",
+                foreignField: "_id",
+                as: "cat"
+              }
+            },
+            {
               $project: {
                 _id:0,
                 idcomp: '$_id',
@@ -218,7 +234,8 @@ export class ProductsService {
                 stock: 1,
                 subcatnombre:{$arrayElemAt: ['$subcat.nombre', 0]} ,
                 subcatimg:{$arrayElemAt: ['$subcat.imagen', 0]} ,
-                nomcat: {$arrayElemAt: ['$subcat.nombre', 0]} ,
+                nomcat: {$arrayElemAt: ['$cat.nombre', 0]} ,
+
                 idcat: {$arrayElemAt: ['$subcat.categoria_id', 0]} 
               }
             },
@@ -243,6 +260,15 @@ export class ProductsService {
                 localField: 'subcategoria_id',
                 foreignField: '_id',
                 as: 'subcat'
+              },
+              
+            },
+            {
+              $lookup: {
+                from: "categorias",
+                localField: "subcat.categoria_id",
+                foreignField: "_id",
+                as: "cat"
               }
             },
             {
@@ -256,7 +282,7 @@ export class ProductsService {
                 stock: 1,
                 subcatnombre:{$arrayElemAt: ['$subcat.nombre', 0]} ,
                 subcatimg:{$arrayElemAt: ['$subcat.imagen', 0]} ,
-                nomcat: {$arrayElemAt: ['$subcat.nombre', 0]} ,
+                nomcat: {$arrayElemAt: ['$cat.nombre', 0]} ,
                 idcat: {$arrayElemAt: ['$subcat.categoria_id', 0]} 
 
               }
@@ -283,6 +309,14 @@ export class ProductsService {
                   },
                 },
                 {
+                  $lookup: {
+                    from: "categorias",
+                    localField: "subcat.categoria_id",
+                    foreignField: "_id",
+                    as: "cat"
+                  }
+                },
+                {
                   $addFields: {
                     precio_promoventa: { $ifNull: ['$precio_promoventa', 0] },
                   }
@@ -301,7 +335,8 @@ export class ProductsService {
                          stock: 1,
                          subcatnombre:{$arrayElemAt: ['$subcat.nombre', 0]} ,
                          subcatimg:{$arrayElemAt: ['$subcat.imagen', 0]} ,
-                         nomcat: {$arrayElemAt: ['$subcat.nombre', 0]} ,
+                         nomcat: {$arrayElemAt: ['$cat.nombre', 0]} ,
+
                         imagenes:'$imagenes',
                         idcat: {$arrayElemAt: ['$subcat.categoria_id', 0]} ,
                         precio_promoventa:1,
@@ -311,7 +346,6 @@ export class ProductsService {
                 }
               ]);
               if(res.length===0) throw {err:true,message:"No hay productos a mostrar"};
-                console.log(res)
 
                   return res[0]
            } catch (error) {
@@ -337,6 +371,14 @@ export class ProductsService {
               as: "subcat"
             }
           },
+          {
+            $lookup: {
+              from: "categorias",
+              localField: "subcat.categoria_id",
+              foreignField: "_id",
+              as: "cat"
+            }
+          },
 
           {
             $project: {
@@ -348,18 +390,18 @@ export class ProductsService {
               nomcomp: '$nombre',
               /* fechafinpromo: { $dateToString: { format: '%d-%m-%Y', date: '$fechafinpromo' } }, */
               descomp: '$descripcion',
-                precio_venta: 1,
+              precio_venta: 1,
               stock: 1,
               subcatnombre:{$arrayElemAt: ['$subcat.nombre', 0]} ,
               subcatimg:{$arrayElemAt: ['$subcat.imagen', 0]} ,
-              nomcat: {$arrayElemAt: ['$subcat.nombre', 0]} ,
+              nomcat: {$arrayElemAt: ['$cat.nombre', 0]} ,
               imagenes:'$imagenes',
               idcat: {$arrayElemAt: ['$subcat.categoria_id', 0]} 
             }
           }
         ])
         if(res.length===0) throw {err:true,message:"No hay productos a mostrar"}
-
+        
             return res
       } catch (error) {
         return new HttpException('Ocurrio un error al buscar por subcategoria '+error.message||error,HttpStatus.NOT_FOUND)     
@@ -385,6 +427,16 @@ export class ProductsService {
                   as: 'subcat'
                 }
               },
+              
+              {
+                $lookup: {
+                  from: "categorias",
+                  localField: "subcat.categoria_id",
+                  foreignField: "_id",
+                  as: "cat"
+                }
+              },
+    
               {
                 $addFields: {
                   precio_promoventa: { $ifNull: ['$precio_promoventa', 0] },
@@ -401,7 +453,7 @@ export class ProductsService {
                   stock: 1,
                   subcatnombre:{$arrayElemAt: ['$subcat.nombre', 0]} ,
                   subcatimg:{$arrayElemAt: ['$subcat.imagen', 0]} ,
-                  nomcat: {$arrayElemAt: ['$subcat.nombre', 0]} ,
+                  nomcat: {$arrayElemAt: ['$cat.nombre', 0]} ,
                   idcat: {$arrayElemAt: ['$subcat.categoria_id', 0]} ,
                   imagenes:'$imagenes',
                   precio_promoventa:1,
@@ -440,6 +492,14 @@ export class ProductsService {
             }
           },
           {
+            $lookup: {
+              from: "categorias",
+              localField: "subcat.categoria_id",
+              foreignField: "_id",
+              as: "cat"
+            }
+          },
+          {
             $addFields: {
               precio_promoventa: { $ifNull: ['$precio_promoventa', 0] },
             }
@@ -455,7 +515,7 @@ export class ProductsService {
               stock: 1,
               subcatnombre:{$arrayElemAt: ['$subcat.nombre', 0]} ,
               subcatimg:{$arrayElemAt: ['$subcat.imagen', 0]} ,
-              nomcat: {$arrayElemAt: ['$subcat.nombre', 0]} ,
+              nomcat: {$arrayElemAt: ['$cat.nombre', 0]} ,
               idcat: {$arrayElemAt: ['$subcat.categoria_id', 0]} ,
               imagenes:'$imagenes',
               precio_promoventa:1,
@@ -464,7 +524,6 @@ export class ProductsService {
         ])
     
       if(res.length===0) throw {err:true,message:"No hay productos a mostrar"}
-      console.log(res)
       return res
     
       } catch (error) {
