@@ -13,6 +13,15 @@ export class LoginUserDto {
   password: string;
 }
 
+export class StructureToken {
+  id: string;
+  nombre: string;
+  enterprise_id: string;
+  rol: string;
+  iat:number;
+  exp:number;
+}
+
 export class CreateUserDto {
   @IsNotEmpty()
   @IsString()

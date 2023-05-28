@@ -23,10 +23,7 @@ export class CustomerController {
     async getId(@Param('id') id:ObjectId){
         return this.customerService.getId(id)
     }
-    @Get('/enterprise/:id')
-    async getByEnterprise(@Param('id') id:ObjectId){
-        return this.customerService.getByEnterprise(id)
-    }
+   
     @Post()
     async post(@Body() body:CustomerDto){
         return this.customerService.post(body)
@@ -41,7 +38,7 @@ export class CustomerController {
         return this.customerService.delete(id)
     }
 
-    @Post('gohcomputer/register')
+    @Post('gohcomputer/register') //generalizar
     register(@Body() body:CustomerDto){
         return this.customerService.post(body)
     }
@@ -49,4 +46,29 @@ export class CustomerController {
     login(@Body() body:LoginCustomerDto){
         return this.customerService.login(body)
     } 
+
+    /* ENTERPRISE */
+    @Get('/enterprise')
+    async getByEnterprise(@Param('id') id:ObjectId){
+        return this.customerService.getByEnterprise(id)
+    }
+    @Get(':id/enterprise')
+    async getByIdEnterprise(@Param('id') id:ObjectId){
+        return this.customerService.getByEnterprise(id)
+    }
+    
+    @Post()
+    async postEnterprise(@Body() body:CustomerDto){
+        return this.customerService.post(body)
+    }
+    @Put(':id')
+    async updateEnterpise(@Param('id', ParseIntPipe) id:number,@Body() body:UpdateCustomerDto){
+        return this.customerService.update(id,body)
+    }
+    @Delete(':id')
+    async deleteEnterpise(@Param('id', ParseIntPipe) id:number){
+        return this.customerService.delete(id)
+    }
+
+
 }
