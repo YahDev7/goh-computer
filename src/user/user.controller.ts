@@ -54,6 +54,9 @@ export class UserController {
     @Public()
     @Post('login')
     async login(@Body() body:LoginUserDto){
+       // res.header('Authorization', `Bearer ${token}`);
+       //ANTES DE ENVIAR AL FRONT  OBTENER EL TOKEN Y ENVIAR EL TOKEN EN LOS HEADERS
+
         return this.userService.login(body)
     }
 

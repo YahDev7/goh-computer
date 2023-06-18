@@ -173,7 +173,7 @@ export class UserService {
             if (!comparepass) throw { err: true, message: "Errror de autentication" }
 
             let payload = {
-                id: finduser._id,
+                usuario_id: finduser._id,
                 nombre: finduser.nombre,
                 enterprise_id: finduser.enterprise_id,
                 rol: finduser.rol
@@ -263,7 +263,8 @@ export class UserService {
 
             body = { ...body, enterprise_id: newenterprise_id, password: passhash }
             const insert = this.UserModule.create(body);
-            if (!insert) return new HttpException('Ocurrio un error al guardar ', HttpStatus.NOT_FOUND)
+            if (!insert) return new HttpException('Ocurrio un error al guardar ', HttpStatus.NOT_FOUND) 
+            //throw new   NotFoundExeption("no exite bro, para obtener un 404")
             return insert
             //return {err:false,message:"Se guardo con éxito"}
 

@@ -46,18 +46,18 @@ export class ProductDto {
   @IsNotEmpty()
   @IsNumber()
   precio_compra_dolar_con_IGV:number;
-
+/* 
   @IsNotEmpty()
   @IsNumber()
-  precio_promocompra_dolar_con_igv:number;
+  precio_promocompra_dolar_con_igv:number; */
 
   @IsArray()
   especificaciones:Object[]
   
-  @IsNumber()
+/*   @IsNumber()
   @IsNotEmpty()
   igv: number;
-
+ */
   @IsNotEmpty()
   @IsNumber()
   precio_compra_dolar_igv: number;
@@ -83,7 +83,7 @@ export class ProductDto {
   @IsString()
   url_fab: string;
 
-  @IsString()
+/*   @IsString()
   promocion: string;
 
   @IsNumber()
@@ -106,7 +106,7 @@ export class ProductDto {
 
 
   @IsString()
-  fechafinpromo: Date;
+  fechafinpromo: Date; */
 
   @IsNotEmpty()
   @IsString()

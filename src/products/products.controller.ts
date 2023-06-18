@@ -1,7 +1,11 @@
-import { Body, Controller,Get, Post,Put,Param,ParseIntPipe, Delete } from '@nestjs/common';
+import { Body, Controller,Get, Post,Put,Param,UseGuards, Delete } from '@nestjs/common';
 import { ProductsService } from './products.service';
 import { ProductDto } from './dto/products.dto';
 import { ObjectId } from 'mongodb';
+import { JwtUserAuthGuard } from 'src/user/guards/guard.user';
+import { RolesGuard } from 'src/user/guards/roles.guard';
+
+@UseGuards(JwtUserAuthGuard/* ,RolesGuard */)
 
 @Controller('products')
 export class ProductsController {
@@ -74,5 +78,12 @@ export class ProductsController {
     @Get('/gohcomputer/getBySubcat/:id')
     getBySubcat(@Param('id') id :string){
         return this.productsService.getBySubcat(id)
+    }
+
+    /* ENTERPRISE */
+
+    @Post('/enterprise')
+    postEnterprise(@Body() body:ProductDto){
+        return this.productsService.saveEnterprise(body)
     }
 }

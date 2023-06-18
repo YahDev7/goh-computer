@@ -19,7 +19,10 @@ async function bootstrap() {
   }) 
   app.useGlobalPipes(new ValidationPipe({
     whitelist:true,//si hay una propiedad que no esta en el dto lo descarta
-    forbidNonWhitelisted:true //lanza un msm por la propiedad que no esta en el dto 
+    forbidNonWhitelisted:true, //lanza un msm por la propiedad que no esta en el dto 
+   /*  transform:true // nest entiende valida que el DTO cumpla el formato de
+     validacion y genera de manera automatica la instancia de la clase que 
+     nosotros especificacmos en los tipos */
   }))//para que las validaciones funcionen 
   await app.listen(4005);
 }
