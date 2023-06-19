@@ -47,7 +47,6 @@ export class ProductsController {
     }
     @Get('/gohcomputer/search/:search')
     search(@Param('search') search :string){
-        console.log(search)
         return this.productsService.search(search)
     }
     @Get('/gohcomputer/allpromo')
@@ -67,7 +66,6 @@ export class ProductsController {
 
     @Get('/gohcomputer/getByIdProd/:id')
     getByIdProd(@Param('id') id :ObjectId){
-        console.log(id)
         return this.productsService.getByIdProd(id)
     }
 

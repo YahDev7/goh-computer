@@ -16,9 +16,17 @@ constructor(
 
     async get():Promise<Categoria[]|HttpException>{
         try {
+            const startTime = new Date().getTime();
+
             const res= await this.CategoriaModule.find();
             if(res.length===0) return new HttpException('No hay datos que mostrar',HttpStatus.NOT_FOUND) 
-             return res
+
+            const endTime = new Date().getTime();
+
+            const responseTime = endTime - startTime;
+            console.log(`Tiempo totalv categoria ${responseTime}ms`)
+
+            return res
         } catch (error) {
             return new HttpException('Ocurrio un error al guardar '+error.message||error,HttpStatus.NOT_FOUND)   
         }
