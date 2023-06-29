@@ -69,6 +69,17 @@ export class ProductsService {
     }
   }
 
+  async saveimg(body: string): Promise<Products | Object> {
+    try { 
+        return body
+     /*  if (!save) throw { err: true, message: 'No se guardardo' }
+      return save */
+      /* return {err:false,message:"Se guardo con éxito"} */
+    } catch (error) {
+      return new HttpException('Ocurrio un error al guardar' + error.message || error, HttpStatus.NOT_FOUND);
+    }
+  }
+
   async verifyUnique(param: Object): Promise<Products> { //param es un obj con keys "string" y sus valores de cualquier tipo
     try {
       const verify = await this.productssModule.findOne(param)

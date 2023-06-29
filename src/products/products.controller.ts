@@ -32,6 +32,11 @@ export class ProductsController {
         return this.productsService.save(body)
     }
 
+    @Post()
+    postimg(@Body() body:string){
+        return this.productsService.saveimg(body)
+    }
+
     @Put(':id')
     update(@Param('id') id:number , @Body() body:ProductDto){
         return this.productsService.update(id,body)

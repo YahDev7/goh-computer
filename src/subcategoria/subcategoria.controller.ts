@@ -1,8 +1,10 @@
-import { Body, Controller, Delete, Get, Param, ParseIntPipe, Post, Put } from '@nestjs/common';
+import { Body, Controller,Req, Delete, Get, Param, ParseIntPipe, Post,UseGuards, Put } from '@nestjs/common';
 import { SubcategoriaService } from './subcategoria.service';
 import { SubCategoriaDto, UpdateSubCategoriaDto } from './dto/subcategoria.dto';
 import { ObjectId } from 'mongodb';
+import { JwtUserAuthGuard } from 'src/user/guards/guard.user';
 
+//@UseGuards(JwtUserAuthGuard)
 
 @Controller('subcategoria')
 export class SubcategoriaController {
@@ -21,10 +23,10 @@ export class SubcategoriaController {
         return this.subcategoriaService.getId(id)
     }
 
-    @Get('/enterprise/:id')
+  /*   @Get('/enterprise/:id')
     async getByEnterprise(@Param('id') id:ObjectId){
         return this.subcategoriaService.getByEnterprise(id)
-    }
+    } */
 
     @Post()
     async post(@Body() body:SubCategoriaDto){
@@ -45,10 +47,17 @@ export class SubcategoriaController {
     }
 
 
+    @Get('/enterprise')
+    async getByEnterprise(@Req() req){
+        console.log(req)
+        const token = req.headers.authorization.split(' ')[1];
+        return this.subcategoriaService.getByEnterprise(token)
+    }
+
     /* GOH */
     @Get('/gohcomputer/bycategoria/:idcat')
     async getBycat(@Param('idcat') idcat:string) {
         return this.subcategoriaService.getBycat(idcat)
     }
-
+  
 }

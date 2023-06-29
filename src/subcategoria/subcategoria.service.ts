@@ -6,13 +6,16 @@ import { InjectModel } from '@nestjs/mongoose';
 import { SubCategoriaDto, UpdateSubCategoriaDto } from './dto/subcategoria.dto';
 import { EnterpriseService } from 'src/enterprise/enterprise.service';
 import { SubCategoria, SubCategoriaDocument } from './schema/subcategoria.schema';
+import { JwtService } from '@nestjs/jwt';
 
 @Injectable()
 export class SubcategoriaService {
 
     constructor(
         @InjectModel(SubCategoria.name) private SubCategoriaModule:Model<SubCategoriaDocument> ,
-        private EnterpriseService:EnterpriseService
+        private EnterpriseService:EnterpriseService,
+        private jwtService: JwtService,
+
         ){}
     
         async get():Promise<SubCategoria[]|HttpException>{
@@ -42,8 +45,12 @@ export class SubcategoriaService {
        }
 
        
-       async getByEnterprise(enterprise_id:ObjectId):Promise<SubCategoria[]|HttpException>{
+      async getByEnterprise(token:string):Promise<SubCategoria[]|HttpException>{
         try {
+            console.log(token)
+            const decodedToken = this.jwtService.verify(token);
+           const {enterprise_id} =decodedToken
+            
           let res =await this.EnterpriseService.getId(enterprise_id);
           if(res instanceof HttpException) throw res
            // if(res) throw {err:true,message:'No se encontraron subcategorias de esta empresa'} 
