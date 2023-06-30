@@ -69,9 +69,21 @@ export class ProductsService {
     }
   }
 
-  async saveimg(body: string): Promise<Products | Object> {
+  async saveimg( enterprise_id: ObjectId,product_id:ObjectId ,files:Array<Object>): Promise<Products | Object> {
     try { 
-        return body
+      let found =await this.getByEnterprise(enterprise_id)
+      if(!found) throw {err:true,message:'No se encontor esta empresa'} 
+
+      let foundpro = await this.productssModule.findOne({ _id: product_id });
+      if(!foundpro) throw {err:true,message:'No se encontor este producto'} 
+
+      console.log(...foundpro.imagenes)
+      let imagenes = [...foundpro.imagenes,...files];
+    
+      const update = await this.productssModule.updateOne({ _id: product_id }, { $set: {imagenes} });
+      if (update.modifiedCount === 0) return new HttpException('No se logro actualizar', HttpStatus.NOT_FOUND);
+
+      return { err: false, message: "Se actualizo con éxito" }  
      /*  if (!save) throw { err: true, message: 'No se guardardo' }
       return save */
       /* return {err:false,message:"Se guardo con éxito"} */

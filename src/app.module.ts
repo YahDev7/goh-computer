@@ -22,6 +22,7 @@ import { CarritoModule } from './carrito/carrito.module';
 import { MovimientoMModule } from './movimiento-m/movimiento-m.module';
 import { LoginModule } from './login/login.module';
 import { PromocionesModule } from './promociones/promociones.module';
+import { CloudinaryModule } from './cloudinary/cloudinary.module';
 import config from './config';
 
 @Module({ 
@@ -66,7 +67,8 @@ import config from './config';
     CarritoModule,
     MovimientoMModule,
     LoginModule,
-    PromocionesModule]
+    PromocionesModule,
+    CloudinaryModule]
  /*  controllers: [AppController],
   providers: [AppService, EnterpriseService], */
 })
