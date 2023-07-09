@@ -32,6 +32,7 @@ import { ObjectId } from 'mongodb';
     @UseInterceptors(FilesInterceptor('files', 3))
     async uploadImage(@Param('id') id:ObjectId,@UploadedFiles() files: Express.Multer.File[],@Req() req) {
 
+      console.log(files)
       const token = req.headers.authorization.split(' ')[1];
 
       return this.cloudinaryService.uploadFile(files,token,id);

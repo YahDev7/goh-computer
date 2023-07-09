@@ -15,7 +15,7 @@ async function bootstrap() {
    app.enableCors({
     credentials: true,
     origin:['http://127.0.0.1:5173','https://boisterous-kringle-fbc71c.netlify.app'],
-    methods: ["GET", "POST"],
+    methods: ["GET", "POST","PUT","DELETE"],
   }) 
   app.useGlobalPipes(new ValidationPipe({
     whitelist:true,//si hay una propiedad que no esta en el dto lo descarta

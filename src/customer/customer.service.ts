@@ -127,7 +127,6 @@ export class CustomerService {
             const found = await this.CustomerModule.findOne({ where: { id, estado: 'A' } })
             if (!found) throw { err: true, message: 'No se encontor esta empresa' }
             const res = await this.verifyAllUpdate(body, id);
-            console.log(res)
             if (res.err) throw res;
 
             const update = await this.CustomerModule.updateOne({ _id: id }, { $set: body });
@@ -190,7 +189,6 @@ export class CustomerService {
     async getByEnterprise(enterprise_id: ObjectId): Promise<Customer[] | HttpException> {
         try {
             let res = await this.EnterpriseService.getId(enterprise_id);
-            console.log(res)
             if (res instanceof HttpException) throw res
             // if(res) throw {err:true,message:'No se encontraron subcategorias de esta empresa'} 
 
@@ -252,7 +250,6 @@ export class CustomerService {
             const found = await this.CustomerModule.findOne({ where: { id, estado: 'A' } })
             if (!found) throw { err: true, message: 'No se encontor esta empresa' }
             const res = await this.verifyAllUpdate(body, id);
-            console.log(res)
             if (res.err) throw res;
 
             const update = await this.CustomerModule.updateOne({ _id: id }, { $set: body });

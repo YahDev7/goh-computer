@@ -6,70 +6,75 @@ import { DocumentoByCustomerDTO, DocumentoDTO } from './dto/documento.dto';
 export class DocumentoController {
 
     constructor(
-        private productsService:DocumentoService
+        private DocumentoService:DocumentoService
     ){}
     @Get()
     get(){
-        return this.productsService.getAll()
+        return this.DocumentoService.getAll()
     }
     @Post('user')
     post(@Body() body:DocumentoDTO){
-        return this.productsService.saveVentaByUser(body)
+        return this.DocumentoService.saveVentaByUser(body)
     }
 
     @Post()
-    postCustomer(@Body() body:DocumentoByCustomerDTO){
-        return this.productsService.saveVentaByCustomer(body)
+    postCustomer(@Body() body/* :DocumentoByCustomerDTO */){
+        return this.DocumentoService.saveVentaByCustomer(body)
     }
+
+
+
+
+
    /*  @Get(':id')
     getId(@Param('id') id:string ){
-        return this.productsService.getId(id)
+        return this.DocumentoService.getId(id)
     }
     @Get('/enterprise/:id')
     async getByEnterprise(@Param('id', ParseIntPipe) id:number){
-        return this.productsService.getByEnterprise(id)
+        return this.DocumentoService.getByEnterprise(id)
     }
    
     
     @Get()
     get(){
-        return this.productsService.get()
+        return this.DocumentoService.get()
     }
 
     @Get(':id')
     getId(@Param('id') id:string ){
-        return this.productsService.getId(id)
+        return this.DocumentoService.getId(id)
     }
     @Get('/enterprise/:id')
     async getByEnterprise(@Param('id', ParseIntPipe) id:number){
-        return this.productsService.getByEnterprise(id)
+        return this.DocumentoService.getByEnterprise(id)
     }
     @Post()
     post(@Body() body:ProductDto){
-        return this.productsService.save(body)
+        return this.DocumentoService.save(body)
     }
     
     @Get()
     get(){
-        return this.productsService.get()
+        return this.DocumentoService.get()
     }
 
     @Get(':id')
     getId(@Param('id') id:string ){
-        return this.productsService.getId(id)
+        return this.DocumentoService.getId(id)
     }
     @Get('/enterprise/:id')
     async getByEnterprise(@Param('id', ParseIntPipe) id:number){
-        return this.productsService.getByEnterprise(id)
+        return this.DocumentoService.getByEnterprise(id)
     }
     @Post()
     post(@Body() body:ProductDto){
-        return this.productsService.save(body)
+        return this.DocumentoService.save(body)
     }
 
     @Post()
     post(@Body() body:ProductDto){
-        return this.productsService.save(body)
+        return this.DocumentoService.save(body)
     } */
 
 }

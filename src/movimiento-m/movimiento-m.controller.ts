@@ -7,29 +7,39 @@ import { ObjectId } from 'mongodb';
 export class MovimientoMController {
 
     constructor(
-        private MovimientoMService:MovimientoMService
-    ){}
+        private MovimientoMService: MovimientoMService
+    ) { }
 
     @Get()
-    get(){
+    get() {
         return this.MovimientoMService.get()
     }
 
     @Get(':id')
-    getId(@Param('id') id:string ){
+    getId(@Param('id') id: string) {
         return this.MovimientoMService.getId(id)
     }
     @Get('/enterprise/:id')
-    async getByEnterprise(@Param('id') id:ObjectId){
+    async getByEnterprise(@Param('id') id: ObjectId) {
         return this.MovimientoMService.getByEnterprise(id)
     }
 
     @Get('/customer/:id')
-    async getByCustomer(@Param('id') id:ObjectId){
+    async getByCustomer(@Param('id') id: ObjectId) {
         return this.MovimientoMService.getByCustomer(id)
     }
     @Post()
-    post(@Body() body:MovimientoMDto){
+    post(@Body() body: MovimientoMDto) {
         return this.MovimientoMService.save(body)
-        }
+    }
+    @Get('ventas/total')
+    getSumaVenta(){
+        return this.MovimientoMService.totalVentas()
+    }
+
+    @Get('Compras/total')
+    getSumaCompra(){
+        return this.MovimientoMService.totalCompras()
+    }
+    
 }

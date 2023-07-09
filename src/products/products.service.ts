@@ -30,13 +30,13 @@ export class ProductsService {
 
   async getId(id: string): Promise<Products | HttpException> {
     try {
-
       let est = await this.productssModule.findOne({ _id: id, estado: 'D' });
       if (est) return new HttpException('No se encontro registro', HttpStatus.NOT_FOUND)
 
       let found = await this.productssModule.findOne({ _id: id });
       if (!found) return new HttpException('No se encontro registro', HttpStatus.NOT_FOUND);
 
+      found.precio_venta = parseFloat(found.precio_venta.toFixed(2));
       return found
     } catch (error) {
       return new HttpException('Ocurrio un error al listar' + error, HttpStatus.NOT_FOUND)
@@ -55,7 +55,7 @@ export class ProductsService {
       return new HttpException('Ocurrio un error al buscar por id ' + error.message || error, HttpStatus.NOT_FOUND)
     }
   }
-  async save(body: ProductDto): Promise<Products | Object> {
+  async save(body/* : ProductDto */): Promise<Products | Object> {
     try {
       let { subcategoria_id } = body
       subcategoria_id = new ObjectId(subcategoria_id)
@@ -77,7 +77,6 @@ export class ProductsService {
       let foundpro = await this.productssModule.findOne({ _id: product_id });
       if(!foundpro) throw {err:true,message:'No se encontor este producto'} 
 
-      console.log(...foundpro.imagenes)
       let imagenes = [...foundpro.imagenes,...files];
     
       const update = await this.productssModule.updateOne({ _id: product_id }, { $set: {imagenes} });
@@ -120,7 +119,6 @@ export class ProductsService {
   }
   async update(id: number, body: UpdateProductDto): Promise<Products | Object> {
     try {
-
       let found = await this.productssModule.findOne({ _id: id, estado: "A" });
       if (!found) return new HttpException('No existe este product', HttpStatus.NOT_FOUND);
 
@@ -193,14 +191,14 @@ export class ProductsService {
             subcategoria_id: { $arrayElemAt: ['$subcat._id', 0] },
             nomcomp: '$nombre',
             descomp: '$descripcion',
-            precio_venta: 1,
+            precio_venta:{ $round: ['$precio_venta', 2] },
             stock: 1,
             subcatnombre: { $arrayElemAt: ['$subcat.nombre', 0] },
             subcatimg: { $arrayElemAt: ['$subcat.imagen', 0] },
             nomcat: { $arrayElemAt: ['$cat.nombre', 0] },
             idcat: { $arrayElemAt: ['$subcat.categoria_id', 0] },
             imagenes: '$imagenes',
-            precio_promoventa: 1
+            precio_promoventa: { $round: ['$precio_promoventa', 2] }
           }
         }
       ])
@@ -253,7 +251,7 @@ export class ProductsService {
           subcategoria_id: { $arrayElemAt: ['$subcat._id', 0] },
           nomcomp: '$nombre',
           descomp: '$descripcion',
-          precio_venta: 1,
+          precio_venta: { $round: ['$precio_venta', 2] },
           stock: 1,
           subcatnombre: { $arrayElemAt: ['$subcat.nombre', 0] },
           subcatimg: { $arrayElemAt: ['$subcat.imagen', 0] },
@@ -301,7 +299,7 @@ export class ProductsService {
           subcategoria_id: { $arrayElemAt: ['$subcat._id', 0] },
           nomcomp: '$nombre',
           descomp: '$descripcion',
-          precio_venta: 1,
+          precio_venta: { $round: ['$precio_venta', 2] },
           stock: 1,
           subcatnombre: { $arrayElemAt: ['$subcat.nombre', 0] },
           subcatimg: { $arrayElemAt: ['$subcat.imagen', 0] },
@@ -353,26 +351,27 @@ export class ProductsService {
             url_pro: 1,
             nomcomp: '$nombre',
 /*                         fechafinpromo: { $dateToString: { format: '%d-%m-%Y', date: '$fechafinpromo' } },
- */                        descomp: '$descripcion',
-            precio_venta: 1,
+ */                       
+            descomp: '$descripcion',
+            precio_venta:{ $round: ['$precio_venta', 2] },
             stock: 1,
             subcatnombre: { $arrayElemAt: ['$subcat.nombre', 0] },
             subcatimg: { $arrayElemAt: ['$subcat.imagen', 0] },
             nomcat: { $arrayElemAt: ['$cat.nombre', 0] },
-
             imagenes: '$imagenes',
             idcat: { $arrayElemAt: ['$subcat.categoria_id', 0] },
-            precio_promoventa: 1,
+           // precio_promoventa: { $round: ['$precio_promoventa', 2] },
             especificaciones: 1
 
           }
         }
       ]);
+      console.log(res)
       if (res.length === 0) throw { err: true, message: "No hay productos a mostrar" };
 
       return res[0]
     } catch (error) {
-      return new HttpException('Ocurrio un error al buscar por id ' + error.message || error, HttpStatus.NOT_FOUND)
+      return new HttpException('Ocurrio un error al buscar por id csmr ' + error.message || error, HttpStatus.NOT_FOUND)
     }
   }
 
@@ -413,7 +412,7 @@ export class ProductsService {
             nomcomp: '$nombre',
             /* fechafinpromo: { $dateToString: { format: '%d-%m-%Y', date: '$fechafinpromo' } }, */
             descomp: '$descripcion',
-            precio_venta: 1,
+            precio_venta:{ $round: ['$precio_venta', 2] },
             stock: 1,
             subcatnombre: { $arrayElemAt: ['$subcat.nombre', 0] },
             subcatimg: { $arrayElemAt: ['$subcat.imagen', 0] },
@@ -472,14 +471,14 @@ export class ProductsService {
             subcategoria_id: { $arrayElemAt: ['$subcat._id', 0] },
             nomcomp: '$nombre',
             descomp: '$descripcion',
-            precio_venta: 1,
+            precio_venta: { $round: ['$precio_venta', 2] },
             stock: 1,
             subcatnombre: { $arrayElemAt: ['$subcat.nombre', 0] },
             subcatimg: { $arrayElemAt: ['$subcat.imagen', 0] },
             nomcat: { $arrayElemAt: ['$cat.nombre', 0] },
             idcat: { $arrayElemAt: ['$subcat.categoria_id', 0] },
             imagenes: '$imagenes',
-            precio_promoventa: 1,
+            precio_promoventa: { $round: ['$precio_promoventa', 2] },
 
           }
         }
@@ -534,14 +533,14 @@ export class ProductsService {
             subcategoria_id: { $arrayElemAt: ['$subcat._id', 0] },
             nomcomp: '$nombre',
             descomp: '$descripcion',
-            precio_venta: 1,
+            precio_venta: { $round: ['$precio_venta', 2] },
             stock: 1,
             subcatnombre: { $arrayElemAt: ['$subcat.nombre', 0] },
             subcatimg: { $arrayElemAt: ['$subcat.imagen', 0] },
             nomcat: { $arrayElemAt: ['$cat.nombre', 0] },
             idcat: { $arrayElemAt: ['$subcat.categoria_id', 0] },
             imagenes: '$imagenes',
-            precio_promoventa: 1,
+            precio_promoventa: { $round: ['$precio_promoventa', 2] },
           }
         }
       ])
@@ -574,6 +573,10 @@ export class ProductsService {
       return new HttpException('Ocurrio un error al guardar' + error.message || error, HttpStatus.NOT_FOUND);
     }
   }
+
+
+
+  
 
 }
 
