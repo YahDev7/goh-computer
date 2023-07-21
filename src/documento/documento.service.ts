@@ -9,6 +9,7 @@ import { CustomerService } from 'src/customer/customer.service';
 import { DocumentoByCustomerDTO, DocumentoCompraDTO, DocumentoDTO } from './dto/documento.dto';
 import { UserService } from 'src/user/user.service';
 import { ProviderService } from 'src/provider/provider.service';
+import { JwtService } from '@nestjs/jwt';
 
 @Injectable()
 export class DocumentoService {
@@ -17,7 +18,9 @@ export class DocumentoService {
         private EnterpriseService: EnterpriseService,
         private UserService: UserService,
         private CustomerService: CustomerService,
-        private ProviderService: ProviderService
+        private ProviderService: ProviderService,
+        private jwtService: JwtService,
+
     ) { }
     //ADMIN
     async getAll(): Promise<Documento[] | HttpException> {
@@ -54,10 +57,24 @@ export class DocumentoService {
 
 
 
-    async getByVenta_id(id: string) {
+    async getByVenta_id(id: ObjectId) {
         try {
-            const res = await this.DocumentoModule.find({ _id: id, tipo_compra_venta: 'VENTA' });
-            if (res.length === 0) return new HttpException('No hay Documentos que mostrar', HttpStatus.NOT_FOUND)
+            const res = await this.DocumentoModule.findOne({ _id: id, tipo_compra_venta: 'VENTA' });
+
+            if (!res) return new HttpException('No hay Documentos que mostrar', HttpStatus.NOT_FOUND)
+            return res
+        } catch (error) {
+            return new HttpException('Ocurrio un error al listar', HttpStatus.NOT_FOUND)
+        }
+    }
+
+    async getByEnterpriseVenta_id(id: ObjectId, token) {
+        try {
+            const decodedToken = this.jwtService.verify(token);
+            let { enterprise_id } = decodedToken
+            enterprise_id=new ObjectId(enterprise_id)
+            const res = await this.DocumentoModule.findOne({ _id: id ,enterprise_id, tipo_compra_venta: 'VENTA' });
+            if (!res) return new HttpException('No hay Documentos que mostrar', HttpStatus.NOT_FOUND)
             return res
         } catch (error) {
             return new HttpException('Ocurrio un error al listar', HttpStatus.NOT_FOUND)
@@ -66,8 +83,8 @@ export class DocumentoService {
 
     async getByCompra_id(id: string) {
         try {
-            const res = await this.DocumentoModule.find({ _id: id, tipo_compra_venta: 'COMPRA' });
-            if (res.length === 0) return new HttpException('No hay Documentos que mostrar', HttpStatus.NOT_FOUND)
+            const res = await this.DocumentoModule.findOne({ _id: id, tipo_compra_venta: 'COMPRA' });
+            if (!res) return new HttpException('No hay Documentos que mostrar', HttpStatus.NOT_FOUND)
             return res
         } catch (error) {
             return new HttpException('Ocurrio un error al listar', HttpStatus.NOT_FOUND)
@@ -102,24 +119,41 @@ export class DocumentoService {
         }
     }
 
-    async saveVentaByCustomer(body/* : DocumentoByCustomerDTO */) {
+    async saveVentaByCustomerLogin(body/* : DocumentoByCustomerDTO */) {
         try {
+            const { tokcarr, tokensession, subtotal } = body
+            const decodedTokencarr = this.jwtService.verify(tokcarr);
+            const decodedToken = this.jwtService.verify(tokensession);
 
-            console.log(body)
-            return
-            let { customer_id, enterprise_id } = body
+            const { id, enterprise_id } = decodedToken
+
+            let doc = {
+                customer_id: new ObjectId(id),
+                enterprise_id: new ObjectId(enterprise_id),
+                tipo_documento: "Boleta",
+                serie: "A00",
+                nro_documento: "001",
+                fecha: new Date(),
+                sub_total: subtotal,
+                descuento_total: 0,
+                igv: 0,
+                total_pagar: subtotal,
+                estado: "PENDIENTE",
+                tipo_compra_venta: "VENTA",
+                detalle: decodedTokencarr.payload
+            }
 
             let resEnterprise = await this.EnterpriseService.getId(enterprise_id)
             if (resEnterprise instanceof HttpException) throw resEnterprise
 
-            let rescustomer = await this.CustomerService.getId(customer_id)
+            let rescustomer = await this.CustomerService.getId(id)
             if (rescustomer instanceof HttpException) throw rescustomer
 
 
-            const save = await this.DocumentoModule.create({ ...body });
+            const save = await this.DocumentoModule.create({ ...doc });
 
             if (!save) throw { err: true, message: 'No se guardardo' }
-            return save
+            return { err: false, message: "Guardado con exito", data: save._id }
             /*   return {err:false,message:"Se guardo con éxito"} */
         } catch (error) {
             return new HttpException('Ocurrio un error al guardar' + error.message || error, HttpStatus.NOT_FOUND);
@@ -161,13 +195,17 @@ export class DocumentoService {
         }
     }
 
-    async getByEnterprise(enterprise_id: ObjectId) {
+    async getByEnterprise(token /* enterprise_id: ObjectId */) {
         try {
-
+            const decodedToken = this.jwtService.verify(token);
+            let { enterprise_id, id } = decodedToken
             let resEnterprise = await this.EnterpriseService.getId(enterprise_id)
             if (resEnterprise instanceof HttpException) throw resEnterprise
 
-            const res = await this.DocumentoModule.find({ enterprise_id });
+            enterprise_id =new ObjectId(enterprise_id)
+
+            const res = await this.DocumentoModule.find({enterprise_id, customer_id:new ObjectId(id) });
+            console.log(res)
             if (res.length === 0) return new HttpException('No hay Documentos que mostrar', HttpStatus.NOT_FOUND)
             return res
         } catch (error) {

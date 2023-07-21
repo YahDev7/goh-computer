@@ -37,9 +37,11 @@ export class MovimientoMDto {
   @IsNumber()
   monto_pagar: number;
 
+  @IsOptional()
   @IsNumber()
   vuelto: number;
 
+  @IsOptional()
   @IsString()
   @MaxLength(40)
   observacion: string;

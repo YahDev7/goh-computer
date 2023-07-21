@@ -7,6 +7,9 @@ import { EnterpriseModule } from 'src/enterprise/enterprise.module';
 import { CustomerModule } from 'src/customer/customer.module';
 import { UserModule } from 'src/user/user.module';
 import { ProviderModule } from 'src/provider/provider.module';
+import { JwtModule } from '@nestjs/jwt';
+import config from 'src/config';
+import { ConfigType } from '@nestjs/config';
 
 @Module({
   imports:[MongooseModule.forFeature([
@@ -14,7 +17,18 @@ import { ProviderModule } from 'src/provider/provider.module';
       name:Documento.name,
       schema:DocumentoSchema,
     }
-  ]),EnterpriseModule,CustomerModule,UserModule,ProviderModule],
+  ]),
+  JwtModule.registerAsync({
+    inject:[config.KEY],
+    useFactory:(cofigService:ConfigType<typeof config>)=>{
+      return{
+        secret:cofigService.jwtSecret,//variables de entorno
+        signOptions:{
+          expiresIn:'10d'
+        }
+      }
+    },
+  }),EnterpriseModule,CustomerModule,UserModule,ProviderModule],
   providers: [DocumentoService],
   controllers: [DocumentoController]
 })

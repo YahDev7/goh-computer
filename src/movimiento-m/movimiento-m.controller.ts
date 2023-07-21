@@ -28,7 +28,7 @@ export class MovimientoMController {
     async getByCustomer(@Param('id') id: ObjectId) {
         return this.MovimientoMService.getByCustomer(id)
     }
-    @Post()
+    @Post('/gohcomputer/deposito')
     post(@Body() body: MovimientoMDto) {
         return this.MovimientoMService.save(body)
     }

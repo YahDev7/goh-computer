@@ -58,18 +58,16 @@ export class MovimientoMService {
 
     async save(body: MovimientoMDto): Promise<MovimientoM | Object> {
         try {
-
             //VALIDAR QUE EL DOCUMENTO SI EXISTA
-
-
-
-            let { documento_id } = body
+            let { documento_id,enterprise_id } = body
             documento_id = new ObjectId(documento_id)
+            enterprise_id = new ObjectId(enterprise_id)
 
-            const save = await this.MovimientoModule.create({ ...body, documento_id });
+            const save = await this.MovimientoModule.create({ ...body, documento_id,enterprise_id });
             if (!save) throw { err: true, message: 'No se guardardo' }
-            return { err: false, message: "Se guardo con éxito" }
+            return { err: false, message: "Se guardo con éxito",data:save._id }
         } catch (error) {
+            console.log(error)
             return new HttpException('Ocurrio un error al guardar' + error.message || error, HttpStatus.NOT_FOUND);
         }
     }

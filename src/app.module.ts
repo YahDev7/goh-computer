@@ -1,9 +1,12 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import {ConfigModule} from '@nestjs/config'
+import {ConfigModule, ConfigService} from '@nestjs/config'
 import { enviroments } from './eviroment';
 import { MongooseModule } from '@nestjs/mongoose';
 import * as Joi from 'joi';
+
+import { HandlebarsAdapter } from '@nestjs-modules/mailer/dist/adapters/handlebars.adapter';
+
 
 import { EnterpriseModule } from './enterprise/enterprise.module';
 import { CategoriaModule } from './categoria/categoria.module';
@@ -25,9 +28,38 @@ import { PromocionesModule } from './promociones/promociones.module';
 import { CloudinaryModule } from './cloudinary/cloudinary.module';
 import { ServiciosModule } from './servicios/servicios.module';
 import config from './config';
+import { MailerModule } from '@nestjs-modules/mailer';
+import { join } from 'path';
+import { CorreoModule } from './correo/correo.module';
 
+console.log(__dirname)
 @Module({ 
-  imports: [ConfigModule.forRoot({
+  imports: [
+    MailerModule.forRootAsync({
+      imports: [ConfigModule],
+      useFactory: async (config: ConfigService) => ({
+        transport: {
+          host: config.get('EMAIL_HOST'),
+          secure: false,
+          auth: {
+            user: config.get('EMAIL_USER'),
+            pass: config.get('EMAIL_PASSWORD'),
+          }, 
+        },
+     /*    defaults: {
+          from: 'gohcomputertechnology@gmail.com'
+        }, */
+        template: {
+          dir: join(__dirname, './templates'),
+          adapter: new HandlebarsAdapter(),
+          options: {
+            strict: true
+          }
+        }
+      }),
+      inject: [ConfigService]
+    }), ConfigModule.forRoot(),
+    ConfigModule.forRoot({
     envFilePath:enviroments[process.env.NODE_ENV]||'.env',
     load:[config],
     isGlobal:true, //para que a todos los servicios sin tener la necesidad de llamar en cada archivo
@@ -41,7 +73,8 @@ import config from './config';
      // DATABASE_PASSWORD:Joi.string().required(),
       JWTSECRET:Joi.string().required(),
     })
-  }),/* , TypeOrmModule.forRoot({
+  }),
+  /* , TypeOrmModule.forRoot({
       type:'postgres',
       host:process.env.DATABASE_HOST,
       port:parseInt(process.env.DATABASE_PORT),
@@ -70,7 +103,8 @@ import config from './config';
     LoginModule,
     PromocionesModule,
     CloudinaryModule,
-    ServiciosModule]
+    ServiciosModule,
+    CorreoModule]
  /*  controllers: [AppController],
   providers: [AppService, EnterpriseService], */
 })

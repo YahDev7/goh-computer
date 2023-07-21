@@ -1,6 +1,7 @@
-import { Body, Controller,Get, Post,Put,Param,ParseIntPipe, Delete } from '@nestjs/common';
+import { Body, Controller,Get, Post,Put,Param,ParseIntPipe, Delete, Req } from '@nestjs/common';
 import { DocumentoService } from './documento.service';
 import { DocumentoByCustomerDTO, DocumentoDTO } from './dto/documento.dto';
+import { ObjectId } from 'mongodb';
 
 @Controller('documento')
 export class DocumentoController {
@@ -12,6 +13,20 @@ export class DocumentoController {
     get(){
         return this.DocumentoService.getAll()
     }
+
+    @Get('/getbyenterprise')
+    getByEnterprise(@Req() req){
+        const token = req.headers.authorization.split(' ')[1];
+
+        return this.DocumentoService.getByEnterprise(token)
+    }
+
+    @Get('/getbyenterprise/:id')
+    getByEnterpriseById(@Param('id') id:ObjectId, @Req() req){
+        const token = req.headers.authorization.split(' ')[1];
+        return this.DocumentoService.getByEnterpriseVenta_id(id,token)
+    }
+
     @Post('user')
     post(@Body() body:DocumentoDTO){
         return this.DocumentoService.saveVentaByUser(body)
@@ -19,8 +34,13 @@ export class DocumentoController {
 
     @Post()
     postCustomer(@Body() body/* :DocumentoByCustomerDTO */){
-        return this.DocumentoService.saveVentaByCustomer(body)
+        return this.DocumentoService.saveVentaByCustomerLogin(body)
     }
+
+  /*   @Get('gohcomputer/getone/:id')
+    GetById(@Param('id') id:ObjectId /* ){
+        return this.DocumentoService.getByVenta_id(id)
+    } */
 
 
 
