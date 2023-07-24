@@ -37,7 +37,6 @@ export class ProductsController {
 
     @Put(':id')
     update(@Param('id') id:number , @Body() body/* :UpdateProductDto */){ //crear nuevamente para poder utilizar ese DTO falla en valdiar
-        console.log(body)
         return this.productsService.update(id,body)
     }
     @Delete(':id')
@@ -57,7 +56,6 @@ export class ProductsController {
     @Public()
     @Get('/gohcomputer/search/:search')
     search(@Param('search') search :string){
-        console.log(search)
         return this.productsService.search(search)
     }
 

@@ -121,7 +121,7 @@ export class DocumentoService {
 
     async saveVentaByCustomerLogin(body/* : DocumentoByCustomerDTO */) {
         try {
-            const { tokcarr, tokensession, subtotal } = body
+            const { tokcarr, tokensession, subtotal,dataCustomer,metodo_pago } = body
             const decodedTokencarr = this.jwtService.verify(tokcarr);
             const decodedToken = this.jwtService.verify(tokensession);
 
@@ -140,7 +140,9 @@ export class DocumentoService {
                 total_pagar: subtotal,
                 estado: "PENDIENTE",
                 tipo_compra_venta: "VENTA",
-                detalle: decodedTokencarr.payload
+                detalle: decodedTokencarr.payload,
+                metodo_pago,
+                dataCustomer
             }
 
             let resEnterprise = await this.EnterpriseService.getId(enterprise_id)
@@ -152,11 +154,12 @@ export class DocumentoService {
 
             const save = await this.DocumentoModule.create({ ...doc });
 
+
             if (!save) throw { err: true, message: 'No se guardardo' }
             return { err: false, message: "Guardado con exito", data: save._id }
             /*   return {err:false,message:"Se guardo con éxito"} */
         } catch (error) {
-            return new HttpException('Ocurrio un error al guardar' + error.message || error, HttpStatus.NOT_FOUND);
+            return new HttpException('Ocurrio un error al guardar ' + error.message || error, HttpStatus.NOT_FOUND);
         }
     }
 
@@ -205,7 +208,6 @@ export class DocumentoService {
             enterprise_id =new ObjectId(enterprise_id)
 
             const res = await this.DocumentoModule.find({enterprise_id, customer_id:new ObjectId(id) });
-            console.log(res)
             if (res.length === 0) return new HttpException('No hay Documentos que mostrar', HttpStatus.NOT_FOUND)
             return res
         } catch (error) {
@@ -262,7 +264,16 @@ export class DocumentoService {
         }
     }
 
+  async updateEstado(id: ObjectId) {
+        try {
+            const res = await this.DocumentoModule.updateOne({ _id: id }, { $set: { estado: 'CONFIRMANDO' }} );
 
+            if (res.modifiedCount===0) return  { err: true, message: "Ocurrio un error al cancelar el documento" }
+            return { err: false, message: "CANCELADO" }
+        } catch (error) {
+            return  error
+        }
+    }
 
 
 

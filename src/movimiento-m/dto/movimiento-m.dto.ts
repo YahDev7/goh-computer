@@ -26,11 +26,12 @@ export class MovimientoMDto {
   @IsNotEmpty()
   metodo_pago: string;
 
+  @IsOptional()
   @IsString() 
   @MaxLength(100)
-  @IsNotEmpty()
   nro_operacion: string;
 
+  @IsOptional()
   @IsNumber()
   monto_deposito: number;
 
@@ -55,4 +56,8 @@ export class MovimientoMDto {
   @MaxLength(10)
   @IsNotEmpty()
   estado: string;
+
+  @IsOptional()
+  @IsNotEmpty()
+  fileAdjunto: Object;
 }

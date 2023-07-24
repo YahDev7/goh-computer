@@ -30,6 +30,7 @@ import { ConfigType } from '@nestjs/config';
     },
   }),EnterpriseModule,CustomerModule,UserModule,ProviderModule],
   providers: [DocumentoService],
-  controllers: [DocumentoController]
+  controllers: [DocumentoController],
+  exports:[DocumentoService]
 })
 export class DocumentoModule {}

@@ -8,12 +8,14 @@ import { EnterpriseService } from 'src/enterprise/enterprise.service';
 import { MovimientoM, MovimientoMDocument } from './schema/movimiento-m.schema';
 import { CustomerService } from 'src/customer/customer.service';
 import { MovimientoMDto } from './dto/movimiento-m.dto';
+import { DocumentoService } from 'src/documento/documento.service';
 
 @Injectable()
 export class MovimientoMService {
     constructor(
         @InjectModel(MovimientoM.name) private MovimientoModule: Model<MovimientoMDocument>,
         private EnterpriseService: EnterpriseService,
+        private DocumentoService: DocumentoService,
         private CustomerService: CustomerService,
     ) { }
 
@@ -65,6 +67,11 @@ export class MovimientoMService {
 
             const save = await this.MovimientoModule.create({ ...body, documento_id,enterprise_id });
             if (!save) throw { err: true, message: 'No se guardardo' }
+
+
+            const update = await this.DocumentoService.updateEstado(documento_id);
+            if(update.err) throw update.message
+
             return { err: false, message: "Se guardo con éxito",data:save._id }
         } catch (error) {
             console.log(error)

@@ -366,7 +366,6 @@ export class ProductsService {
           }
         }
       ]);
-      console.log(res)
       if (res.length === 0) throw { err: true, message: "No hay productos a mostrar" };
 
       return res[0]

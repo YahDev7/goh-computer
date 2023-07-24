@@ -55,6 +55,12 @@ export class Documento{
     
     @Prop([Object])
     detalle: Object[];
+
+    @Prop([Object])
+    dataCustomer: Object[];
+
+    @Prop({ required: true })
+    metodo_pago: string;
 }
 
 export const DocumentoSchema = SchemaFactory.createForClass(Documento);
