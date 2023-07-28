@@ -179,11 +179,11 @@ export class ProductsService {
             as: "cat"
           }
         },
-        {
+       /*  {
           $addFields: {
             precio_promoventa: { $ifNull: ['$precio_promoventa', 0] },
           }
-        },
+        }, */
         {
           $project: {
             _id: 0,
@@ -198,12 +198,13 @@ export class ProductsService {
             nomcat: { $arrayElemAt: ['$cat.nombre', 0] },
             idcat: { $arrayElemAt: ['$subcat.categoria_id', 0] },
             imagenes: '$imagenes',
-            precio_promoventa: { $round: ['$precio_promoventa', 2] }
+           // precio_promoventa: { $round: ['$precio_promoventa', 2] }
           }
         }
       ])
 
       if (res.length === 0) throw { err: true, message: "No hay productos a mostrar" }
+      console.log(res)
       return res
       /*    let res3 =await this.productssModule.find({estado:'A'}).limit(5)
          for (let i = 0; i < res3.length; i++) {
@@ -337,11 +338,11 @@ export class ProductsService {
             as: "cat"
           }
         },
-        {
+      /*   {
           $addFields: {
             precio_promoventa: { $ifNull: ['$precio_promoventa', 0] },
           }
-        },
+        }, */
         {
           $project: {
             _id: 0,
@@ -460,7 +461,7 @@ export class ProductsService {
 
         {
           $addFields: {
-            precio_promoventa: { $ifNull: ['$precio_promoventa', 0] },
+           // precio_promoventa: { $ifNull: ['$precio_promoventa', 0] },
           }
         },
         {
@@ -477,7 +478,7 @@ export class ProductsService {
             nomcat: { $arrayElemAt: ['$cat.nombre', 0] },
             idcat: { $arrayElemAt: ['$subcat.categoria_id', 0] },
             imagenes: '$imagenes',
-            precio_promoventa: { $round: ['$precio_promoventa', 2] },
+           // precio_promoventa: { $round: ['$precio_promoventa', 2] },
 
           }
         }
@@ -520,11 +521,11 @@ export class ProductsService {
             as: "cat"
           }
         },
-        {
+     /*    {
           $addFields: {
             precio_promoventa: { $ifNull: ['$precio_promoventa', 0] },
           }
-        },
+        }, */
         {
           $project: {
             _id: 0,
@@ -539,7 +540,7 @@ export class ProductsService {
             nomcat: { $arrayElemAt: ['$cat.nombre', 0] },
             idcat: { $arrayElemAt: ['$subcat.categoria_id', 0] },
             imagenes: '$imagenes',
-            precio_promoventa: { $round: ['$precio_promoventa', 2] },
+            //precio_promoventa: { $round: ['$precio_promoventa', 2] },
           }
         }
       ])

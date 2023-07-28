@@ -6,12 +6,14 @@ import { CloudinaryResponse } from './cloudinary/cloudinary-response';
 import {ProductsService} from  'src/products/products.service'
 import { JwtService } from '@nestjs/jwt';
 import { ObjectId } from 'mongodb';
+import { MovimientoMService } from 'src/movimiento-m/movimiento-m.service';
 const streamifier = require('streamifier');
 
 @Injectable()
 export class CloudinaryService {
   constructor(
     private ProductoService: ProductsService,
+    private MovimientoService: MovimientoMService,
     private jwtService: JwtService,
 
   ){}
@@ -78,6 +80,47 @@ export class CloudinaryService {
   
   
   }
+
+  
+  uploadFileBilletera(file: Express.Multer.File,token:string,id:ObjectId): Promise<CloudinaryResponse> {
+  
+    const decodedToken = this.jwtService.verify(token);
+
+    let uploadfile= new Promise<CloudinaryResponse>((resolve, reject) => {
+      const uploadStream = cloudinary.uploader.upload_stream(
+        {
+         folder: 'GOHComputer/Billetera_virtual/Yape' ,
+        allowed_formats: ['jpg', 'png'],
+        max_allowed_size: 1000000, // 2MB en bytes
+        },
+        (error, result) => {
+          if (error) return reject(error);
+          resolve(result);
+        },
+      );
+
+      streamifier.createReadStream(file.buffer).pipe(uploadStream);
+    });
+
+    uploadfile.then((resultado) => {
+      // Hacer algo con el resultado
+    let res ={
+      nombre:resultado.public_id,
+      URL: resultado.secure_url,
+    }
+    this.MovimientoService.saveimg(decodedToken.enterprise_id,id,res)
+    }).catch((error) => {
+      return {err:true,message:"ocurrio un error al subir el archivo"}
+    });
+
+    
+    return uploadfile;
+
+  
+  } 
+  
+
+
 }
 
 

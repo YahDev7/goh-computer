@@ -36,7 +36,7 @@ export class CustomerService {
             if (!found) throw { err: true, message: 'No se encontor este customer' }
             return found;
         } catch (error) {
-            return new HttpException('Ocurrio un error al buscar por id ' + error.message || error, HttpStatus.NOT_FOUND)
+            return new HttpException('Ocurrio un error al buscar por id id custoemr solo id' + error.message || error, HttpStatus.NOT_FOUND)
         }
     }
     async verifyUnique(param: { [key: string]: any }): Promise<Customer> { //param es un obj con keys "string" y sus valores de cualquier tipo
@@ -103,13 +103,13 @@ export class CustomerService {
               console.log(body)
               return this.CustomerModule.create(body) */
 
-            let { enterprise_id, pass } = body
+            let { enterprise_id, password } = body
             enterprise_id = new ObjectId(enterprise_id)
 
 
-            let passhash = await hash(pass, 10)
+            let passhash = await hash(password, 10)
 
-            body = { ...body, pass: passhash, enterprise_id }
+            body = { ...body, password: passhash, enterprise_id }
             return this.CustomerModule.create(body)
 
             /*  const save=await this.CustomerModule.create({...body,enterprise_id,user_id});
@@ -157,12 +157,12 @@ export class CustomerService {
 
     async login(body: LoginCustomerDto) {
         try {
-            let { email, pass } = body
+            let { email, password } = body
 
             const finduser = await this.CustomerModule.findOne({ email })
             if (!finduser) throw { err: true, message: "Errror de autentication" }
 
-            let comparepass = await compare(pass, finduser.pass)
+            let comparepass = await compare(password, finduser.password)
             if (!comparepass) throw { err: true, message: "Errror de autentication" }
 
             let payload = {
@@ -186,9 +186,13 @@ export class CustomerService {
 
 
 
-    async getByEnterprise(enterprise_id: ObjectId): Promise<Customer[] | HttpException> {
+    async getByEnterprise(token:string /* enterprise_id: ObjectId */): Promise<Customer[] | HttpException> {
         try {
+            const decodedToken = this.jwtService.verify(token);
+            let {enterprise_id}=decodedToken;
+            enterprise_id=new ObjectId(enterprise_id)
             let res = await this.EnterpriseService.getId(enterprise_id);
+            console.log(res)
             if (res instanceof HttpException) throw res
             // if(res) throw {err:true,message:'No se encontraron subcategorias de esta empresa'} 
 
@@ -196,7 +200,7 @@ export class CustomerService {
             if (found.length === 0) throw { err: true, message: 'No se encontraron subcategorias de esta empresa' }
             return found;
         } catch (error) {
-            return new HttpException('Ocurrio un error al buscar por id ' + error.message || error, HttpStatus.NOT_FOUND)
+            return new HttpException('Ocurrio un error al buscar' + error.message || error, HttpStatus.NOT_FOUND)
         }
     }
 
@@ -207,7 +211,7 @@ export class CustomerService {
             if (!found) throw { err: true, message: 'No se encontor este customer' }
             return found;
         } catch (error) {
-            return new HttpException('Ocurrio un error al buscar por id ' + error.message || error, HttpStatus.NOT_FOUND)
+            return new HttpException('Ocurrio un error al buscar por id cutomer ' + error.message || error, HttpStatus.NOT_FOUND)
         }
     }
     async postEnterprise(body: CustomerDto): Promise<Customer | Object> {
@@ -226,13 +230,13 @@ export class CustomerService {
               console.log(body)
               return this.CustomerModule.create(body) */
 
-            let { enterprise_id, pass } = body
+            let { enterprise_id, password } = body
             enterprise_id = new ObjectId(enterprise_id)
 
 
-            let passhash = await hash(pass, 10)
+            let passhash = await hash(password, 10)
 
-            body = { ...body, pass: passhash, enterprise_id }
+            body = { ...body, password: passhash, enterprise_id }
             return this.CustomerModule.create(body)
 
             /*  const save=await this.CustomerModule.create({...body,enterprise_id,user_id});

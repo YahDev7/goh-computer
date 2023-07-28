@@ -201,13 +201,14 @@ export class DocumentoService {
     async getByEnterprise(token /* enterprise_id: ObjectId */) {
         try {
             const decodedToken = this.jwtService.verify(token);
-            let { enterprise_id, id } = decodedToken
+            console.log(decodedToken)
+            let { enterprise_id } = decodedToken
             let resEnterprise = await this.EnterpriseService.getId(enterprise_id)
             if (resEnterprise instanceof HttpException) throw resEnterprise
 
             enterprise_id =new ObjectId(enterprise_id)
 
-            const res = await this.DocumentoModule.find({enterprise_id, customer_id:new ObjectId(id) });
+            const res = await this.DocumentoModule.find({enterprise_id/* , customer_id:new ObjectId(id)  */});
             if (res.length === 0) return new HttpException('No hay Documentos que mostrar', HttpStatus.NOT_FOUND)
             return res
         } catch (error) {

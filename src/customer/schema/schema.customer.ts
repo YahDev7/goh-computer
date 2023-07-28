@@ -45,7 +45,7 @@ export class Customer {
   email: string;
 
   @Prop({ required: true })
-  pass: string;
+  password: string;
 
   @Prop({required:true})
   estado: string;

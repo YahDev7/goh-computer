@@ -11,7 +11,7 @@ export class LoginCustomerDto {
 
   @IsNotEmpty()
   @Length(1, 20)
-  pass: string;
+  password: string;
 }
 export class CustomerDto {
  /*  @IsOptional()
@@ -67,7 +67,7 @@ export class CustomerDto {
 
   @IsNotEmpty()
   @Length(1, 20)
-  pass: string;
+  password: string;
 
   @IsNotEmpty()
   @MaxLength(2)

@@ -30,7 +30,7 @@ export class UserService {
             if (res.length === 0) throw { err: true, message: 'No hay datos que mostrar' }
             return res
         } catch (error) {
-            return new HttpException('Ocurrio un error al guardar ' + error.message || error, HttpStatus.NOT_FOUND)
+            return new HttpException('Ocurrio un error al listar ' + error.message || error, HttpStatus.NOT_FOUND)
         }
     }
 
@@ -232,15 +232,19 @@ export class UserService {
     } */
 
 
-    async getIdByEnterprise(id: ObjectId,token): Promise<User | HttpException> {
+    async getByEnterprise(token): Promise<User[] | HttpException> {
         try {
             const decodedToken = this.jwtService.verify(token);
-            const found = await this.UserModule.findOne({ _id: id, estado: 'A' })
+            let {enterprise_id,usuario_id} =decodedToken
+            enterprise_id=new ObjectId(enterprise_id)
+            const found = await this.UserModule.findOne({ _id:usuario_id, estado: 'A' })
             
             if (!found) throw { err: true, message: 'error al buscar este user' }
             if(decodedToken.enterprise_id!==found.enterprise_id.toString())  throw { err: true, message: 'unauthorizedr' }          
 
-            return found; 
+            const users = await this.UserModule.find()
+
+            return users;  
         } catch (error) {
             return new HttpException('Ocurrio un error ' + error.message || error, HttpStatus.NOT_FOUND)
         }

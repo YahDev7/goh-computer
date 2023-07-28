@@ -9,6 +9,7 @@ import { MovimientoM, MovimientoMDocument } from './schema/movimiento-m.schema';
 import { CustomerService } from 'src/customer/customer.service';
 import { MovimientoMDto } from './dto/movimiento-m.dto';
 import { DocumentoService } from 'src/documento/documento.service';
+import { JwtService } from '@nestjs/jwt';
 
 @Injectable()
 export class MovimientoMService {
@@ -17,6 +18,8 @@ export class MovimientoMService {
         private EnterpriseService: EnterpriseService,
         private DocumentoService: DocumentoService,
         private CustomerService: CustomerService,
+        private jwtService: JwtService,
+
     ) { }
 
     async get(): Promise<MovimientoM[] | HttpException> {
@@ -44,13 +47,19 @@ export class MovimientoMService {
             return new HttpException('Ocurrio un error al listar por id' + error, HttpStatus.NOT_FOUND)
         }
     }
-    async getByEnterprise(enterprise_id: ObjectId): Promise<MovimientoM[] | HttpException> {
+    async getByEnterprise(token): Promise<MovimientoM[] | HttpException> {
         try {
+            const decodedToken = this.jwtService.verify(token);
+            console.log(decodedToken)
+            let { enterprise_id } = decodedToken
+
             let res = await this.EnterpriseService.getId(enterprise_id);
+            console.log(res)
+
             if (res instanceof HttpException) throw res
 
-            const found = await this.MovimientoModule.find({ enterprise_id, estado: 'A' })
-            if (found.length === 0) throw { err: true, message: 'No se encontraron deepositos' }
+            const found = await this.MovimientoModule.find({ enterprise_id})
+            if (found.length === 0) throw { err: true, message: 'No se encontraron depositos' }
 
             return found;
         } catch (error) {
@@ -78,6 +87,30 @@ export class MovimientoMService {
             return new HttpException('Ocurrio un error al guardar' + error.message || error, HttpStatus.NOT_FOUND);
         }
     }
+
+    async saveimg( enterprise_id: ObjectId,mov_id:ObjectId ,files:Object): Promise<MovimientoM | Object> {
+        try { 
+          let found =await this.getByEnterprise(enterprise_id)
+          if(!found) throw {err:true,message:'No se encontor esta empresa'} 
+    
+          let foundpro = await this.MovimientoModule.findOne({ _id: mov_id });
+          if(!foundpro) throw {err:true,message:'No se encontor este producto'} 
+    
+        
+          const update = await this.MovimientoModule.updateOne({ _id: mov_id }, { $set: {fileAdjunto:files} });
+          if (update.modifiedCount === 0) return new HttpException('No se logro actualizar', HttpStatus.NOT_FOUND);
+    
+          return { err: false, message: "Se actualizo con éxito" }  
+         /*  if (!save) throw { err: true, message: 'No se guardardo' }
+          return save */
+          /* return {err:false,message:"Se guardo con éxito"} */
+        } catch (error) {
+          return new HttpException('Ocurrio un error al guardar' + error.message || error, HttpStatus.NOT_FOUND);
+        }
+      }
+
+
+
 
     async getByCustomer(customer_id: ObjectId): Promise<MovimientoM[] | HttpException> {
         try {

@@ -1,4 +1,4 @@
-import { Body, Controller, Delete, Get, Param, ParseIntPipe, Post, Put, UseGuards } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Param, ParseIntPipe, Post, Put, Req, UseGuards } from '@nestjs/common';
 import { CustomerService } from './customer.service';
 import { CustomerDto, LoginCustomerDto, UpdateCustomerDto } from './dto/customer.dto';
 import { ObjectId } from 'mongodb';
@@ -19,10 +19,10 @@ export class CustomerController {
         return this.customerService.get()
     }
 
-    @Get(':id')
+  /*   @Get(':id')
     async getId(@Param('id') id:ObjectId){
         return this.customerService.getId(id)
-    }
+    } */
    
     @Post()
     async post(@Body() body:CustomerDto){
@@ -48,14 +48,21 @@ export class CustomerController {
     } 
 
     /* ENTERPRISE */
-    @Get('/enterprise')
+  /*   @Get('/enterprise')
     async getByEnterprise(@Param('id') id:ObjectId){
         return this.customerService.getByEnterprise(id)
+    } */
+    @Get('/enterprise')
+    async getByEnterprise(@Req() req){
+        const token = req.headers.authorization.split(' ')[1];
+        return this.customerService.getByEnterprise(token)
     }
-    @Get(':id/enterprise')
+
+
+  /*   @Get(':id/enterprise')
     async getByIdEnterprise(@Param('id') id:ObjectId){
         return this.customerService.getByEnterprise(id)
-    }
+    } */
     
     @Post()
     async postEnterprise(@Body() body:CustomerDto){

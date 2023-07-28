@@ -22,10 +22,10 @@ export class UserController {
     }
 
     @RolesDecorator(Roles.ADMIN)
-    @Get(':id')
+   /*  @Get(':id')
     async getId(@Param('id') id:ObjectId){
         return this.userService.getId(id)
-    }
+    } */
   
     @RolesDecorator(Roles.ADMIN)
     @Post()
@@ -67,11 +67,11 @@ export class UserController {
     async getByEnterprise(@Param('id') id:ObjectId){
         return this.userService.getByEnterprise(id)
     } */
-    @RolesDecorator(Roles.ADMINCUSTOMER)
-    @Get(':id/enterprise')
-    async getIdByEnterprise(@Param('id') id:ObjectId,@Req() req){
+//    @RolesDecorator(Roles.ADMINCUSTOMER)
+    @Get('enterprise')
+    async getByEnterprise(@Req() req){
         const token = req.headers.authorization.split(' ')[1];
-        return this.userService.getIdByEnterprise(id,token)
+        return this.userService.getByEnterprise(token)
     }
 
     @RolesDecorator(Roles.ADMINCUSTOMER)

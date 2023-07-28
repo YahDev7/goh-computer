@@ -14,7 +14,7 @@ export class DocumentoController {
         return this.DocumentoService.getAll()
     }
 
-    @Get('/getbyenterprise')
+    @Get('/enterprise')
     getByEnterprise(@Req() req){
         const token = req.headers.authorization.split(' ')[1];
 

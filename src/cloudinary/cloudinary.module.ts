@@ -7,6 +7,7 @@ import { ProductsModule } from 'src/products/products.module';
 import { JwtModule } from '@nestjs/jwt';
 import config from 'src/config';
 import { ConfigType } from '@nestjs/config';
+import { MovimientoMModule } from 'src/movimiento-m/movimiento-m.module';
 
 @Module({
   imports:[
@@ -20,7 +21,7 @@ import { ConfigType } from '@nestjs/config';
           }
         }
       },
-    }),ProductsModule],
+    }),ProductsModule,MovimientoMModule],
   providers: [CloudinaryProvider, CloudinaryService],
   exports: [CloudinaryProvider, CloudinaryService],
   controllers: [CloudinaryController]

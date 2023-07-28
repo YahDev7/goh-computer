@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Param, ParseIntPipe, Post } from '@nestjs/common';
+import { Body, Controller, Get, Param, ParseIntPipe, Post, Req } from '@nestjs/common';
 import { MovimientoMService } from './movimiento-m.service';
 import { MovimientoMDto } from './dto/movimiento-m.dto';
 import { ObjectId } from 'mongodb';
@@ -15,14 +15,20 @@ export class MovimientoMController {
         return this.MovimientoMService.get()
     }
 
-    @Get(':id')
+    /* @Get(':id')
     getId(@Param('id') id: string) {
         return this.MovimientoMService.getId(id)
+    } */
+    @Get('/enterprise')
+    async getByEnterprise(@Req() req) {
+        const token = req.headers.authorization.split(' ')[1];
+        return this.MovimientoMService.getByEnterprise(token)
+
     }
-    @Get('/enterprise/:id')
+   /*  @Get('/enterprise/:id')
     async getByEnterprise(@Param('id') id: ObjectId) {
         return this.MovimientoMService.getByEnterprise(id)
-    }
+    } */
 
     @Get('/customer/:id')
     async getByCustomer(@Param('id') id: ObjectId) {

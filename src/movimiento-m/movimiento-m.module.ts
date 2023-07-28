@@ -7,6 +7,9 @@ import { EnterpriseModule } from 'src/enterprise/enterprise.module';
 import { MongooseModule } from '@nestjs/mongoose';
 import { MovimientoM, MovimientoMSchema } from './schema/movimiento-m.schema';
 import { DocumentoModule } from 'src/documento/documento.module';
+import { JwtModule } from '@nestjs/jwt';
+import config from 'src/config';
+import { ConfigType } from '@nestjs/config';
 
 @Module({
   imports:[MongooseModule.forFeature([
@@ -14,7 +17,17 @@ import { DocumentoModule } from 'src/documento/documento.module';
       name:MovimientoM.name,
       schema:MovimientoMSchema,
     }
-  ]),EnterpriseModule,CustomerModule,DocumentoModule],
+  ]),  JwtModule.registerAsync({
+    inject:[config.KEY],
+    useFactory:(cofigService:ConfigType<typeof config>)=>{
+      return{
+        secret:cofigService.jwtSecret,//variables de entorno
+        signOptions:{
+          expiresIn:'10d'
+        }
+      }
+    },
+  }),EnterpriseModule,CustomerModule,DocumentoModule],
   providers: [MovimientoMService],
   controllers: [MovimientoMController],
   exports:[MovimientoMService]

@@ -44,6 +44,21 @@ import { ObjectId } from 'mongodb';
     const responses = await Promise.all(uploadPromises);
     return responses.map((response) => response.url);  */
     }
+
+    @Post('upload/billeteravirtual/:id')
+    @UseInterceptors(FileInterceptor('file'))
+    async uploadBilleteraVirtual(@Param('id') id_mov:ObjectId,@UploadedFile() file: Express.Multer.File,@Req() req) {
+      const token = req.headers.authorization.split(' ')[1];
+
+      return this.cloudinaryService.uploadFileBilletera(file,token,id_mov);
+
+        
+      /*  const uploadPromises = files.map((file) =>
+      this.cloudinaryService.uploadFiles(file)
+    );
+    const responses = await Promise.all(uploadPromises);
+    return responses.map((response) => response.url);  */
+    }
   }
   
 
