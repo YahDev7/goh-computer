@@ -7,9 +7,9 @@ export class MovimientoMDto {
   @IsNotEmpty()
   documento_id: ObjectId;
 
-  @IsString()
+  @IsOptional()
   @IsNotEmpty()
-  enterprise_id: ObjectId;
+  enterprise_id: ObjectId; 
 
   @IsOptional()
   @IsString()

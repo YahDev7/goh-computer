@@ -94,23 +94,33 @@ export class DocumentoService {
 
 
     //ENTERPRISES
-    async saveVentaByUser(body: DocumentoDTO) {
+    async saveVentaByUserByEnterprise(token,body: DocumentoDTO) {
         try {
-            let { user_id, customer_id, enterprise_id } = body
+
+            const decodedToken = this.jwtService.verify(token);
+            let {enterprise_id,usuario_id} =decodedToken;
+            enterprise_id = new ObjectId(enterprise_id)
+            usuario_id = new ObjectId(usuario_id)
+
+            let {customer_id } = body
+
+         //   let { user_id, customer_id, enterprise_id } = body
 
             let resEnterprise = await this.EnterpriseService.getId(enterprise_id)
             if (resEnterprise instanceof HttpException) throw resEnterprise
 
-            let resuser = await this.UserService.getId(user_id)
+            let resuser = await this.UserService.getId(usuario_id)
             if (resuser instanceof HttpException) throw resuser
 
-            let rescustomer = await this.CustomerService.getId(customer_id)
-            if (rescustomer instanceof HttpException) throw rescustomer
+            if(customer_id){
+                let rescustomer = await this.CustomerService.getId(customer_id)
+                if (rescustomer instanceof HttpException) throw rescustomer
+            }
 
 
 
             const save = await this.DocumentoModule.create(body);
-
+            console.log(save)
             if (!save) throw { err: true, message: 'No se guardardo' }
             return save
             /*  return {err:false,message:"Se guardo con éxito"} */

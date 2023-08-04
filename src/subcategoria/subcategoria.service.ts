@@ -47,15 +47,15 @@ export class SubcategoriaService {
        
       async getByEnterprise(token:string):Promise<SubCategoria[]|HttpException>{
         try {
-            console.log(token)
             const decodedToken = this.jwtService.verify(token);
-           const {enterprise_id} =decodedToken
-            
+           let {enterprise_id} =decodedToken
+           enterprise_id=new ObjectId(enterprise_id);
           let res =await this.EnterpriseService.getId(enterprise_id);
           if(res instanceof HttpException) throw res
            // if(res) throw {err:true,message:'No se encontraron subcategorias de esta empresa'} 
 
             const found=await this.SubCategoriaModule.find({enterprise_id,estado:'A'})
+            console.log(found)
             if(found.length===0) throw {err:true,message:'No se encontraron subcategorias de esta empresa'} 
             return found;
         } catch (error) {
@@ -148,6 +148,28 @@ export class SubcategoriaService {
             }
         
         }
+
+        
+    async postByEnterprise(body: SubCategoriaDto,token): Promise<SubCategoria | Object> {
+        try {
+            const decodedToken = this.jwtService.verify(token);
+            let {enterprise_id,usuario_id} =decodedToken;
+            let {categoria_id}=body
+            enterprise_id = new ObjectId(enterprise_id)
+            usuario_id = new ObjectId(usuario_id)
+            categoria_id=new ObjectId(categoria_id)
+
+           body={...body,enterprise_id,usuario_id,categoria_id } 
+            
+            const insert =await this.SubCategoriaModule.create(body);
+            console.log(insert)
+            if (!insert) return new HttpException('Ocurrio un error al guardar ', HttpStatus.NOT_FOUND)
+            return insert
+            /*  return {err:false,message:"Se guardo con éxito"} */
+        } catch (error) {
+            return new HttpException('Ocurrio un error al guardar ' + error.message || error, HttpStatus.NOT_FOUND)
+        }
+    }
 
 
 

@@ -1,5 +1,5 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
-import { CustomerDto, LoginCustomerDto, UpdateCustomerDto } from './dto/customer.dto';
+import { CustomerDto, LoginCustomerDto, RegisterCustomerDto, UpdateCustomerDto } from './dto/customer.dto';
 import { EnterpriseService } from 'src/enterprise/enterprise.service';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
@@ -87,34 +87,21 @@ export class CustomerService {
         }
     }
 
-    async post(body: CustomerDto): Promise<Customer | Object> {
+    async post(body: RegisterCustomerDto): Promise<Customer | Object> {
         try {
-            // const res=await this.verifyAll(body);
+            //const res=await this.verifyAll(body);
             //if(res.err) throw res;
-
-
-            /*   let {enterprise_id,user_id,pass} =body
-              enterprise_id=new ObjectId(enterprise_id)
-              user_id=new ObjectId(user_id)
-              
-              let passhash=await hash(pass,10)
-              
-              body={...body,pass:passhash,enterprise_id,user_id}
-              console.log(body)
-              return this.CustomerModule.create(body) */
 
             let { enterprise_id, password } = body
             enterprise_id = new ObjectId(enterprise_id)
+            password = await hash(password, 10)
 
+            body = { ...body, password, enterprise_id }
+            let insert = await this.CustomerModule.create(body)
 
-            let passhash = await hash(password, 10)
+            if (!insert) throw { err: true, message: "ocurrio un error al registrarce en la web" }
 
-            body = { ...body, password: passhash, enterprise_id }
-            return this.CustomerModule.create(body)
-
-            /*  const save=await this.CustomerModule.create({...body,enterprise_id,user_id});
-             if(!save) throw {err:true,message:'No se guardardo'}
-             return {err:false,message:"Se guardo con éxito"} */
+            return { err: false, message: "Registro con exito" }
 
         } catch (error) {
             console.log(error)
@@ -186,13 +173,12 @@ export class CustomerService {
 
 
 
-    async getByEnterprise(token:string /* enterprise_id: ObjectId */): Promise<Customer[] | HttpException> {
+    async getByEnterprise(token: string /* enterprise_id: ObjectId */): Promise<Customer[] | HttpException> {
         try {
             const decodedToken = this.jwtService.verify(token);
-            let {enterprise_id}=decodedToken;
-            enterprise_id=new ObjectId(enterprise_id)
+            let { enterprise_id } = decodedToken;
+            enterprise_id = new ObjectId(enterprise_id)
             let res = await this.EnterpriseService.getId(enterprise_id);
-            console.log(res)
             if (res instanceof HttpException) throw res
             // if(res) throw {err:true,message:'No se encontraron subcategorias de esta empresa'} 
 
@@ -214,34 +200,19 @@ export class CustomerService {
             return new HttpException('Ocurrio un error al buscar por id cutomer ' + error.message || error, HttpStatus.NOT_FOUND)
         }
     }
-    async postEnterprise(body: CustomerDto): Promise<Customer | Object> {
+    async postEnterprise(token, body: CustomerDto): Promise<Customer | Object> {
         try {
-            // const res=await this.verifyAll(body);
-            //if(res.err) throw res;
+            const decodedToken = this.jwtService.verify(token);
+            let { enterprise_id, usuario_id } = decodedToken
+            let { password } = body
 
-
-            /*   let {enterprise_id,user_id,pass} =body
-              enterprise_id=new ObjectId(enterprise_id)
-              user_id=new ObjectId(user_id)
-              
-              let passhash=await hash(pass,10)
-              
-              body={...body,pass:passhash,enterprise_id,user_id}
-              console.log(body)
-              return this.CustomerModule.create(body) */
-
-            let { enterprise_id, password } = body
             enterprise_id = new ObjectId(enterprise_id)
+            password = await hash(password, 10)
 
-
-            let passhash = await hash(password, 10)
-
-            body = { ...body, password: passhash, enterprise_id }
-            return this.CustomerModule.create(body)
-
-            /*  const save=await this.CustomerModule.create({...body,enterprise_id,user_id});
-             if(!save) throw {err:true,message:'No se guardardo'}
-             return {err:false,message:"Se guardo con éxito"} */
+            let newbody = { ...body, password, enterprise_id }
+            const save = await this.CustomerModule.create(newbody);
+            if (!save) throw { err: true, message: 'No se guardardo' }
+            return { err: false, message: "Se guardo con éxito" }
 
         } catch (error) {
             console.log(error)

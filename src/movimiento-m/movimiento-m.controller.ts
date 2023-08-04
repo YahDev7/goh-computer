@@ -25,6 +25,12 @@ export class MovimientoMController {
         return this.MovimientoMService.getByEnterprise(token)
 
     }
+    @Post('/enterprise')
+    saveByEnterprise(@Body() body,@Req() req){
+        const token = req.headers.authorization.split(' ')[1];
+        return this.MovimientoMService.saveVentaByUserByEnterprise(token,body)
+    }
+
    /*  @Get('/enterprise/:id')
     async getByEnterprise(@Param('id') id: ObjectId) {
         return this.MovimientoMService.getByEnterprise(id)

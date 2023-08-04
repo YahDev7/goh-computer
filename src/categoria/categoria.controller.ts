@@ -1,4 +1,4 @@
-import { Body, Controller, Delete, Get, Param, ParseIntPipe, Post, Put } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Param, ParseIntPipe, Post, Put, Req } from '@nestjs/common';
 import { CategoriaService } from './categoria.service';
 import { CategoriaDto, UpdateCategoriaDto } from './dto/categoria.dto';
 import { ObjectId } from 'mongodb';
@@ -14,12 +14,13 @@ export class CategoriaController {
         return this.categoriaService.get()
     }
 
-    @Get(':id')
+ /*    @Get(':id')
     async getId(@Param('id') id:ObjectId){
         return this.categoriaService.getId(id)
-    }
+    } */
+
     @Get('/enterprise/:id')
-    async getByEnterprise(@Param('id') id:ObjectId){
+    async getByIdByEnterprise(@Param('id') id:ObjectId){
         return this.categoriaService.getByEnterprise(id)
     }
     @Post()
@@ -40,7 +41,10 @@ export class CategoriaController {
         return this.categoriaService.deleteImg(id)
     }
 
-
+   @Get()
+    async getByEnterprise(){
+        return this.categoriaService.get()
+    }
 
     @Get('/gohcomputer/all')
     async getcatGoh() {
@@ -53,5 +57,17 @@ export class CategoriaController {
     }
     
 
+    /* ENTERPRISE */
+    @Get('enterprise')
+    async GetByEnterprise(@Req() req){
+        const token = req.headers.authorization.split(' ')[1];
+
+        return this.categoriaService.getByEnterprise(token)
+    }
+    @Post('enterprise')
+    async postByEnterprise(@Body() body:CategoriaDto ,@Req() req){
+        const token = req.headers.authorization.split(' ')[1];
+        return this.categoriaService.postByEnterprise(body,token)
+    }
     
 }

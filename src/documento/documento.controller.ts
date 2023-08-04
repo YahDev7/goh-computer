@@ -21,16 +21,28 @@ export class DocumentoController {
         return this.DocumentoService.getByEnterprise(token)
     }
 
+    @Post('/enterprise/user')
+    saveByEnterprise(@Body() body/* :DocumentoDTO  */,@Req() req){
+        const token = req.headers.authorization.split(' ')[1];
+        return this.DocumentoService.saveVentaByUserByEnterprise(token,body)
+    }
+
+    @Post('/enterprise/customer')
+    saveByEnterpriseCustomer(@Body() body/* :DocumentoDTO  */,@Req() req){
+       // const token = req.headers.authorization.split(' ')[1];
+        return this.DocumentoService.saveVentaByCustomerLogin(body)
+    }
+
     @Get('/getbyenterprise/:id')
     getByEnterpriseById(@Param('id') id:ObjectId, @Req() req){
         const token = req.headers.authorization.split(' ')[1];
         return this.DocumentoService.getByEnterpriseVenta_id(id,token)
     }
 
-    @Post('user')
+ /*    @Post('user')
     post(@Body() body:DocumentoDTO){
         return this.DocumentoService.saveVentaByUser(body)
-    }
+    } */
 
     @Post()
     postCustomer(@Body() body/* :DocumentoByCustomerDTO */){

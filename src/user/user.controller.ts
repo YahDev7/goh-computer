@@ -1,6 +1,6 @@
 import { Body, Controller, Get, Param, ParseIntPipe, Post,Put,Delete, UseGuards, Req } from '@nestjs/common';
 import { UserService } from './user.service';
-import { CreateUserDto, LoginUserDto, UpdateUserDto } from './dto/user.dto';
+import { CreateUserDto, LoginUserDto, RegisterUserDto, UpdateUserDto } from './dto/user.dto';
 import { ObjectId } from 'mongodb';
 import { JwtUserAuthGuard } from './guards/guard.user';
 import { Public } from './decorators/public.decorator';
@@ -21,18 +21,12 @@ export class UserController {
         return this.userService.get()
     }
 
-    @RolesDecorator(Roles.ADMIN)
-   /*  @Get(':id')
+   /* @RolesDecorator(Roles.ADMIN)
+     @Get(':id')
     async getId(@Param('id') id:ObjectId){
         return this.userService.getId(id)
     } */
   
-    @RolesDecorator(Roles.ADMIN)
-    @Post()
-    async post(@Body() body:CreateUserDto){
-        return this.userService.post(body)
-    }
-
     @RolesDecorator(Roles.ADMIN)
     @Put(':id')
     async update(@Param('id', ParseIntPipe) id:ObjectId,@Body() body:UpdateUserDto){
@@ -47,7 +41,7 @@ export class UserController {
 
     @RolesDecorator(Roles.ADMIN)
     @Post('register')
-    async register(@Body() body:CreateUserDto){
+    async register(@Body() body:RegisterUserDto){
         return this.userService.post(body)
     }
 
@@ -74,7 +68,7 @@ export class UserController {
         return this.userService.getByEnterprise(token)
     }
 
-    @RolesDecorator(Roles.ADMINCUSTOMER)
+    @RolesDecorator(Roles.ADMIN)
     @Post('/enterprise')
     async postByEnterprise(@Body() body:CreateUserDto,@Req() req){
         const token = req.headers.authorization.split(' ')[1];

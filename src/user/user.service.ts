@@ -1,7 +1,7 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import { CreateUserDto, LoginUserDto, UpdateUserDto } from './dto/user.dto';
+import { CreateUserDto, LoginUserDto, RegisterUserDto, UpdateUserDto } from './dto/user.dto';
 import { EnterpriseService } from 'src/enterprise/enterprise.service';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
@@ -36,7 +36,7 @@ export class UserService {
 
     async getId(id: ObjectId): Promise<User | HttpException> {
         try {
-            const found = await this.UserModule.findOne({ _id:id, estado: 'A' })
+            const found = await this.UserModule.findOne({ _id: id, estado: 'A' })
             console.log(found)
 
             if (!found) throw { err: true, message: 'error al buscar este user' }
@@ -55,7 +55,7 @@ export class UserService {
 
         }
     }
-    async verifyAll(body: CreateUserDto) { //param es un obj con keys "string" y sus valores de cualquier tipo
+    async verifyAll(body/* : CreateUserDto */) { //param es un obj con keys "string" y sus valores de cualquier tipo
         try {
             const { dni, email, telefono } = body;
             const verifyNomb = await this.verifyUnique({ dni })
@@ -94,21 +94,19 @@ export class UserService {
         }
     }
 
-    async post(body: CreateUserDto): Promise<User | Object> {
+    async post(body: RegisterUserDto): Promise<User | Object> {
         try {
-            const { enterprise_id, password } = body
-               let resEnterprise =await this.EnterpriseService.getId(enterprise_id);
-                if(resEnterprise instanceof HttpException) throw resEnterprise
+            let { enterprise_id, password } = body
+            let resEnterprise = await this.EnterpriseService.getId(enterprise_id);
+            if (resEnterprise instanceof HttpException) throw resEnterprise
 
-                const res=await this.verifyAll(body);
-                if(res.err) throw res; 
+            const res = await this.verifyAll(body);
+            if (res.err) throw res;
 
-            let newenterprise_id = new ObjectId(enterprise_id)
+            enterprise_id = new ObjectId(enterprise_id)
+            password = await hash(password, 10)
 
-
-            let passhash = await hash(password, 10)
-
-            body = { ...body, enterprise_id: newenterprise_id, password: passhash }
+            body = { ...body, enterprise_id, password }
             const insert = this.UserModule.create(body);
             if (!insert) return new HttpException('Ocurrio un error al guardar ', HttpStatus.NOT_FOUND)
             return insert
@@ -125,7 +123,7 @@ export class UserService {
     async update(id: ObjectId, body: UpdateUserDto): Promise<Object | HttpException> {
         try {
 
-            const found = await this.UserModule.findOne({ where: { _id:id, estado: 'A' } })
+            const found = await this.UserModule.findOne({ where: { _id: id, estado: 'A' } })
             if (!found) throw { err: true, message: 'No se encontor este user' }
             const res = await this.verifyAllUpdate(body, id);
             if (res.err) throw res;
@@ -146,7 +144,7 @@ export class UserService {
     async delete(id: ObjectId): Promise<Object> {
         try {
 
-            const found = await this.UserModule.findOne({ _id:id, estado: 'A' })
+            const found = await this.UserModule.findOne({ _id: id, estado: 'A' })
             if (!found) throw { err: true, message: 'No se encontor esta empresa' }
 
             const update = await this.UserModule.updateOne({ _id: id }, { $set: { estado: 'D' } });
@@ -194,25 +192,127 @@ export class UserService {
 
 
 
- /*    async getByEnterpriseAdmin(enterprise_id: ObjectId): Promise<User[] | HttpException> {
+
+    async getByEnterprise(token): Promise<User[] | HttpException> {
         try {
-            let res = await this.EnterpriseService.getId(enterprise_id);
-            if (res instanceof HttpException) throw res
-            // if(res) throw {err:true,message:'No se encontraron subcategorias de esta empresa'} 
+            const decodedToken = this.jwtService.verify(token);
+            let { enterprise_id, usuario_id } = decodedToken
+            enterprise_id = new ObjectId(enterprise_id)
+            const found = await this.UserModule.findOne({ _id: usuario_id, estado: 'A' })
 
-            let newenterprise_id = new ObjectId(enterprise_id)
+            if (!found) throw { err: true, message: 'error al buscar este user' }
+            if (decodedToken.enterprise_id !== found.enterprise_id.toString()) throw { err: true, message: 'unauthorizedr' }
 
-            const found = await this.UserModule.find({ enterprise_id:newenterprise_id, estado: 'A' })
-            if (found.length === 0) throw { err: true, message: 'No se encontro usuarios en esta empresa' }
-            return found;
+            const users = await this.UserModule.find()
+
+            return users;
         } catch (error) {
             return new HttpException('Ocurrio un error ' + error.message || error, HttpStatus.NOT_FOUND)
         }
-    } */
+    }
+    async postByEnterprise(body: CreateUserDto, token): Promise<User | Object> {
+        try {
+            const {password } = body
+            /*   let resEnterprise =await this.EnterpriseService.getId(enterprise_id);
+              if(resEnterprise instanceof HttpException) throw resEnterprise */
+
+            /*    const res=await this.verifyAll(body);
+               if(res.err) throw res; */
+            const decodedToken = this.jwtService.verify(token);
+           // if (decodedToken.enterprise_id !== enterprise_id.toString()) throw { err: true, message: 'unauthorized' }
+            let  {enterprise_id}=decodedToken
+
+            enterprise_id = new ObjectId(enterprise_id)
+
+            let passhash = await hash(password, 10)
+
+            let newbody = { ...body, password: passhash,enterprise_id }
+            const insert = this.UserModule.create(newbody);
+            if (!insert) return new HttpException('Ocurrio un error al guardar ', HttpStatus.NOT_FOUND)
+            //throw new   NotFoundExeption("no exite bro, para obtener un 404")
+            return {err:false,message:"se creo con exito"}
+            //return {err:false,message:"Se guardo con éxito"}
+
+            /*   const insert=this.UserModule.create(body);
+              if(!insert) return new HttpException('Ocurrio un error al guardar ',HttpStatus.NOT_FOUND)
+              return this.UserModule.save(insert) */
+        } catch (error) {
+            console.log(error)
+            return new HttpException('Ocurrio un error al guardar ' + error.message || error, HttpStatus.NOT_FOUND)
+        }
+    }
+    async updateByEnterprise(id: ObjectId, body: UpdateUserDto, token): Promise<Object | HttpException> {
+        try {
+            const decodedToken = this.jwtService.verify(token);
+
+            const found = await this.UserModule.findOne({ where: { _id: id, estado: 'A' } })
+            if (!found) throw { err: true, message: 'No se encontor este user' }
+
+            if (decodedToken.enterprise_id !== found.enterprise_id.toString()) throw { err: true, message: 'unauthorized' }
+
+            const res = await this.verifyAllUpdate(body, id);
+            if (res.err) throw res;
+
+            const update = await this.UserModule.updateOne({ _id: id }, { $set: body });
+            if (update.modifiedCount === 0) return new HttpException('No se logro actualizar', HttpStatus.NOT_FOUND);
+
+            return { err: false, message: "Se actualizo con éxito" }
+
+            /*  let resUpdate=Object.assign(found,body);
+             return this.UserModule.save(resUpdate); */
+
+        } catch (error) {
+            return new HttpException('Ocurrio un error al guardar ' + error.message || error, HttpStatus.NOT_FOUND)
+        }
+    }
+    async deleteByEnterprise(id: ObjectId, token): Promise<Object> {
+        try {
+
+            const decodedToken = this.jwtService.verify(token);
+            const found = await this.UserModule.findOne({ _id: id, estado: 'A' })
+            if (!found) throw { err: true, message: 'No se encontor esta empresa' }
+
+            if (decodedToken.enterprise_id !== found.enterprise_id.toString()) throw { err: true, message: 'unauthorized' }
+
+
+            const update = await this.UserModule.updateOne({ _id: id }, { $set: { estado: 'D' } });
+            if (!update) return new HttpException('ocurrio un error al eliminar', HttpStatus.NOT_FOUND);
+
+            /*  let resUpdate=Object.assign(found,{estado:'D'});
+             const resfinal= await this.UserModule.save(resUpdate); */
+
+            return { err: false, message: 'Enterprise eliminado' }
+        } catch (error) {
+            return new HttpException('Ocurrio un error al eliminar ' + error.message || error, HttpStatus.NOT_FOUND)
+        }
+
+    }
+}
 
 
 
-    /* ENTERPRISE */
+
+
+
+/*    async getByEnterpriseAdmin(enterprise_id: ObjectId): Promise<User[] | HttpException> {
+       try {
+           let res = await this.EnterpriseService.getId(enterprise_id);
+           if (res instanceof HttpException) throw res
+           // if(res) throw {err:true,message:'No se encontraron subcategorias de esta empresa'} 
+
+           let newenterprise_id = new ObjectId(enterprise_id)
+
+           const found = await this.UserModule.find({ enterprise_id:newenterprise_id, estado: 'A' })
+           if (found.length === 0) throw { err: true, message: 'No se encontro usuarios en esta empresa' }
+           return found;
+       } catch (error) {
+           return new HttpException('Ocurrio un error ' + error.message || error, HttpStatus.NOT_FOUND)
+       }
+   } */
+
+
+
+/* ENTERPRISE */
 
 
 /*     async getByEnterprise(): Promise<User[] | HttpException> {
@@ -230,100 +330,3 @@ export class UserService {
             return new HttpException('Ocurrio un error ' + error.message || error, HttpStatus.NOT_FOUND)
         }
     } */
-
-
-    async getByEnterprise(token): Promise<User[] | HttpException> {
-        try {
-            const decodedToken = this.jwtService.verify(token);
-            let {enterprise_id,usuario_id} =decodedToken
-            enterprise_id=new ObjectId(enterprise_id)
-            const found = await this.UserModule.findOne({ _id:usuario_id, estado: 'A' })
-            
-            if (!found) throw { err: true, message: 'error al buscar este user' }
-            if(decodedToken.enterprise_id!==found.enterprise_id.toString())  throw { err: true, message: 'unauthorizedr' }          
-
-            const users = await this.UserModule.find()
-
-            return users;  
-        } catch (error) {
-            return new HttpException('Ocurrio un error ' + error.message || error, HttpStatus.NOT_FOUND)
-        }
-    }
-    async postByEnterprise(body: CreateUserDto,token): Promise<User | Object> {
-        try {
-            const { enterprise_id, password } = body
-            /*   let resEnterprise =await this.EnterpriseService.getId(enterprise_id);
-              if(resEnterprise instanceof HttpException) throw resEnterprise */
-
-            /*    const res=await this.verifyAll(body);
-               if(res.err) throw res; */
-            const decodedToken = this.jwtService.verify(token);
-            if(decodedToken.enterprise_id!==enterprise_id.toString())  throw { err: true, message: 'unauthorized' }          
-
-
-            let newenterprise_id = new ObjectId(enterprise_id)
-
-            let passhash = await hash(password, 10)
-
-            body = { ...body, enterprise_id: newenterprise_id, password: passhash }
-            const insert = this.UserModule.create(body);
-            if (!insert) return new HttpException('Ocurrio un error al guardar ', HttpStatus.NOT_FOUND) 
-            //throw new   NotFoundExeption("no exite bro, para obtener un 404")
-            return insert
-            //return {err:false,message:"Se guardo con éxito"}
-
-            /*   const insert=this.UserModule.create(body);
-              if(!insert) return new HttpException('Ocurrio un error al guardar ',HttpStatus.NOT_FOUND)
-              return this.UserModule.save(insert) */
-        } catch (error) {
-            console.log(error)
-            return new HttpException('Ocurrio un error al guardar ' + error.message || error, HttpStatus.NOT_FOUND)
-        }
-    }
-    async updateByEnterprise(id:ObjectId,body:UpdateUserDto,token):Promise<Object|HttpException>{
-        try {
-            const decodedToken = this.jwtService.verify(token);
-    
-           const found=await this.UserModule.findOne({where:{_id:id,estado:'A'}})
-            if(!found) throw {err:true,message:'No se encontor este user'} 
-
-            if(decodedToken.enterprise_id!==found.enterprise_id.toString())  throw { err: true, message: 'unauthorized' }          
-
-            const res=await this.verifyAllUpdate(body,id);
-            if(res.err) throw res;
-
-            const update=await this.UserModule.updateOne({_id:id}, { $set: body });
-            if(update.modifiedCount===0) return new HttpException('No se logro actualizar',HttpStatus.NOT_FOUND); 
-           
-            return {err:false,message:"Se actualizo con éxito"}  
-
-           /*  let resUpdate=Object.assign(found,body);
-            return this.UserModule.save(resUpdate); */
-        
-        } catch (error) {
-            return new HttpException('Ocurrio un error al guardar '+error.message||error,HttpStatus.NOT_FOUND)   
-        }
-    }
-    async deleteByEnterprise(id: ObjectId,token): Promise<Object> {
-        try {
-
-            const decodedToken = this.jwtService.verify(token);
-            const found = await this.UserModule.findOne({ _id:id, estado: 'A' })
-            if (!found) throw { err: true, message: 'No se encontor esta empresa' }
-
-            if(decodedToken.enterprise_id!==found.enterprise_id.toString())  throw { err: true, message: 'unauthorized' }          
-
-            
-            const update = await this.UserModule.updateOne({ _id: id }, { $set: { estado: 'D' } });
-            if (!update) return new HttpException('ocurrio un error al eliminar', HttpStatus.NOT_FOUND);
-
-            /*  let resUpdate=Object.assign(found,{estado:'D'});
-             const resfinal= await this.UserModule.save(resUpdate); */
-
-            return { err: false, message: 'Enterprise eliminado' }
-        } catch (error) {
-            return new HttpException('Ocurrio un error al eliminar ' + error.message || error, HttpStatus.NOT_FOUND)
-        }
-
-    }
-}

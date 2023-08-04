@@ -5,10 +5,11 @@ import { ObjectId } from 'mongodb';
 import {PartialType} from '@nestjs/mapped-types'
 
 export class DocumentoByCustomerDTO {
+  @IsOptional()
   @IsString()
   customer_id: ObjectId;
 
-  @IsNotEmpty()
+  @IsOptional()
   enterprise_id: ObjectId;
 
   @IsString()

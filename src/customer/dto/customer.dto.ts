@@ -13,16 +13,26 @@ export class LoginCustomerDto {
   @Length(1, 20)
   password: string;
 }
+
+export class RegisterCustomerDto {
+ 
+   @IsNotEmpty()
+   enterprise_id: ObjectId;
+  
+   @IsNotEmpty()
+   @IsEmail()
+   @Length(1, 30)
+   email: string;
+ 
+   @IsNotEmpty()
+   @Length(1, 20)
+   password: string;
+ 
+ }
 export class CustomerDto {
  /*  @IsOptional()
   @Type(() => Number)
   id?: number; */
-
-  @IsNotEmpty()
-  enterprise_id: ObjectId;
-
-  @IsOptional()
-  user_id: ObjectId;
 
   @IsOptional()
   @Length(8, 8)
@@ -71,6 +81,6 @@ export class CustomerDto {
 
   @IsNotEmpty()
   @MaxLength(2)
-  estado?: string;
+  estado: string;
 }
 export class UpdateCustomerDto extends PartialType(CustomerDto) {}

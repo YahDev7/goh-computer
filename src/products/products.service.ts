@@ -204,7 +204,6 @@ export class ProductsService {
       ])
 
       if (res.length === 0) throw { err: true, message: "No hay productos a mostrar" }
-      console.log(res)
       return res
       /*    let res3 =await this.productssModule.find({estado:'A'}).limit(5)
          for (let i = 0; i < res3.length; i++) {

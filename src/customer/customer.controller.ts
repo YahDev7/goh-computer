@@ -1,6 +1,6 @@
 import { Body, Controller, Delete, Get, Param, ParseIntPipe, Post, Put, Req, UseGuards } from '@nestjs/common';
 import { CustomerService } from './customer.service';
-import { CustomerDto, LoginCustomerDto, UpdateCustomerDto } from './dto/customer.dto';
+import { CustomerDto, LoginCustomerDto, RegisterCustomerDto, UpdateCustomerDto } from './dto/customer.dto';
 import { ObjectId } from 'mongodb';
 import { LoginDto, RegisterDto } from './dto/login.dto';
 import { AuthGuard } from '@nestjs/passport';
@@ -18,16 +18,11 @@ export class CustomerController {
     async get(){
         return this.customerService.get()
     }
-
-  /*   @Get(':id')
-    async getId(@Param('id') id:ObjectId){
-        return this.customerService.getId(id)
-    } */
    
-    @Post()
+  /*   @Post()
     async post(@Body() body:CustomerDto){
         return this.customerService.post(body)
-    }
+    } */
 
     @Put(':id')
     async update(@Param('id', ParseIntPipe) id:number,@Body() body:UpdateCustomerDto){
@@ -39,7 +34,7 @@ export class CustomerController {
     }
 
     @Post('gohcomputer/register') //generalizar
-    register(@Body() body:CustomerDto){
+    register(@Body() body:RegisterCustomerDto){
         return this.customerService.post(body)
     }
     @Post('gohcomputer/login')
@@ -64,9 +59,10 @@ export class CustomerController {
         return this.customerService.getByEnterprise(id)
     } */
     
-    @Post()
-    async postEnterprise(@Body() body:CustomerDto){
-        return this.customerService.post(body)
+    @Post('/enterprise')
+    async postEnterprise(@Body() body:CustomerDto,@Req() req){
+        const token = req.headers.authorization.split(' ')[1];
+        return this.customerService.postEnterprise(token,body)
     }
     @Put(':id')
     async updateEnterpise(@Param('id', ParseIntPipe) id:number,@Body() body:UpdateCustomerDto){

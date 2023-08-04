@@ -18,10 +18,10 @@ export class SubcategoriaController {
         return this.subcategoriaService.get()
     }
 
-    @Get(':id')
+  /*   @Get(':id')
     async getId(@Param('id', ParseIntPipe) id:string){
         return this.subcategoriaService.getId(id)
-    }
+    } */
 
   /*   @Get('/enterprise/:id')
     async getByEnterprise(@Param('id') id:ObjectId){
@@ -49,9 +49,13 @@ export class SubcategoriaController {
 
     @Get('/enterprise')
     async getByEnterprise(@Req() req){
-        console.log(req)
         const token = req.headers.authorization.split(' ')[1];
         return this.subcategoriaService.getByEnterprise(token)
+    }
+    @Post('enterprise')
+    async postByEnterprise(@Body() body:SubCategoriaDto ,@Req() req){
+        const token = req.headers.authorization.split(' ')[1];
+        return this.subcategoriaService.postByEnterprise(body,token)
     }
 
     /* GOH */

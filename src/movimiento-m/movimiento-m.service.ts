@@ -50,11 +50,9 @@ export class MovimientoMService {
     async getByEnterprise(token): Promise<MovimientoM[] | HttpException> {
         try {
             const decodedToken = this.jwtService.verify(token);
-            console.log(decodedToken)
             let { enterprise_id } = decodedToken
 
             let res = await this.EnterpriseService.getId(enterprise_id);
-            console.log(res)
 
             if (res instanceof HttpException) throw res
 
@@ -108,6 +106,44 @@ export class MovimientoMService {
           return new HttpException('Ocurrio un error al guardar' + error.message || error, HttpStatus.NOT_FOUND);
         }
       }
+
+      async saveVentaByUserByEnterprise(token,body: MovimientoMDto) {
+        try {
+
+            const decodedToken = this.jwtService.verify(token);
+            let {enterprise_id,usuario_id} =decodedToken;
+            enterprise_id = new ObjectId(enterprise_id)
+            usuario_id = new ObjectId(usuario_id)
+
+            let { documento_id } = body
+            documento_id = new ObjectId(documento_id)
+
+           
+
+         //   let { user_id, customer_id, enterprise_id } = body
+
+            let resEnterprise = await this.EnterpriseService.getId(enterprise_id)
+            if (resEnterprise instanceof HttpException) throw resEnterprise
+
+           /*  let resuser = await this.UserService.getId(usuario_id)
+            if (resuser instanceof HttpException) throw resuser */
+
+           
+            const save = await this.MovimientoModule.create({ ...body, documento_id,enterprise_id });
+            if (!save) throw { err: true, message: 'No se guardardo' }
+
+
+            const update = await this.DocumentoService.updateEstado(documento_id);
+            if(update.err) throw update.message
+
+            return { err: false, message: "Se guardo con éxito",data:save._id }
+
+            /*  return {err:false,message:"Se guardo con éxito"} */
+        } catch (error) {
+            console.log(error)
+            return new HttpException('Ocurrio un error al guardar ' + error.message || error, HttpStatus.NOT_FOUND);
+        }
+    }
 
 
 

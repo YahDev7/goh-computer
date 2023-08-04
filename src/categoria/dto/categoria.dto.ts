@@ -3,22 +3,21 @@ import {PartialType} from '@nestjs/mapped-types'
 import { ObjectId } from 'mongodb';
 export class CategoriaDto {
 
-  @IsString()
-  @IsNotEmpty()
+//  @IsNotEmpty()
   usuario_id: ObjectId;
 
-  @IsString()
-  @IsNotEmpty()
   enterprise_id: ObjectId;
 
   @IsString()
-  @MaxLength(100)
+//  @MaxLength(100)
   nombre: string;
 
+  @IsOptional()
   @IsString()
   @MaxLength(70)
   imagen: string;
  
+  @IsOptional()
   @IsString()
   @MaxLength(500)
   url_imagen: string;

@@ -22,11 +22,24 @@ export class StructureToken {
   exp:number;
 }
 
-export class CreateUserDto {
+
+export class RegisterUserDto {
   @IsNotEmpty()
   @IsString()
   enterprise_id: ObjectId;
 
+  @IsNotEmpty()
+  @IsEmail()
+  email: string;
+
+  @IsNotEmpty()
+  @IsString()
+  password: string;
+}
+
+
+export class CreateUserDto {
+  
   @IsNotEmpty()
   @IsString()
   nombre: string;
