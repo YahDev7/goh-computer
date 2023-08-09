@@ -21,7 +21,7 @@ export class Categoria{
   @Prop({maxlength: 500, unique:false })
   url_imagen: string;
 
-  @Prop({ required: true, maxlength: 2 })
+  @Prop({ required: true, maxlength: 1 })
   estado: string;
 }
 export const CategoriaSchema = SchemaFactory.createForClass(Categoria);

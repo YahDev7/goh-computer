@@ -108,7 +108,7 @@ export class CustomerService {
             return new HttpException('Ocurrio un error al guardar ' + error.message || error, HttpStatus.NOT_FOUND)
         }
     }
-    async update(id: number, body: UpdateCustomerDto): Promise<Customer | HttpException | Object> {
+/*     async update(id: ObjectId, body: UpdateCustomerDto): Promise<Customer | HttpException | Object> {
         try {
 
             const found = await this.CustomerModule.findOne({ where: { id, estado: 'A' } })
@@ -124,7 +124,7 @@ export class CustomerService {
         } catch (error) {
             return new HttpException('Ocurrio un error al guardar ' + error.message || error, HttpStatus.NOT_FOUND)
         }
-    }
+    } */
 
     async delete(id: number): Promise<Object> {
         try {
@@ -157,6 +157,7 @@ export class CustomerService {
                 nombre: finduser.nombres,
                 enterprise_id: finduser.enterprise_id
             }
+
             let token = this.jwtService.sign(payload)
             let { _id, enterprise_id, nombres, ...user } = finduser
             const data = {
@@ -197,6 +198,8 @@ export class CustomerService {
             if (!found) throw { err: true, message: 'No se encontor este customer' }
             return found;
         } catch (error) {
+            console.log(error)
+
             return new HttpException('Ocurrio un error al buscar por id cutomer ' + error.message || error, HttpStatus.NOT_FOUND)
         }
     }
@@ -219,32 +222,50 @@ export class CustomerService {
             return new HttpException('Ocurrio un error al guardar ' + error.message || error, HttpStatus.NOT_FOUND)
         }
     }
-    async updateEnterprise(id: number, body: UpdateCustomerDto): Promise<Customer | HttpException | Object> {
+    async updateByEnterprise(id: ObjectId, body: UpdateCustomerDto, token): Promise<Object | HttpException> {
         try {
+            const decodedToken = this.jwtService.verify(token);
 
-            const found = await this.CustomerModule.findOne({ where: { id, estado: 'A' } })
-            if (!found) throw { err: true, message: 'No se encontor esta empresa' }
-            const res = await this.verifyAllUpdate(body, id);
-            if (res.err) throw res;
+            const found = await this.CustomerModule.findOne({ _id: id, estado: 'A'  })
+            if (!found) throw { err: true, message: 'No se encontor este customer' }
 
+            if (decodedToken.enterprise_id !== found.enterprise_id.toString()) throw { err: true, message: 'unauthorized' }
+
+           /* 
+            QUE EL DNI NO ESTE SIENDO UTILIZADO POR OTOR A EXCEPCION DEL MISMO
+           const res = await this.verifyAllUpdate(body, id);
+            if (res.err) throw res; */ 
+  
             const update = await this.CustomerModule.updateOne({ _id: id }, { $set: body });
+            console.log(update)
             if (update.modifiedCount === 0) return new HttpException('No se logro actualizar', HttpStatus.NOT_FOUND);
-
             return { err: false, message: "Se actualizo con éxito" }
+
+            /*  let resUpdate=Object.assign(found,body);
+             return this.UserModule.save(resUpdate); */
 
         } catch (error) {
             return new HttpException('Ocurrio un error al guardar ' + error.message || error, HttpStatus.NOT_FOUND)
         }
     }
 
-    async deleteEnterprise(id: number): Promise<Object> {
+    async deleteByEnterprise(id: ObjectId, token): Promise<Object> {
         try {
+            id=new ObjectId(id)
+            const decodedToken = this.jwtService.verify(token);
+           /*  const found = await this.UserModule.findOne({ _id: id, estado: 'A' })
+            console.log(found) */
 
-            const found = await this.CustomerModule.findOne({ where: { id, estado: 'A' } })
-            if (!found) throw { err: true, message: 'No se encontor esta empresa' }
+            //if (!found) throw { err: true, message: 'No se encontor este usuario' }
+
+           // if (decodedToken.enterprise_id !== found.enterprise_id.toString()) throw { err: true, message: 'unauthorized' }
+
 
             const update = await this.CustomerModule.updateOne({ _id: id }, { $set: { estado: 'D' } });
             if (!update) return new HttpException('ocurrio un error al eliminar', HttpStatus.NOT_FOUND);
+
+            /*  let resUpdate=Object.assign(found,{estado:'D'});
+             const resfinal= await this.UserModule.save(resUpdate); */
 
             return { err: false, message: 'Enterprise eliminado' }
         } catch (error) {

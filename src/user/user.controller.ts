@@ -15,11 +15,11 @@ export class UserController {
         private userService:UserService
     ){}
     
-    @RolesDecorator(Roles.ADMIN)
+   /*  @RolesDecorator(Roles.ADMIN)
     @Get()
     async get(){
         return this.userService.get()
-    }
+    } */
 
    /* @RolesDecorator(Roles.ADMIN)
      @Get(':id')
@@ -68,6 +68,12 @@ export class UserController {
         return this.userService.getByEnterprise(token)
     }
 
+    @Get('enterprise/:id')
+    async getByEnterpriseId(@Param('id') id:ObjectId,@Req() req){
+        const token = req.headers.authorization.split(' ')[1];
+        return this.userService.getByEnterpriseId(id,token)
+    }
+
     @RolesDecorator(Roles.ADMIN)
     @Post('/enterprise')
     async postByEnterprise(@Body() body:CreateUserDto,@Req() req){
@@ -75,15 +81,15 @@ export class UserController {
         return this.userService.postByEnterprise(body,token)
     }
 
-    @RolesDecorator(Roles.ADMINCUSTOMER)
-    @Put(':id/enterprise')
+    @RolesDecorator(Roles.ADMIN)
+    @Put('/enterprise/:id')
     async updateByEnterprise(@Param('id') id:ObjectId,@Body() body:UpdateUserDto,@Req() req){
         const token = req.headers.authorization.split(' ')[1];
         return this.userService.updateByEnterprise(id,body,token)
     }
 
-    @RolesDecorator(Roles.ADMINCUSTOMER)
-    @Delete(':id/enterprise')
+//    @RolesDecorator(Roles.ADMINCUSTOMER)
+    @Delete('enterprise/:id')
     async deleteByEnterprise(@Param('id') id:ObjectId,@Req() req){
         const token = req.headers.authorization.split(' ')[1];
         return this.userService.deleteByEnterprise(id,token)

@@ -24,10 +24,10 @@ export class CustomerController {
         return this.customerService.post(body)
     } */
 
-    @Put(':id')
+   /*  @Put(':id')
     async update(@Param('id', ParseIntPipe) id:number,@Body() body:UpdateCustomerDto){
         return this.customerService.update(id,body)
-    }
+    } */
     @Delete(':id')
     async delete(@Param('id', ParseIntPipe) id:number){
         return this.customerService.delete(id)
@@ -54,23 +54,27 @@ export class CustomerController {
     }
 
 
-  /*   @Get(':id/enterprise')
-    async getByIdEnterprise(@Param('id') id:ObjectId){
-        return this.customerService.getByEnterprise(id)
-    } */
+     @Get('enterprise/:id')
+    async getByEnterpriseId(@Param('id') id:ObjectId){
+        console.log(id)
+        return this.customerService.getIdEnterprise(id)
+    } 
     
     @Post('/enterprise')
     async postEnterprise(@Body() body:CustomerDto,@Req() req){
         const token = req.headers.authorization.split(' ')[1];
         return this.customerService.postEnterprise(token,body)
     }
-    @Put(':id')
-    async updateEnterpise(@Param('id', ParseIntPipe) id:number,@Body() body:UpdateCustomerDto){
-        return this.customerService.update(id,body)
+    @Put('enterprise/:id')
+    async updateEnterpise(@Param('id') id:ObjectId,@Body() body:UpdateCustomerDto,@Req() req){
+        const token = req.headers.authorization.split(' ')[1];
+
+        return this.customerService.updateByEnterprise(id,body,token)
     }
-    @Delete(':id')
-    async deleteEnterpise(@Param('id', ParseIntPipe) id:number){
-        return this.customerService.delete(id)
+    @Delete('enterprise/:id')
+    async deleteEnterpise(@Param('id') id:ObjectId,@Req() req){
+        const token = req.headers.authorization.split(' ')[1];
+        return this.customerService.deleteByEnterprise(id,token)
     }
 
 

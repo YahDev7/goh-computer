@@ -120,7 +120,6 @@ export class DocumentoService {
 
 
             const save = await this.DocumentoModule.create(body);
-            console.log(save)
             if (!save) throw { err: true, message: 'No se guardardo' }
             return save
             /*  return {err:false,message:"Se guardo con éxito"} */
@@ -169,6 +168,7 @@ export class DocumentoService {
             return { err: false, message: "Guardado con exito", data: save._id }
             /*   return {err:false,message:"Se guardo con éxito"} */
         } catch (error) {
+            console.log(error)
             return new HttpException('Ocurrio un error al guardar ' + error.message || error, HttpStatus.NOT_FOUND);
         }
     }
@@ -211,7 +211,6 @@ export class DocumentoService {
     async getByEnterprise(token /* enterprise_id: ObjectId */) {
         try {
             const decodedToken = this.jwtService.verify(token);
-            console.log(decodedToken)
             let { enterprise_id } = decodedToken
             let resEnterprise = await this.EnterpriseService.getId(enterprise_id)
             if (resEnterprise instanceof HttpException) throw resEnterprise

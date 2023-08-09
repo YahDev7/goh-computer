@@ -19,23 +19,23 @@ export class CategoriaController {
         return this.categoriaService.getId(id)
     } */
 
-    @Get('/enterprise/:id')
+   /*  @Get('/enterprise/:id')
     async getByIdByEnterprise(@Param('id') id:ObjectId){
         return this.categoriaService.getByEnterprise(id)
-    }
-    @Post()
+    } */
+   /*  @Post()
     async post(@Body() body:CategoriaDto){
         return this.categoriaService.post(body)
-    }
+    } */
 
-    @Put(':id')
+ /*    @Put(':id')
     async update(@Param('id', ParseIntPipe) id:number,@Body() body:UpdateCategoriaDto){
         return this.categoriaService.update(id,body)
-    }
-    @Delete(':id')
+    } */
+  /*   @Delete(':id')
     async delete(@Param('id') id){
         return this.categoriaService.delete(id)
-    }
+    } */
     @Delete('/deleteimg/:id')
     async deleteimg(@Param('id') id){
         return this.categoriaService.deleteImg(id)
@@ -64,10 +64,25 @@ export class CategoriaController {
 
         return this.categoriaService.getByEnterprise(token)
     }
+    @Get('enterprise/:id')
+    async GetByEnterpriseById(@Param('id') id:ObjectId,@Req() req){
+        const token = req.headers.authorization.split(' ')[1];
+        return this.categoriaService.getByEnterpriseId(id,token)
+    }
     @Post('enterprise')
     async postByEnterprise(@Body() body:CategoriaDto ,@Req() req){
         const token = req.headers.authorization.split(' ')[1];
         return this.categoriaService.postByEnterprise(body,token)
     }
-    
+    @Put('enterprise/:id')
+    async putByEnterprise(@Param('id') id:ObjectId,@Body() body:CategoriaDto ,@Req() req){
+        const token = req.headers.authorization.split(' ')[1];
+        return this.categoriaService.updateByEnterprise(id,body,token)
+    }
+    @Delete('enterprise/:id')
+    async delete(@Param('id') id:ObjectId,@Req() req){
+        const token = req.headers.authorization.split(' ')[1];
+        console.log(token)
+        return this.categoriaService.deleteByEnterprise(token,id)
+    }
 }

@@ -47,16 +47,7 @@ export class SubcategoriaController {
     }
 
 
-    @Get('/enterprise')
-    async getByEnterprise(@Req() req){
-        const token = req.headers.authorization.split(' ')[1];
-        return this.subcategoriaService.getByEnterprise(token)
-    }
-    @Post('enterprise')
-    async postByEnterprise(@Body() body:SubCategoriaDto ,@Req() req){
-        const token = req.headers.authorization.split(' ')[1];
-        return this.subcategoriaService.postByEnterprise(body,token)
-    }
+  
 
     /* GOH */
     @Get('/gohcomputer/bycategoria/:idcat')
@@ -64,4 +55,31 @@ export class SubcategoriaController {
         return this.subcategoriaService.getBycat(idcat)
     }
   
+
+    @Get('/enterprise')
+    async getByEnterprise(@Req() req){
+        const token = req.headers.authorization.split(' ')[1];
+        return this.subcategoriaService.getByEnterprise(token)
+    }
+
+    @Get('/enterprise/:id')
+    async getByEnterpriseById(@Param('id') id,@Req() req){
+        const token = req.headers.authorization.split(' ')[1];
+        return this.subcategoriaService.getByEnterpriseId(id,token)
+    }
+    @Post('enterprise')
+    async postByEnterprise(@Body() body:SubCategoriaDto ,@Req() req){
+        const token = req.headers.authorization.split(' ')[1];
+        return this.subcategoriaService.postByEnterprise(body,token)
+    }
+    @Put('/enterprise/:id')
+    async updateByEnterprise(@Param('id') id:ObjectId,@Body() body:UpdateSubCategoriaDto,@Req() req){
+        const token = req.headers.authorization.split(' ')[1];
+        return this.subcategoriaService.updateByEnterpriseId(id,body,token)
+    }
+    @Delete('enterprise/:id')
+    async deleteByEnterprise(@Param('id') id:ObjectId,@Req() req){
+        const token = req.headers.authorization.split(' ')[1];
+        return this.subcategoriaService.deleteByEnterprise(id,token)
+    } 
 }

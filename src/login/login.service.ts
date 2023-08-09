@@ -13,7 +13,6 @@ export class LoginService {
    /*  private jwtService:JwtService */
    ){}
 
-    
     async register(body:RegisterDto){
         const {password}=body
         let passhash=await hash(password,10)

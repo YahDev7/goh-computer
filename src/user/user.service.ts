@@ -199,17 +199,36 @@ export class UserService {
             let { enterprise_id, usuario_id } = decodedToken
             enterprise_id = new ObjectId(enterprise_id)
             const found = await this.UserModule.findOne({ _id: usuario_id, estado: 'A' })
-
             if (!found) throw { err: true, message: 'error al buscar este user' }
             if (decodedToken.enterprise_id !== found.enterprise_id.toString()) throw { err: true, message: 'unauthorizedr' }
 
-            const users = await this.UserModule.find()
+            const users = await this.UserModule.find({estado: 'A' })
 
             return users;
         } catch (error) {
             return new HttpException('Ocurrio un error ' + error.message || error, HttpStatus.NOT_FOUND)
         }
     }
+
+    async getByEnterpriseId(id:ObjectId,token): Promise<User | HttpException> {
+        try {
+            const decodedToken = this.jwtService.verify(token);
+            let { enterprise_id, usuario_id } = decodedToken
+            enterprise_id = new ObjectId(enterprise_id)
+            const found = await this.UserModule.findOne({ _id: usuario_id, estado: 'A' })
+
+            if (!found) throw { err: true, message: 'error al buscar este user' }
+            if (decodedToken.enterprise_id !== found.enterprise_id.toString()) throw { err: true, message: 'unauthorizedr' }
+
+            const user = await this.UserModule.findOne({_id:id,enterprise_id})
+
+            return user;
+        } catch (error) {
+            return new HttpException('Ocurrio un error ' + error.message || error, HttpStatus.NOT_FOUND)
+        }
+    }
+
+
     async postByEnterprise(body: CreateUserDto, token): Promise<User | Object> {
         try {
             const {password } = body
@@ -227,8 +246,9 @@ export class UserService {
             let passhash = await hash(password, 10)
 
             let newbody = { ...body, password: passhash,enterprise_id }
-            const insert = this.UserModule.create(newbody);
-            if (!insert) return new HttpException('Ocurrio un error al guardar ', HttpStatus.NOT_FOUND)
+            const insert = await this.UserModule.create(newbody);
+            if (!insert) throw { err: true, message: 'No se guardardo el usuario' }
+            console.log(insert)
             //throw new   NotFoundExeption("no exite bro, para obtener un 404")
             return {err:false,message:"se creo con exito"}
             //return {err:false,message:"Se guardo con éxito"}
@@ -245,17 +265,19 @@ export class UserService {
         try {
             const decodedToken = this.jwtService.verify(token);
 
-            const found = await this.UserModule.findOne({ where: { _id: id, estado: 'A' } })
+            const found = await this.UserModule.findOne({ _id: id, estado: 'A'  })
             if (!found) throw { err: true, message: 'No se encontor este user' }
 
             if (decodedToken.enterprise_id !== found.enterprise_id.toString()) throw { err: true, message: 'unauthorized' }
 
-            const res = await this.verifyAllUpdate(body, id);
-            if (res.err) throw res;
-
+           /* 
+            QUE EL DNI NO ESTE SIENDO UTILIZADO POR OTOR A EXCEPCION DEL MISMO
+           const res = await this.verifyAllUpdate(body, id);
+            if (res.err) throw res; */ 
+  
             const update = await this.UserModule.updateOne({ _id: id }, { $set: body });
+            console.log(update)
             if (update.modifiedCount === 0) return new HttpException('No se logro actualizar', HttpStatus.NOT_FOUND);
-
             return { err: false, message: "Se actualizo con éxito" }
 
             /*  let resUpdate=Object.assign(found,body);
@@ -267,10 +289,13 @@ export class UserService {
     }
     async deleteByEnterprise(id: ObjectId, token): Promise<Object> {
         try {
-
+            id=new ObjectId(id)
             const decodedToken = this.jwtService.verify(token);
-            const found = await this.UserModule.findOne({ _id: id, estado: 'A' })
-            if (!found) throw { err: true, message: 'No se encontor esta empresa' }
+            console.log(id)
+            const found = await this.UserModule.findOne({ _id: id, estado: 'D' })
+            console.log(found)
+
+            if (!found) throw { err: true, message: 'No se encontor este usuario' }
 
             if (decodedToken.enterprise_id !== found.enterprise_id.toString()) throw { err: true, message: 'unauthorized' }
 

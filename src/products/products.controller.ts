@@ -1,4 +1,4 @@
-import { Body, Controller,Get, Post,Put,Param,UseGuards, Delete } from '@nestjs/common';
+import { Body, Controller,Get, Post,Put,Param,UseGuards, Delete, Req } from '@nestjs/common';
 import { ProductsService } from './products.service';
 import { ProductDto, UpdateProductDto } from './dto/products.dto';
 import { ObjectId } from 'mongodb';
@@ -15,21 +15,18 @@ export class ProductsController {
         private productsService:ProductsService
     ){}
 
+    @Public()
     @Get()
     get(){
         return this.productsService.get()
     }
 
-    @Public()
+    /* @Public()
     @Get(':id')
     getId(@Param('id') id:string ){
         return this.productsService.getId(id)
-    }
-    @Public()
-    @Get('/enterprise/:id')
-    async getByEnterprise(@Param('id') id:ObjectId){
-        return this.productsService.getByEnterprise(id)
-    }
+    } */
+   
     @Post()
     post(@Body() body/* :ProductDto */){
         return this.productsService.save(body)
@@ -39,10 +36,10 @@ export class ProductsController {
     update(@Param('id') id:number , @Body() body/* :UpdateProductDto */){ //crear nuevamente para poder utilizar ese DTO falla en valdiar
         return this.productsService.update(id,body)
     }
-    @Delete(':id')
+  /*   @Delete(':id')
     delete(@Param('id') id:string){
         return this.productsService.delete(id)
-    }
+    } */
 
 
 
@@ -95,5 +92,18 @@ export class ProductsController {
     @Post('/enterprise')
     postEnterprise(@Body() body:ProductDto){
         return this.productsService.saveEnterprise(body)
+    }
+
+    @Get('/enterprise/:id')
+    async getByEnterprise(@Param('id') id:ObjectId,@Req() req){
+        const token = req.headers.authorization.split(' ')[1];
+        return this.productsService.getByEnterpriseById(id,token)
+    }
+
+    @Delete('/enterprise/:id')
+    async DeleteByEnterprise(@Param('id') id:ObjectId,@Req() req){
+        const token = req.headers.authorization.split(' ')[1];
+        return this.productsService.delete(id,token)
+
     }
 }

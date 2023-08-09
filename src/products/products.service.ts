@@ -8,11 +8,15 @@ import { ProductDto, UpdateProductDto } from './dto/products.dto';
 import { EnterpriseService } from 'src/enterprise/enterprise.service';
 import { SubcategoriaService } from 'src/subcategoria/subcategoria.service';
 import { ObjectId } from 'mongodb';
+import { JwtService } from '@nestjs/jwt';
+import { UserService } from 'src/user/user.service';
 
 @Injectable()
 export class ProductsService {
   constructor(
     @InjectModel(Products.name) private productssModule: Model<ProductsDocument>,
+    private jwtService: JwtService,
+    private UserService: UserService,
     private EnterpriseService: EnterpriseService,
     private SubCategoriaService: SubcategoriaService,
 
@@ -42,11 +46,11 @@ export class ProductsService {
       return new HttpException('Ocurrio un error al listar' + error, HttpStatus.NOT_FOUND)
     }
   }
+
   async getByEnterprise(enterprise_id: ObjectId): Promise<Products[] | HttpException> {
     try {
       let res = await this.EnterpriseService.getId(enterprise_id);
       if (res instanceof HttpException) throw res
-      // if(res) throw {err:true,message:'No se encontraron subcategorias de esta empresa'} 
 
       const found = await this.productssModule.find({ enterprise_id, estado: 'A' })
       if (found.length === 0) throw { err: true, message: 'No se encontraron subcategorias de esta empresa' }
@@ -55,6 +59,32 @@ export class ProductsService {
       return new HttpException('Ocurrio un error al buscar por id ' + error.message || error, HttpStatus.NOT_FOUND)
     }
   }
+
+
+
+  async getByEnterpriseById(idprod: ObjectId,token): Promise<Products | HttpException> {
+    try {
+      const decodedToken = this.jwtService.verify(token);
+      let { enterprise_id, usuario_id } = decodedToken
+      enterprise_id = new ObjectId(enterprise_id)
+      let res = await this.EnterpriseService.getId(enterprise_id);
+      if (res instanceof HttpException) throw res
+
+      idprod= new ObjectId(idprod)
+
+      console.log(idprod,enterprise_id)
+      // if(res) throw {err:true,message:'No se encontraron subcategorias de esta empresa'} 
+
+      const found = await this.productssModule.findOne({_id:idprod, enterprise_id, estado: 'A' })
+      console.log(found)
+      if (!found) throw { err: true, message: 'No se encontro el producto de esta empresa' }
+      return found;
+    } catch (error) {
+      return new HttpException('Ocurrio un error al buscar por id ' + error.message || error, HttpStatus.NOT_FOUND)
+    }
+  }
+
+
   async save(body/* : ProductDto */): Promise<Products | Object> {
     try {
       let { subcategoria_id } = body
@@ -134,7 +164,7 @@ export class ProductsService {
       return new HttpException('Ocurrio un error al update, ' + error.message || error, HttpStatus.NOT_FOUND);
     }
   }
-  async delete(id: string) {
+  async delete(id: ObjectId,token) {
     try {
       let found = await this.productssModule.find({ _id: id });
       if (!found) return new HttpException('No se encontro registro a eliminar', HttpStatus.NOT_FOUND);
@@ -145,7 +175,6 @@ export class ProductsService {
 
       const update = await this.productssModule.updateOne({ _id: id }, { $set: { estado: 'D' } });
       if (!update) return new HttpException('ocurrio un error al eliminar', HttpStatus.NOT_FOUND);
-
       return { err: false, message: "Se elimino con éxito" }
     } catch (error) {
       return new HttpException('Ocurrio un error al eliminar, VERIFIQUE', HttpStatus.NOT_FOUND);
@@ -569,7 +598,8 @@ export class ProductsService {
       return save
       /* return {err:false,message:"Se guardo con éxito"} */
     } catch (error) {
-      return new HttpException('Ocurrio un error al guardar' + error.message || error, HttpStatus.NOT_FOUND);
+            console.log(error)
+            return new HttpException('Ocurrio un error al guardar' + error.message || error, HttpStatus.NOT_FOUND);
     }
   }
 

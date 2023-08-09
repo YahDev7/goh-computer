@@ -135,6 +135,24 @@ export class CategoriaService {
 
     }
 
+    async getByEnterpriseId(id:ObjectId,token): Promise<Categoria | HttpException> {
+        try {
+            const decodedToken = this.jwtService.verify(token);
+            let { enterprise_id, usuario_id } = decodedToken
+            enterprise_id = new ObjectId(enterprise_id)
+
+            //const found = await this.CategoriaModule.findOne({ _id: usuario_id, estado: 'A' })
+
+            //if (!found) throw { err: true, message: 'error al buscar este user' }
+            //if (decodedToken.enterprise_id !== found.enterprise_id.toString()) throw { err: true, message: 'unauthorizedr' }
+
+            const cat = await this.CategoriaModule.findOne({_id:id,enterprise_id,estado:"A"})
+            return cat;
+
+        } catch (error) {
+            return new HttpException('Ocurrio un error ' + error.message || error, HttpStatus.NOT_FOUND)
+        }
+    }
 
     async postByEnterprise(body: CategoriaDto,token): Promise<Categoria | Object> {
         try {
@@ -153,5 +171,35 @@ export class CategoriaService {
         } catch (error) {
             return new HttpException('Ocurrio un error al guardar ' + error.message || error, HttpStatus.NOT_FOUND)
         }
+    }
+
+    async updateByEnterprise(id: ObjectId, body: CategoriaDto, token): Promise<Object | HttpException> {
+        try {
+            const decodedToken = this.jwtService.verify(token);
+  
+            const update = await this.CategoriaModule.updateOne({ _id: id }, { $set: body });
+            console.log(update)
+            if (update.modifiedCount === 0) return new HttpException('No se logro actualizar', HttpStatus.NOT_FOUND);
+            return { err: false, message: "Se actualizo con éxito" }
+
+        } catch (error) {
+            return new HttpException('Ocurrio un error al guardar ' + error.message || error, HttpStatus.NOT_FOUND)
+        }
+    }
+
+    async deleteByEnterprise(id: ObjectId, token): Promise<Object|HttpException> {
+        try {
+          //  id=new ObjectId(id)
+          //  const decodedToken = this.jwtService.verify(token);
+           
+          const update = await this.CategoriaModule.updateOne({ _id: id }, { $set: {estado:'D'} });
+          console.log(update)
+          if (update.modifiedCount === 0) return new HttpException('No se logro actualizar', HttpStatus.NOT_FOUND);
+          return { err: false, message: "Se actualizo con éxito" }
+        } catch (error) {
+            console.log(error)
+            return new HttpException('Ocurrio un error al eliminar ' + error.message || error, HttpStatus.NOT_FOUND)
+        }
+
     }
 }
