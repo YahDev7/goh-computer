@@ -49,6 +49,12 @@ export class DocumentoController {
         return this.DocumentoService.saveVentaByCustomerLogin(body)
     }
 
+    @Post('enterprise')
+    postAdmin(@Body() body,@Req() req/* :DocumentoByCustomerDTO */){
+        const token = req.headers.authorization.split(' ')[1];
+
+        return this.DocumentoService.saveVentaAdmin(body,token)
+    }
   /*   @Get('gohcomputer/getone/:id')
     GetById(@Param('id') id:ObjectId /* ){
         return this.DocumentoService.getByVenta_id(id)

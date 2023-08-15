@@ -72,8 +72,8 @@ export class DocumentoService {
         try {
             const decodedToken = this.jwtService.verify(token);
             let { enterprise_id } = decodedToken
-            enterprise_id=new ObjectId(enterprise_id)
-            const res = await this.DocumentoModule.findOne({ _id: id ,enterprise_id, tipo_compra_venta: 'VENTA' });
+            enterprise_id = new ObjectId(enterprise_id)
+            const res = await this.DocumentoModule.findOne({ _id: id, enterprise_id, tipo_compra_venta: 'VENTA' });
             if (!res) return new HttpException('No hay Documentos que mostrar', HttpStatus.NOT_FOUND)
             return res
         } catch (error) {
@@ -94,17 +94,17 @@ export class DocumentoService {
 
 
     //ENTERPRISES
-    async saveVentaByUserByEnterprise(token,body: DocumentoDTO) {
+    async saveVentaByUserByEnterprise(token, body: DocumentoDTO) {
         try {
 
             const decodedToken = this.jwtService.verify(token);
-            let {enterprise_id,usuario_id} =decodedToken;
+            let { enterprise_id, usuario_id } = decodedToken;
             enterprise_id = new ObjectId(enterprise_id)
             usuario_id = new ObjectId(usuario_id)
 
-            let {customer_id } = body
+            let { customer_id } = body
 
-         //   let { user_id, customer_id, enterprise_id } = body
+            //   let { user_id, customer_id, enterprise_id } = body
 
             let resEnterprise = await this.EnterpriseService.getId(enterprise_id)
             if (resEnterprise instanceof HttpException) throw resEnterprise
@@ -112,7 +112,7 @@ export class DocumentoService {
             let resuser = await this.UserService.getId(usuario_id)
             if (resuser instanceof HttpException) throw resuser
 
-            if(customer_id){
+            if (customer_id) {
                 let rescustomer = await this.CustomerService.getId(customer_id)
                 if (rescustomer instanceof HttpException) throw rescustomer
             }
@@ -130,7 +130,7 @@ export class DocumentoService {
 
     async saveVentaByCustomerLogin(body/* : DocumentoByCustomerDTO */) {
         try {
-            const { tokcarr, tokensession, subtotal,dataCustomer,metodo_pago } = body
+            const { tokcarr, tokensession, subtotal, dataCustomer, metodo_pago } = body
             const decodedTokencarr = this.jwtService.verify(tokcarr);
             const decodedToken = this.jwtService.verify(tokensession);
 
@@ -162,6 +162,34 @@ export class DocumentoService {
 
 
             const save = await this.DocumentoModule.create({ ...doc });
+
+
+            if (!save) throw { err: true, message: 'No se guardardo' }
+            return { err: false, message: "Guardado con exito", data: save._id }
+            /*   return {err:false,message:"Se guardo con éxito"} */
+        } catch (error) {
+            console.log(error)
+            return new HttpException('Ocurrio un error al guardar ' + error.message || error, HttpStatus.NOT_FOUND);
+        }
+    }
+
+
+    async saveVentaAdmin(body, token/* : DocumentoByCustomerDTO */) {
+        try {
+            //   const {subtotal,dataCustomer,metodo_pago } = body
+            const decodedToken = this.jwtService.verify(token);
+            let { enterprise_id } = decodedToken
+
+            let { customer_id } = body
+            let resEnterprise = await this.EnterpriseService.getId(enterprise_id)
+            if (resEnterprise instanceof HttpException) throw resEnterprise
+            body = {
+                ...body,
+                customer_id: new ObjectId(customer_id),
+                enterprise_id: new ObjectId(enterprise_id),
+
+            }
+            const save = await this.DocumentoModule.create(body);
 
 
             if (!save) throw { err: true, message: 'No se guardardo' }
@@ -215,9 +243,9 @@ export class DocumentoService {
             let resEnterprise = await this.EnterpriseService.getId(enterprise_id)
             if (resEnterprise instanceof HttpException) throw resEnterprise
 
-            enterprise_id =new ObjectId(enterprise_id)
+            enterprise_id = new ObjectId(enterprise_id)
 
-            const res = await this.DocumentoModule.find({enterprise_id/* , customer_id:new ObjectId(id)  */});
+            const res = await this.DocumentoModule.find({ enterprise_id/* , customer_id:new ObjectId(id)  */ });
             if (res.length === 0) return new HttpException('No hay Documentos que mostrar', HttpStatus.NOT_FOUND)
             return res
         } catch (error) {
@@ -274,14 +302,14 @@ export class DocumentoService {
         }
     }
 
-  async updateEstado(id: ObjectId) {
+    async updateEstado(id: ObjectId) {
         try {
-            const res = await this.DocumentoModule.updateOne({ _id: id }, { $set: { estado: 'CONFIRMANDO' }} );
+            const res = await this.DocumentoModule.updateOne({ _id: id }, { $set: { estado: 'CONFIRMANDO' } });
 
-            if (res.modifiedCount===0) return  { err: true, message: "Ocurrio un error al cancelar el documento" }
+            if (res.modifiedCount === 0) return { err: true, message: "Ocurrio un error al cancelar el documento" }
             return { err: false, message: "CANCELADO" }
         } catch (error) {
-            return  error
+            return error
         }
     }
 
