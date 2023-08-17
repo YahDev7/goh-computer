@@ -70,6 +70,7 @@ export class DocumentoService {
 
     async getByEnterpriseVenta_id(id: ObjectId, token) {
         try {
+            id= new ObjectId(id)
             const decodedToken = this.jwtService.verify(token);
             let { enterprise_id } = decodedToken
             enterprise_id = new ObjectId(enterprise_id)
@@ -77,7 +78,7 @@ export class DocumentoService {
             if (!res) return new HttpException('No hay Documentos que mostrar', HttpStatus.NOT_FOUND)
             return res
         } catch (error) {
-            return new HttpException('Ocurrio un error al listar', HttpStatus.NOT_FOUND)
+            return new HttpException('Ocurrio un error al listar'+error, HttpStatus.NOT_FOUND)
         }
     }
 
