@@ -10,6 +10,7 @@ import { DocumentoByCustomerDTO, DocumentoCompraDTO, DocumentoDTO } from './dto/
 import { UserService } from 'src/user/user.service';
 import { ProviderService } from 'src/provider/provider.service';
 import { JwtService } from '@nestjs/jwt';
+import { number } from 'joi';
 
 @Injectable()
 export class DocumentoService {
@@ -68,6 +69,19 @@ export class DocumentoService {
         }
     }
 
+    async getByEnterpriseWebVenta_id(id: ObjectId, token) {
+        try {
+            id= new ObjectId(id)
+            const decodedToken = this.jwtService.verify(token);
+            let { enterprise_id } = decodedToken
+            enterprise_id = new ObjectId(enterprise_id)
+            const res = await this.DocumentoModule.findOne({ _id: id, enterprise_id, tipo_compra_venta: 'VENTA' });
+            if (!res) return new HttpException('No hay Documentos que mostrar', HttpStatus.NOT_FOUND)
+            return res
+        } catch (error) {
+            return new HttpException('Ocurrio un error al listar'+error, HttpStatus.NOT_FOUND)
+        }
+    }
     async getByEnterpriseVenta_id(id: ObjectId, token) {
         try {
             id= new ObjectId(id)
@@ -132,6 +146,41 @@ export class DocumentoService {
     async saveVentaByCustomerLogin(body/* : DocumentoByCustomerDTO */) {
         try {
             const { tokcarr, tokensession, subtotal, dataCustomer, metodo_pago } = body
+
+            let customervacio=[];
+            for (const key in dataCustomer) {
+                if (dataCustomer[key] === "") {
+                  customervacio.push(key)
+                }
+                if (key === "dni" ) {
+
+                   
+                    if (dataCustomer[key].length < 8) {
+                        customervacio.push('DNI tiene que ser de 8 digitos')
+                    }
+                    dataCustomer["dni"]= Number(dataCustomer["dni"]);
+
+                    if (typeof dataCustomer[key] !=="number") {
+
+                        customervacio.push('Dni tienen que ser numeros')
+                      }
+                }
+
+                if ( key === "celular") {
+                    console.log(dataCustomer[key].length===9)
+                    if (dataCustomer[key].length < 9) {
+                        customervacio.push('Celular tiene que ser de 9 digitos')
+                    }
+                    dataCustomer["celular"]= Number(dataCustomer["celular"]);
+
+                    if (typeof dataCustomer[key] !=="number") {
+                        customervacio.push('celular tienen que ser numeros')
+                      }
+                }
+
+              }
+              console.log(dataCustomer)
+              if(customervacio.length>0) return { err: true, data:customervacio}
             const decodedTokencarr = this.jwtService.verify(tokcarr);
             const decodedToken = this.jwtService.verify(tokensession);
 
@@ -222,9 +271,11 @@ export class DocumentoService {
         }
     }
 
-    async anular(id: string) {
+    async anular(id: ObjectId/* ,token */) {
         try {
-            let res = this.DocumentoModule.find({ _id: id, estado: 'PENDIENTE' })
+
+            id= new ObjectId(id)
+            let res = this.DocumentoModule.findOne({ _id: id, estado: 'PENDIENTE' })
             if (res instanceof HttpException) throw res
 
             const update = await this.DocumentoModule.updateOne({ _id: id }, { $set: { estado: 'ANULADO' } });
@@ -246,7 +297,27 @@ export class DocumentoService {
 
             enterprise_id = new ObjectId(enterprise_id)
 
-            const res = await this.DocumentoModule.find({ enterprise_id/* , customer_id:new ObjectId(id)  */ });
+            const res = await this.DocumentoModule.find({ enterprise_id, estado: { $ne: 'ANULADO' },});
+            if (res.length === 0) return new HttpException('No hay Documentos que mostrar', HttpStatus.NOT_FOUND)
+            return res
+        } catch (error) {
+            return new HttpException('Ocurrio un error al guardar' + error.message || error, HttpStatus.NOT_FOUND);
+        }
+    }
+
+    async getByEnterpriseWeb(token /* enterprise_id: ObjectId */) {
+        try {
+            const decodedToken = this.jwtService.verify(token);
+            console.log(decodedToken)
+            let { enterprise_id,id } = decodedToken
+
+            let resEnterprise = await this.EnterpriseService.getId(enterprise_id)
+            if (resEnterprise instanceof HttpException) throw resEnterprise
+
+            id = new ObjectId(id)
+            enterprise_id = new ObjectId(enterprise_id)
+
+            const res = await this.DocumentoModule.find({ enterprise_id, customer_id:id , estado: { $ne: 'ANULADO' },});
             if (res.length === 0) return new HttpException('No hay Documentos que mostrar', HttpStatus.NOT_FOUND)
             return res
         } catch (error) {

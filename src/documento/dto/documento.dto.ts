@@ -1,4 +1,4 @@
-import { IsNotEmpty, IsNumber, IsOptional, IsString, Length, MaxLength, MinLength, ValidateNested } from 'class-validator';
+import { IsNotEmpty, IsNumber, IsOptional, IsString, Length, MaxLength, MinLength,IsNotEmptyObject, ValidateNested, IsArray } from 'class-validator';
 import { Type } from 'class-transformer';
 import { ObjectId } from 'mongodb';
 
@@ -59,9 +59,20 @@ export class DocumentoByCustomerDTO {
   @IsString()
   @IsNotEmpty()
   metodo_pago: string;
-  
-  @IsOptional()
-  dataCustomer: Object[];
+
+  @IsNotEmptyObject()
+  dataCustomer: {
+    nombres: string;
+    apellidos: string;
+    dni: string;
+    departamento:string;
+    provincia:string;
+    distrito:string;
+    direccion:string;
+    referencia:string;
+    celular:string;
+    correo:string;
+  };
 }
 
 export class DocumentoDTO extends PartialType(DocumentoByCustomerDTO)  {
@@ -70,6 +81,19 @@ export class DocumentoDTO extends PartialType(DocumentoByCustomerDTO)  {
 
   @IsString()
   caja_id: ObjectId;
+  @IsOptional()
+  dataCustomer: {
+    nombres: string;
+    apellidos: string;
+    dni: string;
+    departamento:string;
+    provincia:string;
+    distrito:string;
+    direccion:string;
+    referencia:string;
+    celular:string;
+    correo:string;
+  };
 }
 
 

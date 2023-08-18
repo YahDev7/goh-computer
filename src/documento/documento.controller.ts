@@ -17,8 +17,13 @@ export class DocumentoController {
     @Get('/enterprise')
     getByEnterprise(@Req() req) {
         const token = req.headers.authorization.split(' ')[1];
-
         return this.DocumentoService.getByEnterprise(token)
+    }
+
+    @Get('/web/enterprise')
+    getByEnterpriseWeb(@Req() req) {
+        const token = req.headers.authorization.split(' ')[1];
+        return this.DocumentoService.getByEnterpriseWeb(token)
     }
 
     @Post('/enterprise/user')
@@ -52,10 +57,19 @@ export class DocumentoController {
     @Post('enterprise')
     postAdmin(@Body() body, @Req() req/* :DocumentoByCustomerDTO */) {
         const token = req.headers.authorization.split(' ')[1];
-
         return this.DocumentoService.saveVentaAdmin(body, token)
     }
+    @Post('enterprise/anular/:id')
+    anular(@Param('id') id: ObjectId, @Req() req) {
+      //  const token = req.headers.authorization.split(' ')[1];
+        return this.DocumentoService.anular(id/* , token */)
+    }
 
+    @Get('web/enterprise/:id')
+    getByEnterpriseWebById(@Param('id') id: ObjectId, @Req() req) {
+        const token = req.headers.authorization.split(' ')[1];
+        return this.DocumentoService.getByEnterpriseWebVenta_id(id, token)
+    }
     @Get('/enterprise/:id')
     getByEnterpriseById(@Param('id') id: ObjectId, @Req() req) {
         const token = req.headers.authorization.split(' ')[1];

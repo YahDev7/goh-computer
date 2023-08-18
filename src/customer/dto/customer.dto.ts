@@ -27,6 +27,11 @@ export class RegisterCustomerDto {
    @IsNotEmpty()
    @Length(1, 20)
    password: string;
+
+   @IsNotEmpty()
+   nombres: string;
+   @IsNotEmpty()
+   estado: string;
  
  }
 export class CustomerDto {
@@ -36,7 +41,7 @@ export class CustomerDto {
 
   @IsOptional()
   @Length(8, 8)
-  dni: string;
+  dni_ruc: string;
 
   @IsNotEmpty()
   nombres: string;

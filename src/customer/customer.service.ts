@@ -50,8 +50,8 @@ export class CustomerService {
     }
     async verifyAll(body: CustomerDto) { //param es un obj con keys "string" y sus valores de cualquier tipo
         try {
-            const { dni, email, telefono } = body;
-            const verifyNomb = await this.verifyUnique({ dni })
+            const { dni_ruc, email, telefono } = body;
+            const verifyNomb = await this.verifyUnique({ dni_ruc })
             if (verifyNomb) return { err: true, message: 'dni utilizado' }
 
             const verifyruc = await this.verifyUnique({ email })
@@ -69,9 +69,9 @@ export class CustomerService {
 
     async verifyAllUpdate(body: UpdateCustomerDto, id: number) { //param es un obj con keys "string" y sus valores de cualquier tipo
         try {
-            const { dni, email, telefono } = body;
+            const { dni_ruc, email, telefono } = body;
 
-            const verifyNomb = await this.verifyUnique({ dni })
+            const verifyNomb = await this.verifyUnique({ dni_ruc })
             if (verifyNomb) if (verifyNomb['_id'] !== id) return { err: true, message: 'dni utilizado' };
 
             const verifyremail = await this.verifyUnique({ email, id })

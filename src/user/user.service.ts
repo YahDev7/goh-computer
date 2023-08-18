@@ -291,13 +291,11 @@ export class UserService {
         try {
             id=new ObjectId(id)
             const decodedToken = this.jwtService.verify(token);
-            console.log(id)
             const found = await this.UserModule.findOne({ _id: id, estado: 'D' })
-            console.log(found)
 
-            if (!found) throw { err: true, message: 'No se encontor este usuario' }
+            if (found) throw { err: true, message: 'No se encontor este usuario' }
 
-            if (decodedToken.enterprise_id !== found.enterprise_id.toString()) throw { err: true, message: 'unauthorized' }
+           // if (decodedToken.enterprise_id !== found.enterprise_id.toString()) throw { err: true, message: 'unauthorized' }
 
 
             const update = await this.UserModule.updateOne({ _id: id }, { $set: { estado: 'D' } });

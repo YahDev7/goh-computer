@@ -1,4 +1,4 @@
-import { IsArray, IsEmpty, IsNotEmpty, IsNumber, IsString, Length, MaxLength } from 'class-validator';
+import { IsArray, IsDecimal, IsEmpty, IsNotEmpty, IsNumber, IsString, Length, MaxLength } from 'class-validator';
 import {PartialType} from '@nestjs/mapped-types'
 import { ObjectId } from 'mongodb';
 
@@ -40,7 +40,7 @@ export class ProductDto {
   precio_compra_dolar: number;
   
   @IsNotEmpty()
-  @IsNumber()
+  @IsDecimal()
   valor_dolar: number;
   
   @IsNotEmpty()

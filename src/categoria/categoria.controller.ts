@@ -82,7 +82,6 @@ export class CategoriaController {
     @Delete('enterprise/:id')
     async delete(@Param('id') id:ObjectId,@Req() req){
         const token = req.headers.authorization.split(' ')[1];
-        console.log(token)
-        return this.categoriaService.deleteByEnterprise(token,id)
+        return this.categoriaService.deleteByEnterprise(id,token)
     }
 }
