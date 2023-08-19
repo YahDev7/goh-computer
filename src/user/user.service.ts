@@ -37,7 +37,6 @@ export class UserService {
     async getId(id: ObjectId): Promise<User | HttpException> {
         try {
             const found = await this.UserModule.findOne({ _id: id, estado: 'A' })
-            console.log(found)
 
             if (!found) throw { err: true, message: 'error al buscar este user' }
             return found;
@@ -202,7 +201,7 @@ export class UserService {
             if (!found) throw { err: true, message: 'error al buscar este user' }
             if (decodedToken.enterprise_id !== found.enterprise_id.toString()) throw { err: true, message: 'unauthorizedr' }
 
-            const users = await this.UserModule.find({estado: 'A' })
+            const users = await this.UserModule.find({estado: 'A',enterprise_id })
 
             return users;
         } catch (error) {
@@ -210,19 +209,41 @@ export class UserService {
         }
     }
 
-    async getByEnterpriseId(id:ObjectId,token): Promise<User | HttpException> {
+    async getByEnterpriseId(id:ObjectId,token): Promise<Object | HttpException> {
         try {
             const decodedToken = this.jwtService.verify(token);
             let { enterprise_id, usuario_id } = decodedToken
             enterprise_id = new ObjectId(enterprise_id)
+            id=new ObjectId(id)
             const found = await this.UserModule.findOne({ _id: usuario_id, estado: 'A' })
 
             if (!found) throw { err: true, message: 'error al buscar este user' }
             if (decodedToken.enterprise_id !== found.enterprise_id.toString()) throw { err: true, message: 'unauthorizedr' }
 
-            const user = await this.UserModule.findOne({_id:id,enterprise_id})
+            
+          //  const user = await this.UserModule.findOne({_id:id,enterprise_id})
+ 
+            let user = await this.UserModule.aggregate([
+                {
+                  $match: {
+                    _id:id,
+                    enterprise_id
+                  }
+                },
+                {
+                  $project: {
+                    password: 0,
+                  }
+                },
+              ]); 
+ 
+              console.log(user)
 
-            return user;
+
+            if (!user[0]) throw { err: true, message: 'error al buscar este user' }
+
+            return user[0];
+
         } catch (error) {
             return new HttpException('Ocurrio un error ' + error.message || error, HttpStatus.NOT_FOUND)
         }
@@ -248,7 +269,6 @@ export class UserService {
             let newbody = { ...body, password: passhash,enterprise_id }
             const insert = await this.UserModule.create(newbody);
             if (!insert) throw { err: true, message: 'No se guardardo el usuario' }
-            console.log(insert)
             //throw new   NotFoundExeption("no exite bro, para obtener un 404")
             return {err:false,message:"se creo con exito"}
             //return {err:false,message:"Se guardo con éxito"}
@@ -276,7 +296,6 @@ export class UserService {
             if (res.err) throw res; */ 
   
             const update = await this.UserModule.updateOne({ _id: id }, { $set: body });
-            console.log(update)
             if (update.modifiedCount === 0) return new HttpException('No se logro actualizar', HttpStatus.NOT_FOUND);
             return { err: false, message: "Se actualizo con éxito" }
 

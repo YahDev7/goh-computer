@@ -72,11 +72,9 @@ export class ProductsService {
 
       idprod= new ObjectId(idprod)
 
-      console.log(idprod,enterprise_id)
       // if(res) throw {err:true,message:'No se encontraron subcategorias de esta empresa'} 
 
       const found = await this.productssModule.findOne({_id:idprod, enterprise_id, estado: 'A' })
-      console.log(found)
       if (!found) throw { err: true, message: 'No se encontro el producto de esta empresa' }
       return found;
     } catch (error) {

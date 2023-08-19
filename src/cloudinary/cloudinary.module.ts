@@ -8,6 +8,8 @@ import { JwtModule } from '@nestjs/jwt';
 import config from 'src/config';
 import { ConfigType } from '@nestjs/config';
 import { MovimientoMModule } from 'src/movimiento-m/movimiento-m.module';
+import { CategoriaModule } from 'src/categoria/categoria.module';
+import { SubcategoriaModule } from 'src/subcategoria/subcategoria.module';
 
 @Module({
   imports:[
@@ -21,7 +23,7 @@ import { MovimientoMModule } from 'src/movimiento-m/movimiento-m.module';
           }
         }
       },
-    }),ProductsModule,MovimientoMModule],
+    }),ProductsModule,MovimientoMModule,CategoriaModule,SubcategoriaModule],
   providers: [CloudinaryProvider, CloudinaryService],
   exports: [CloudinaryProvider, CloudinaryService],
   controllers: [CloudinaryController]

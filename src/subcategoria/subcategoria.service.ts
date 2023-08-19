@@ -45,7 +45,7 @@ export class SubcategoriaService {
        }
 
        
-      async getByEnterprise(token:string):Promise<SubCategoria[]|HttpException>{
+      async getByEnterprise(token):Promise<SubCategoria[]|HttpException>{
         try {
             const decodedToken = this.jwtService.verify(token);
            let {enterprise_id} =decodedToken
@@ -55,7 +55,6 @@ export class SubcategoriaService {
            // if(res) throw {err:true,message:'No se encontraron subcategorias de esta empresa'} 
 
             const found=await this.SubCategoriaModule.find({enterprise_id,estado:'A'})
-            console.log(found)
             if(found.length===0) throw {err:true,message:'No se encontraron subcategorias de esta empresa'} 
             return found;
         } catch (error) {
@@ -243,5 +242,27 @@ export class SubcategoriaService {
 
     }
 
+    async saveimg( enterprise_id: ObjectId,id:ObjectId ,files): Promise<SubCategoria | Object> {
+        try { 
+            let {nombre,
+                URL}=files
+          let found =await this.getByEnterprise(enterprise_id)
+          if(!found) throw {err:true,message:'No se encontor esta empresa'} 
+    
+          let foundpro = await this.SubCategoriaModule.findOne({ _id: id });
+          if(!foundpro) throw {err:true,message:'No se encontor este producto'} 
+    
+        
+          const update = await this.SubCategoriaModule.updateOne({ _id: id }, { $set: {imagen:nombre, url_imagen:URL} });
+          if (update.modifiedCount === 0) return new HttpException('No se logro actualizar', HttpStatus.NOT_FOUND);
+    
+          return { err: false, message: "Se actualizo con éxito" }  
+         /*  if (!save) throw { err: true, message: 'No se guardardo' }
+          return save */
+          /* return {err:false,message:"Se guardo con éxito"} */
+        } catch (error) {
+          return new HttpException('Ocurrio un error al guardar' + error.message || error, HttpStatus.NOT_FOUND);
+        }
+      }
 
 }

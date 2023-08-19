@@ -32,7 +32,7 @@ import { ObjectId } from 'mongodb';
     @UseInterceptors(FilesInterceptor('files', 3))
     async uploadImage(@Param('id') id:ObjectId,@UploadedFiles() files: Express.Multer.File[],@Req() req) {
 
-      console.log(files)
+      console.log("files",files)
       const token = req.headers.authorization.split(' ')[1];
 
       return this.cloudinaryService.uploadFile(files,token,id);
@@ -58,6 +58,28 @@ import { ObjectId } from 'mongodb';
     );
     const responses = await Promise.all(uploadPromises);
     return responses.map((response) => response.url);  */
+    }
+
+
+    @Post('upload/categoria/:id')
+    @UseInterceptors(FileInterceptor('file'))
+    async uploadCategoria(@Param('id') id:ObjectId,@UploadedFile() file: Express.Multer.File,@Req() req) {
+      const token = req.headers.authorization.split(' ')[1];
+
+      return this.cloudinaryService.uploadCategoria(file,token,id);
+
+      
+    }
+
+
+    @Post('upload/subcategoria/:id')
+    @UseInterceptors(FileInterceptor('file'))
+    async uploadSubCategoria(@Param('id') id:ObjectId,@UploadedFile() file: Express.Multer.File,@Req() req) {
+      const token = req.headers.authorization.split(' ')[1];
+
+      return this.cloudinaryService.uploadSubCategoria(file,token,id);
+
+      
     }
   }
   
