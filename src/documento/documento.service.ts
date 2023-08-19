@@ -9,213 +9,382 @@ import { CustomerService } from 'src/customer/customer.service';
 import { DocumentoByCustomerDTO, DocumentoCompraDTO, DocumentoDTO } from './dto/documento.dto';
 import { UserService } from 'src/user/user.service';
 import { ProviderService } from 'src/provider/provider.service';
+import { JwtService } from '@nestjs/jwt';
+import { number } from 'joi';
 
 @Injectable()
 export class DocumentoService {
     constructor(
-        @InjectModel(Documento.name) private DocumentoModule:Model<DocumentoDocument> ,
-        private EnterpriseService:EnterpriseService,
-        private UserService:UserService,
-        private CustomerService:CustomerService,
-        private ProviderService:ProviderService
-    ){}
+        @InjectModel(Documento.name) private DocumentoModule: Model<DocumentoDocument>,
+        private EnterpriseService: EnterpriseService,
+        private UserService: UserService,
+        private CustomerService: CustomerService,
+        private ProviderService: ProviderService,
+        private jwtService: JwtService,
+
+    ) { }
     //ADMIN
-    async getAll():Promise<Documento[]|HttpException>{
+    async getAll(): Promise<Documento[] | HttpException> {
         try {
-            const res=await this.DocumentoModule.find();
-            if(res.length===0) return new HttpException('No hay Documentos que mostrar',HttpStatus.NOT_FOUND) 
+            const res = await this.DocumentoModule.find();
+            if (res.length === 0) return new HttpException('No hay Documentos que mostrar', HttpStatus.NOT_FOUND)
             return res
-        } catch (error) {   
-            return new HttpException('Ocurrio un error al listar',HttpStatus.NOT_FOUND) 
+        } catch (error) {
+            return new HttpException('Ocurrio un error al listar', HttpStatus.NOT_FOUND)
         }
     }
 
-    async getVentas(){
+    async getVentas() {
         try {
-            const res=await this.DocumentoModule.find({tipo_compra_venta:'VENTA'});
-            if(res.length===0) return new HttpException('No hay Documentos que mostrar',HttpStatus.NOT_FOUND) 
+            const res = await this.DocumentoModule.find({ tipo_compra_venta: 'VENTA' });
+            if (res.length === 0) return new HttpException('No hay Documentos que mostrar', HttpStatus.NOT_FOUND)
             return res
-        } catch (error) {   
-            return new HttpException('Ocurrio un error al listar',HttpStatus.NOT_FOUND) 
+        } catch (error) {
+            return new HttpException('Ocurrio un error al listar', HttpStatus.NOT_FOUND)
         }
     }
 
-    async getCompras(){
+
+
+    async getCompras() {
         try {
-            const res=await this.DocumentoModule.find({tipo_compra_venta:'COMPRA'});
-            if(res.length===0) return new HttpException('No hay Documentos que mostrar',HttpStatus.NOT_FOUND) 
+            const res = await this.DocumentoModule.find({ tipo_compra_venta: 'COMPRA' });
+            if (res.length === 0) return new HttpException('No hay Documentos que mostrar', HttpStatus.NOT_FOUND)
             return res
-        } catch (error) {   
-            return new HttpException('Ocurrio un error al listar',HttpStatus.NOT_FOUND) 
+        } catch (error) {
+            return new HttpException('Ocurrio un error al listar', HttpStatus.NOT_FOUND)
         }
     }
 
-    async getByVenta_id(id:string){
+
+
+    async getByVenta_id(id: ObjectId) {
         try {
-            const res=await this.DocumentoModule.find({_id:id,tipo_compra_venta:'VENTA'});
-            if(res.length===0) return new HttpException('No hay Documentos que mostrar',HttpStatus.NOT_FOUND) 
+            const res = await this.DocumentoModule.findOne({ _id: id, tipo_compra_venta: 'VENTA' });
+
+            if (!res) return new HttpException('No hay Documentos que mostrar', HttpStatus.NOT_FOUND)
             return res
-        } catch (error) {   
-            return new HttpException('Ocurrio un error al listar',HttpStatus.NOT_FOUND) 
+        } catch (error) {
+            return new HttpException('Ocurrio un error al listar', HttpStatus.NOT_FOUND)
         }
     }
 
-    async getByCompra_id(id:string){
+    async getByEnterpriseWebVenta_id(id: ObjectId, token) {
         try {
-            const res=await this.DocumentoModule.find({_id:id,tipo_compra_venta:'COMPRA'});
-            if(res.length===0) return new HttpException('No hay Documentos que mostrar',HttpStatus.NOT_FOUND) 
+            id= new ObjectId(id)
+            const decodedToken = this.jwtService.verify(token);
+            let { enterprise_id } = decodedToken
+            enterprise_id = new ObjectId(enterprise_id)
+            const res = await this.DocumentoModule.findOne({ _id: id, enterprise_id, tipo_compra_venta: 'VENTA' });
+            if (!res) return new HttpException('No hay Documentos que mostrar', HttpStatus.NOT_FOUND)
             return res
-        } catch (error) {   
-            return new HttpException('Ocurrio un error al listar',HttpStatus.NOT_FOUND) 
+        } catch (error) {
+            return new HttpException('Ocurrio un error al listar'+error, HttpStatus.NOT_FOUND)
+        }
+    }
+    async getByEnterpriseVenta_id(id: ObjectId, token) {
+        try {
+            id= new ObjectId(id)
+            const decodedToken = this.jwtService.verify(token);
+            let { enterprise_id } = decodedToken
+            enterprise_id = new ObjectId(enterprise_id)
+            const res = await this.DocumentoModule.findOne({ _id: id, enterprise_id, tipo_compra_venta: 'VENTA' });
+            if (!res) return new HttpException('No hay Documentos que mostrar', HttpStatus.NOT_FOUND)
+            return res
+        } catch (error) {
+            return new HttpException('Ocurrio un error al listar'+error, HttpStatus.NOT_FOUND)
+        }
+    }
+
+    async getByCompra_id(id: string) {
+        try {
+            const res = await this.DocumentoModule.findOne({ _id: id, tipo_compra_venta: 'COMPRA' });
+            if (!res) return new HttpException('No hay Documentos que mostrar', HttpStatus.NOT_FOUND)
+            return res
+        } catch (error) {
+            return new HttpException('Ocurrio un error al listar', HttpStatus.NOT_FOUND)
         }
     }
 
 
 
     //ENTERPRISES
-    async saveVentaByUser(body:DocumentoDTO){
-        try {
-           let {user_id,customer_id,enterprise_id} =body
-
-           let resEnterprise=await this.EnterpriseService.getId(enterprise_id)
-           if(resEnterprise instanceof HttpException) throw resEnterprise
-
-            let resuser=await this.UserService.getId(user_id)
-            if(resuser instanceof HttpException) throw resuser
-
-            let rescustomer=await this.CustomerService.getId(customer_id)
-            if(rescustomer instanceof HttpException) throw rescustomer
-
-
-
-            const save=await this.DocumentoModule.create(body);
-
-             if(!save) throw {err:true,message:'No se guardardo'}
-             return save
-            /*  return {err:false,message:"Se guardo con éxito"} */
-         } catch (error) {
-             return new HttpException('Ocurrio un error al guardar '+error.message||error,HttpStatus.NOT_FOUND); 
-         }
-    }
-
-    async saveVentaByCustomer (body:DocumentoByCustomerDTO){
+    async saveVentaByUserByEnterprise(token, body: DocumentoDTO) {
         try {
 
-            let {customer_id,enterprise_id} =body
-          
-            let resEnterprise=await this.EnterpriseService.getId(enterprise_id)
-            if(resEnterprise instanceof HttpException) throw resEnterprise
+            const decodedToken = this.jwtService.verify(token);
+            let { enterprise_id, usuario_id } = decodedToken;
+            enterprise_id = new ObjectId(enterprise_id)
+            usuario_id = new ObjectId(usuario_id)
 
-            let rescustomer=await this.CustomerService.getId(customer_id)
-            if(rescustomer instanceof HttpException) throw rescustomer
+            let { customer_id } = body
+
+            //   let { user_id, customer_id, enterprise_id } = body
+
+            let resEnterprise = await this.EnterpriseService.getId(enterprise_id)
+            if (resEnterprise instanceof HttpException) throw resEnterprise
+
+            let resuser = await this.UserService.getId(usuario_id)
+            if (resuser instanceof HttpException) throw resuser
+
+            if (customer_id) {
+                let rescustomer = await this.CustomerService.getId(customer_id)
+                if (rescustomer instanceof HttpException) throw rescustomer
+            }
 
 
-             const save=await this.DocumentoModule.create({...body});
 
-             if(!save) throw {err:true,message:'No se guardardo'}
-             return save
-           /*   return {err:false,message:"Se guardo con éxito"} */
-         } catch (error) {
-             return new HttpException('Ocurrio un error al guardar'+error.message||error,HttpStatus.NOT_FOUND); 
-         }
-    }
-
-    async saveCompra(body:DocumentoCompraDTO){
-           //NINGUN CUSTOMER PUEDE HACER ESTO
-           try {
-            let {enterprise_id,provider_id} =body
-
-            let resEnterprise=await this.EnterpriseService.getId(enterprise_id)
-            if(resEnterprise instanceof HttpException) throw resEnterprise
-
-            let resProvider=await this.ProviderService.getId(provider_id)
-            if(resProvider instanceof HttpException) throw resProvider
-
-            const save=await this.DocumentoModule.create(body);
-            if(!save) throw {err:true,message:'No se guardardo'}
+            const save = await this.DocumentoModule.create(body);
+            if (!save) throw { err: true, message: 'No se guardardo' }
             return save
-           /*  return {err:false,message:"Se guardo con éxito"} */
+            /*  return {err:false,message:"Se guardo con éxito"} */
         } catch (error) {
-            return new HttpException('Ocurrio un error al guardar'+error.message||error,HttpStatus.NOT_FOUND); 
+            return new HttpException('Ocurrio un error al guardar ' + error.message || error, HttpStatus.NOT_FOUND);
         }
     }
-    
-    async anular(id:string){
+
+    async saveVentaByCustomerLogin(body/* : DocumentoByCustomerDTO */) {
         try {
-            let res= this.DocumentoModule.find({_id:id,estado:'PENDIENTE'})
-            if(res instanceof HttpException) throw res
-          
-             const update=await this.DocumentoModule.updateOne({_id:id}, { $set: {estado:'ANULADO'} });
-             if(update.modifiedCount===0) return new HttpException('No se logro actualizar',HttpStatus.NOT_FOUND); 
+            const { tokcarr, tokensession, subtotal, dataCustomer, metodo_pago } = body
 
-             return {err:false,message:"Se anulo con éxito"}  
+            let customervacio=[];
+            for (const key in dataCustomer) {
+                if (dataCustomer[key] === "") {
+                  customervacio.push(key)
+                }
+                if (key === "dni" ) {
 
+                   
+                    if (dataCustomer[key].length < 8) {
+                        customervacio.push('DNI tiene que ser de 8 digitos')
+                    }
+                    dataCustomer["dni"]= Number(dataCustomer["dni"]);
+
+                    if (typeof dataCustomer[key] !=="number") {
+
+                        customervacio.push('Dni tienen que ser numeros')
+                      }
+                }
+
+                if ( key === "celular") {
+                    console.log(dataCustomer[key].length===9)
+                    if (dataCustomer[key].length < 9) {
+                        customervacio.push('Celular tiene que ser de 9 digitos')
+                    }
+                    dataCustomer["celular"]= Number(dataCustomer["celular"]);
+
+                    if (typeof dataCustomer[key] !=="number") {
+                        customervacio.push('celular tienen que ser numeros')
+                      }
+                }
+
+              }
+              console.log(dataCustomer)
+              if(customervacio.length>0) return { err: true, data:customervacio}
+            const decodedTokencarr = this.jwtService.verify(tokcarr);
+            const decodedToken = this.jwtService.verify(tokensession);
+
+            const { id, enterprise_id } = decodedToken
+
+            let doc = {
+                customer_id: new ObjectId(id),
+                enterprise_id: new ObjectId(enterprise_id),
+                tipo_documento: "Boleta",
+                serie: "A00",
+                nro_documento: "001",
+                fecha: new Date(),
+                sub_total: subtotal,
+                descuento_total: 0,
+                igv: 0,
+                total_pagar: subtotal,
+                estado: "PENDIENTE",
+                tipo_compra_venta: "VENTA",
+                detalle: decodedTokencarr.payload,
+                metodo_pago,
+                dataCustomer
+            }
+
+            let resEnterprise = await this.EnterpriseService.getId(enterprise_id)
+            if (resEnterprise instanceof HttpException) throw resEnterprise
+
+            let rescustomer = await this.CustomerService.getId(id)
+            if (rescustomer instanceof HttpException) throw rescustomer
+
+
+            const save = await this.DocumentoModule.create({ ...doc });
+
+
+            if (!save) throw { err: true, message: 'No se guardardo' }
+            return { err: false, message: "Guardado con exito", data: save._id }
+            /*   return {err:false,message:"Se guardo con éxito"} */
         } catch (error) {
-            return new HttpException('Ocurrio un error al guardar'+error.message||error,HttpStatus.NOT_FOUND);  
+            console.log(error)
+            return new HttpException('Ocurrio un error al guardar ' + error.message || error, HttpStatus.NOT_FOUND);
         }
     }
 
-    async getByEnterprise(enterprise_id:ObjectId){
+
+    async saveVentaAdmin(body, token/* : DocumentoByCustomerDTO */) {
+        try {
+            //   const {subtotal,dataCustomer,metodo_pago } = body
+            const decodedToken = this.jwtService.verify(token);
+            let { enterprise_id } = decodedToken
+
+            let { customer_id } = body
+            let resEnterprise = await this.EnterpriseService.getId(enterprise_id)
+            if (resEnterprise instanceof HttpException) throw resEnterprise
+            body = {
+                ...body,
+                customer_id: new ObjectId(customer_id),
+                enterprise_id: new ObjectId(enterprise_id),
+
+            }
+            const save = await this.DocumentoModule.create(body);
+
+
+            if (!save) throw { err: true, message: 'No se guardardo' }
+            return { err: false, message: "Guardado con exito", data: save._id }
+            /*   return {err:false,message:"Se guardo con éxito"} */
+        } catch (error) {
+            console.log(error)
+            return new HttpException('Ocurrio un error al guardar ' + error.message || error, HttpStatus.NOT_FOUND);
+        }
+    }
+
+    async saveCompra(body: DocumentoCompraDTO) {
+        //NINGUN CUSTOMER PUEDE HACER ESTO
+        try {
+            let { enterprise_id, provider_id } = body
+
+            let resEnterprise = await this.EnterpriseService.getId(enterprise_id)
+            if (resEnterprise instanceof HttpException) throw resEnterprise
+
+            let resProvider = await this.ProviderService.getId(provider_id)
+            if (resProvider instanceof HttpException) throw resProvider
+
+            const save = await this.DocumentoModule.create(body);
+            if (!save) throw { err: true, message: 'No se guardardo' }
+            return save
+            /*  return {err:false,message:"Se guardo con éxito"} */
+        } catch (error) {
+            return new HttpException('Ocurrio un error al guardar' + error.message || error, HttpStatus.NOT_FOUND);
+        }
+    }
+
+    async anular(id: ObjectId/* ,token */) {
         try {
 
-            let resEnterprise=await this.EnterpriseService.getId(enterprise_id)
-            if(resEnterprise instanceof HttpException) throw resEnterprise
-    
-            const res=await this.DocumentoModule.find({enterprise_id});
-            if(res.length===0) return new HttpException('No hay Documentos que mostrar',HttpStatus.NOT_FOUND) 
-            return res 
+            id= new ObjectId(id)
+            let res = this.DocumentoModule.findOne({ _id: id, estado: 'PENDIENTE' })
+            if (res instanceof HttpException) throw res
+
+            const update = await this.DocumentoModule.updateOne({ _id: id }, { $set: { estado: 'ANULADO' } });
+            if (update.modifiedCount === 0) return new HttpException('No se logro actualizar', HttpStatus.NOT_FOUND);
+
+            return { err: false, message: "Se anulo con éxito" }
+
         } catch (error) {
-            return new HttpException('Ocurrio un error al guardar'+error.message||error,HttpStatus.NOT_FOUND);  
+            return new HttpException('Ocurrio un error al guardar' + error.message || error, HttpStatus.NOT_FOUND);
         }
     }
 
-    async getByDate(enterprise_id:ObjectId,fi,ff){
+    async getByEnterprise(token /* enterprise_id: ObjectId */) {
+        try {
+            const decodedToken = this.jwtService.verify(token);
+            let { enterprise_id } = decodedToken
+            let resEnterprise = await this.EnterpriseService.getId(enterprise_id)
+            if (resEnterprise instanceof HttpException) throw resEnterprise
+
+            enterprise_id = new ObjectId(enterprise_id)
+
+            const res = await this.DocumentoModule.find({ enterprise_id, estado: { $ne: 'ANULADO' },});
+            if (res.length === 0) return new HttpException('No hay Documentos que mostrar', HttpStatus.NOT_FOUND)
+            return res
+        } catch (error) {
+            return new HttpException('Ocurrio un error al guardar' + error.message || error, HttpStatus.NOT_FOUND);
+        }
+    }
+
+    async getByEnterpriseWeb(token /* enterprise_id: ObjectId */) {
+        try {
+            const decodedToken = this.jwtService.verify(token);
+            console.log(decodedToken)
+            let { enterprise_id,id } = decodedToken
+
+            let resEnterprise = await this.EnterpriseService.getId(enterprise_id)
+            if (resEnterprise instanceof HttpException) throw resEnterprise
+
+            id = new ObjectId(id)
+            enterprise_id = new ObjectId(enterprise_id)
+
+            const res = await this.DocumentoModule.find({ enterprise_id, customer_id:id , estado: { $ne: 'ANULADO' },});
+            if (res.length === 0) return new HttpException('No hay Documentos que mostrar', HttpStatus.NOT_FOUND)
+            return res
+        } catch (error) {
+            return new HttpException('Ocurrio un error al guardar' + error.message || error, HttpStatus.NOT_FOUND);
+        }
+    }
+
+    async getByDate(enterprise_id: ObjectId, fi, ff) {
         try {
 
-            let resEnterprise=await this.EnterpriseService.getId(enterprise_id)
-            if(resEnterprise instanceof HttpException) throw resEnterprise
-          
-            const res=await this.DocumentoModule.find({ fecha: {
-                $gte: fi/* new Date('2023-05-01T00:00:00Z') */,
-                $lt:ff/*  new Date('2023-06-01T00:00:00Z') */
-              }});
+            let resEnterprise = await this.EnterpriseService.getId(enterprise_id)
+            if (resEnterprise instanceof HttpException) throw resEnterprise
 
-            if(res.length===0) return new HttpException('No hay Documentos que mostrar en este rango de fechas',HttpStatus.NOT_FOUND) 
-            return res 
+            const res = await this.DocumentoModule.find({
+                fecha: {
+                    $gte: fi/* new Date('2023-05-01T00:00:00Z') */,
+                    $lt: ff/*  new Date('2023-06-01T00:00:00Z') */
+                }
+            });
+
+            if (res.length === 0) return new HttpException('No hay Documentos que mostrar en este rango de fechas', HttpStatus.NOT_FOUND)
+            return res
         } catch (error) {
-            return new HttpException('Ocurrio un error al guardar'+error.message||error,HttpStatus.NOT_FOUND);  
-            
+            return new HttpException('Ocurrio un error al guardar' + error.message || error, HttpStatus.NOT_FOUND);
+
         }
     }
 
-    async getByUser(user_id:ObjectId){//ESPECIFICAR EMPRESA
+    async getByUser(user_id: ObjectId) {//ESPECIFICAR EMPRESA
         try {
 
-            let resUser=await this.EnterpriseService.getId(user_id)
-            if(resUser instanceof HttpException) throw resUser
-    
-            const res=await this.DocumentoModule.find({user_id});
-            if(res.length===0) return new HttpException('No hay Documentos que mostrar para este user',HttpStatus.NOT_FOUND) 
-            return res 
+            let resUser = await this.EnterpriseService.getId(user_id)
+            if (resUser instanceof HttpException) throw resUser
+
+            const res = await this.DocumentoModule.find({ user_id });
+            if (res.length === 0) return new HttpException('No hay Documentos que mostrar para este user', HttpStatus.NOT_FOUND)
+            return res
         } catch (error) {
-            return new HttpException('Ocurrio un error al guardar'+error.message||error,HttpStatus.NOT_FOUND);  
+            return new HttpException('Ocurrio un error al guardar' + error.message || error, HttpStatus.NOT_FOUND);
         }
     }
 
-    async getByCustomer(customer_id:ObjectId){//ESPECIFICAR EMPRESA
+    async getByCustomer(customer_id: ObjectId) {//ESPECIFICAR EMPRESA
         try {
 
-           /*  let resCustomer=await this.EnterpriseService.getId(customer_id)
-            if(resCustomer instanceof HttpException) throw resCustomer */
-    
-            const res=await this.DocumentoModule.find({customer_id});
-            if(res.length===0) return new HttpException('No hay Documentos que mostrar para este customer',HttpStatus.NOT_FOUND) 
-            return res 
+            /*  let resCustomer=await this.EnterpriseService.getId(customer_id)
+             if(resCustomer instanceof HttpException) throw resCustomer */
+
+            const res = await this.DocumentoModule.find({ customer_id });
+            if (res.length === 0) return new HttpException('No hay Documentos que mostrar para este customer', HttpStatus.NOT_FOUND)
+            return res
         } catch (error) {
-            return new HttpException('Ocurrio un error al guardar'+error.message||error,HttpStatus.NOT_FOUND);  
+            return new HttpException('Ocurrio un error al guardar' + error.message || error, HttpStatus.NOT_FOUND);
+        }
+    }
+
+    async updateEstado(id: ObjectId) {
+        try {
+            const res = await this.DocumentoModule.updateOne({ _id: id }, { $set: { estado: 'CONFIRMANDO' } });
+
+            if (res.modifiedCount === 0) return { err: true, message: "Ocurrio un error al cancelar el documento" }
+            return { err: false, message: "CANCELADO" }
+        } catch (error) {
+            return error
         }
     }
 
 
-    
+
 }

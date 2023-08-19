@@ -21,7 +21,6 @@ export class CarritoService {
     async getToken(token){
         const decodedToken = this.jwtService.verify(token);
         
-        console.log(decodedToken)
         return decodedToken.payload
 
         //console.log(body)

@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Param, ParseIntPipe, Post } from '@nestjs/common';
+import { Body, Controller, Get, Param, ParseIntPipe, Post, Req } from '@nestjs/common';
 import { MovimientoMService } from './movimiento-m.service';
 import { MovimientoMDto } from './dto/movimiento-m.dto';
 import { ObjectId } from 'mongodb';
@@ -7,29 +7,51 @@ import { ObjectId } from 'mongodb';
 export class MovimientoMController {
 
     constructor(
-        private MovimientoMService:MovimientoMService
-    ){}
+        private MovimientoMService: MovimientoMService
+    ) { }
 
     @Get()
-    get(){
+    get() {
         return this.MovimientoMService.get()
     }
 
-    @Get(':id')
-    getId(@Param('id') id:string ){
+    /* @Get(':id')
+    getId(@Param('id') id: string) {
         return this.MovimientoMService.getId(id)
+    } */
+    @Get('/enterprise')
+    async getByEnterprise(@Req() req) {
+        const token = req.headers.authorization.split(' ')[1];
+        return this.MovimientoMService.getByEnterprise(token)
+
     }
-    @Get('/enterprise/:id')
-    async getByEnterprise(@Param('id') id:ObjectId){
-        return this.MovimientoMService.getByEnterprise(id)
+    @Post('/enterprise')
+    saveByEnterprise(@Body() body,@Req() req){
+        const token = req.headers.authorization.split(' ')[1];
+        return this.MovimientoMService.saveVentaByUserByEnterprise(token,body)
     }
 
+   /*  @Get('/enterprise/:id')
+    async getByEnterprise(@Param('id') id: ObjectId) {
+        return this.MovimientoMService.getByEnterprise(id)
+    } */
+
     @Get('/customer/:id')
-    async getByCustomer(@Param('id') id:ObjectId){
+    async getByCustomer(@Param('id') id: ObjectId) {
         return this.MovimientoMService.getByCustomer(id)
     }
-    @Post()
-    post(@Body() body:MovimientoMDto){
+    @Post('/gohcomputer/deposito')
+    post(@Body() body: MovimientoMDto) {
         return this.MovimientoMService.save(body)
-        }
+    }
+    @Get('ventas/total')
+    getSumaVenta(){
+        return this.MovimientoMService.totalVentas()
+    }
+
+    @Get('Compras/total')
+    getSumaCompra(){
+        return this.MovimientoMService.totalCompras()
+    }
+    
 }

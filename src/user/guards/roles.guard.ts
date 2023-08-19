@@ -21,6 +21,7 @@ export class RolesGuard implements CanActivate {
     const user =req.user; /* as PayLoadToken */; // el as es opcional
     
     const isAuth =roles.some((role)=>role===user.rol);
+   
     if(!isAuth){
       throw new UnauthorizedException('Error al iniciar sesion')
     }

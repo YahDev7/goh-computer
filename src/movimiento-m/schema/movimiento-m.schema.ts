@@ -25,16 +25,16 @@ export class MovimientoM {
   @Prop({ required: true })
   metodo_pago: string;
 
-  @Prop({ maxlength: 100, required: true })
+  @Prop({ maxlength: 100 })
   nro_operacion: string;
 
-  @Prop({ type: Number, required: true })
+  @Prop({ type: Number })
   monto_deposito: number;
 
   @Prop({ type: Number, required: true })
   monto_pagar: number;
 
-  @Prop({ type: Number, required: true })
+  @Prop({ type: Number })
   vuelto: number;
 
   @Prop({ maxlength: 40 })
@@ -45,6 +45,9 @@ export class MovimientoM {
 
   @Prop({ maxlength: 15, required: true })
   estado: string;
+
+  @Prop({type:Object})
+  fileAdjunto: Object;
 
 }
 

@@ -34,30 +34,24 @@ export class Products {
     valor_dolar: number;
     
     @Prop({required:true})
-    igv: number;
-    
-    @Prop({required:true})
     precio_compra_dolar_igv: number;
     
     @Prop({required:true})
     precio_compra_dolar_con_IGV:number;
 
-    @Prop({required:false})
-    precio_promocompra_dolar_con_igv:number;
-
-    @Prop([Object])
-    especificaciones:Object[]
-
     @Prop({required:true})
     precio_compra_soles: number;
-    
+
     @Prop({required:true})
     ganancia: number;
-    
+
     @Prop({required:true})
     precio_venta: number;
-    
-    @Prop({required:true,length:10,unique:true})
+
+    @Prop([Object])
+    especificaciones:Object[]    
+        
+    @Prop({length:10,unique:true})
     codfabricante: string;
     
     @Prop()
@@ -65,31 +59,7 @@ export class Products {
     
     @Prop()
     url_fab: string;
-
-    @Prop()
-    promocion: string;
-    
-    @Prop()
-    precio_promocompra_dolar: number;
-    
-    @Prop()
-    igvpromo: number;
-    
-    @Prop()
-    precio_promocompra_dolar_igv: number;
-    
-    @Prop()
-    precio_promocompra_soles: number;
-
-    @Prop()
-    ganancia_promo: number;
-    
-    @Prop()
-    precio_promoventa: number;
-    
-    @Prop()
-    fechafinpromo: Date;
-    
+     
     @Prop({required:true})
     garantia: string;
     

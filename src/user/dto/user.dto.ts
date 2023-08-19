@@ -13,11 +13,33 @@ export class LoginUserDto {
   password: string;
 }
 
-export class CreateUserDto {
+export class StructureToken {
+  id: string;
+  nombre: string;
+  enterprise_id: string;
+  rol: string;
+  iat:number;
+  exp:number;
+}
+
+
+export class RegisterUserDto {
   @IsNotEmpty()
   @IsString()
   enterprise_id: ObjectId;
 
+  @IsNotEmpty()
+  @IsEmail()
+  email: string;
+
+  @IsNotEmpty()
+  @IsString()
+  password: string;
+}
+
+
+export class CreateUserDto {
+  
   @IsNotEmpty()
   @IsString()
   nombre: string;

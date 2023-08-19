@@ -1,75 +1,138 @@
-import { Body, Controller,Get, Post,Put,Param,ParseIntPipe, Delete } from '@nestjs/common';
+import { Body, Controller, Get, Post, Put, Param, ParseIntPipe, Delete, Req } from '@nestjs/common';
 import { DocumentoService } from './documento.service';
 import { DocumentoByCustomerDTO, DocumentoDTO } from './dto/documento.dto';
+import { ObjectId } from 'mongodb';
 
 @Controller('documento')
 export class DocumentoController {
 
     constructor(
-        private productsService:DocumentoService
-    ){}
+        private DocumentoService: DocumentoService
+    ) { }
     @Get()
-    get(){
-        return this.productsService.getAll()
-    }
-    @Post('user')
-    post(@Body() body:DocumentoDTO){
-        return this.productsService.saveVentaByUser(body)
+    get() {
+        return this.DocumentoService.getAll()
     }
 
-    @Post()
-    postCustomer(@Body() body:DocumentoByCustomerDTO){
-        return this.productsService.saveVentaByCustomer(body)
+    @Get('/enterprise')
+    getByEnterprise(@Req() req) {
+        const token = req.headers.authorization.split(' ')[1];
+        return this.DocumentoService.getByEnterprise(token)
     }
-   /*  @Get(':id')
-    getId(@Param('id') id:string ){
-        return this.productsService.getId(id)
+
+    @Get('/web/enterprise')
+    getByEnterpriseWeb(@Req() req) {
+        const token = req.headers.authorization.split(' ')[1];
+        return this.DocumentoService.getByEnterpriseWeb(token)
+    }
+
+    @Post('/enterprise/user')
+    saveByEnterprise(@Body() body/* :DocumentoDTO  */, @Req() req) {
+        const token = req.headers.authorization.split(' ')[1];
+        return this.DocumentoService.saveVentaByUserByEnterprise(token, body)
+    }
+
+    @Post('/enterprise/customer')
+    saveByEnterpriseCustomer(@Body() body/* :DocumentoDTO  */, @Req() req) {
+        // const token = req.headers.authorization.split(' ')[1];
+        return this.DocumentoService.saveVentaByCustomerLogin(body)
+    }
+
+    /*   @Get('/getbyenterprise/:id')
+      getByEnterpriseById(@Param('id') id:ObjectId, @Req() req){
+          const token = req.headers.authorization.split(' ')[1];
+          return this.DocumentoService.getByEnterpriseVenta_id(id,token)
+      } */
+
+    /*    @Post('user')
+       post(@Body() body:DocumentoDTO){
+           return this.DocumentoService.saveVentaByUser(body)
+       } */
+
+    @Post()
+    postCustomer(@Body() body/* :DocumentoByCustomerDTO */) {
+        return this.DocumentoService.saveVentaByCustomerLogin(body)
+    }
+
+    @Post('enterprise')
+    postAdmin(@Body() body, @Req() req/* :DocumentoByCustomerDTO */) {
+        const token = req.headers.authorization.split(' ')[1];
+        return this.DocumentoService.saveVentaAdmin(body, token)
+    }
+    @Post('enterprise/anular/:id')
+    anular(@Param('id') id: ObjectId, @Req() req) {
+      //  const token = req.headers.authorization.split(' ')[1];
+        return this.DocumentoService.anular(id/* , token */)
+    }
+
+    @Get('web/enterprise/:id')
+    getByEnterpriseWebById(@Param('id') id: ObjectId, @Req() req) {
+        const token = req.headers.authorization.split(' ')[1];
+        return this.DocumentoService.getByEnterpriseWebVenta_id(id, token)
     }
     @Get('/enterprise/:id')
-    async getByEnterprise(@Param('id', ParseIntPipe) id:number){
-        return this.productsService.getByEnterprise(id)
+    getByEnterpriseById(@Param('id') id: ObjectId, @Req() req) {
+        const token = req.headers.authorization.split(' ')[1];
+        return this.DocumentoService.getByEnterpriseVenta_id(id, token)
     }
-   
+    /*   @Get('gohcomputer/getone/:id')
+      GetById(@Param('id') id:ObjectId /* ){
+          return this.DocumentoService.getByVenta_id(id)
+      } */
+
+
+
+
+
+    /*  @Get(':id')
+     getId(@Param('id') id:string ){
+         return this.DocumentoService.getId(id)
+     }
+     @Get('/enterprise/:id')
+     async getByEnterprise(@Param('id', ParseIntPipe) id:number){
+         return this.DocumentoService.getByEnterprise(id)
+     }
     
-    @Get()
-    get(){
-        return this.productsService.get()
-    }
-
-    @Get(':id')
-    getId(@Param('id') id:string ){
-        return this.productsService.getId(id)
-    }
-    @Get('/enterprise/:id')
-    async getByEnterprise(@Param('id', ParseIntPipe) id:number){
-        return this.productsService.getByEnterprise(id)
-    }
-    @Post()
-    post(@Body() body:ProductDto){
-        return this.productsService.save(body)
-    }
-    
-    @Get()
-    get(){
-        return this.productsService.get()
-    }
-
-    @Get(':id')
-    getId(@Param('id') id:string ){
-        return this.productsService.getId(id)
-    }
-    @Get('/enterprise/:id')
-    async getByEnterprise(@Param('id', ParseIntPipe) id:number){
-        return this.productsService.getByEnterprise(id)
-    }
-    @Post()
-    post(@Body() body:ProductDto){
-        return this.productsService.save(body)
-    }
-
-    @Post()
-    post(@Body() body:ProductDto){
-        return this.productsService.save(body)
-    } */
+     
+     @Get()
+     get(){
+         return this.DocumentoService.get()
+     }
+ 
+     @Get(':id')
+     getId(@Param('id') id:string ){
+         return this.DocumentoService.getId(id)
+     }
+     @Get('/enterprise/:id')
+     async getByEnterprise(@Param('id', ParseIntPipe) id:number){
+         return this.DocumentoService.getByEnterprise(id)
+     }
+     @Post()
+     post(@Body() body:ProductDto){
+         return this.DocumentoService.save(body)
+     }
+     
+     @Get()
+     get(){
+         return this.DocumentoService.get()
+     }
+ 
+     @Get(':id')
+     getId(@Param('id') id:string ){
+         return this.DocumentoService.getId(id)
+     }
+     @Get('/enterprise/:id')
+     async getByEnterprise(@Param('id', ParseIntPipe) id:number){
+         return this.DocumentoService.getByEnterprise(id)
+     }
+     @Post()
+     post(@Body() body:ProductDto){
+         return this.DocumentoService.save(body)
+     }
+ 
+     @Post()
+     post(@Body() body:ProductDto){
+         return this.DocumentoService.save(body)
+     } */
 
 }

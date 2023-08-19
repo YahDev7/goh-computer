@@ -8,11 +8,15 @@ import { ProductDto, UpdateProductDto } from './dto/products.dto';
 import { EnterpriseService } from 'src/enterprise/enterprise.service';
 import { SubcategoriaService } from 'src/subcategoria/subcategoria.service';
 import { ObjectId } from 'mongodb';
+import { JwtService } from '@nestjs/jwt';
+import { UserService } from 'src/user/user.service';
 
 @Injectable()
 export class ProductsService {
   constructor(
     @InjectModel(Products.name) private productssModule: Model<ProductsDocument>,
+    private jwtService: JwtService,
+    private UserService: UserService,
     private EnterpriseService: EnterpriseService,
     private SubCategoriaService: SubcategoriaService,
 
@@ -30,23 +34,23 @@ export class ProductsService {
 
   async getId(id: string): Promise<Products | HttpException> {
     try {
-
       let est = await this.productssModule.findOne({ _id: id, estado: 'D' });
       if (est) return new HttpException('No se encontro registro', HttpStatus.NOT_FOUND)
 
       let found = await this.productssModule.findOne({ _id: id });
       if (!found) return new HttpException('No se encontro registro', HttpStatus.NOT_FOUND);
 
+      found.precio_venta = parseFloat(found.precio_venta.toFixed(2));
       return found
     } catch (error) {
       return new HttpException('Ocurrio un error al listar' + error, HttpStatus.NOT_FOUND)
     }
   }
+
   async getByEnterprise(enterprise_id: ObjectId): Promise<Products[] | HttpException> {
     try {
       let res = await this.EnterpriseService.getId(enterprise_id);
       if (res instanceof HttpException) throw res
-      // if(res) throw {err:true,message:'No se encontraron subcategorias de esta empresa'} 
 
       const found = await this.productssModule.find({ enterprise_id, estado: 'A' })
       if (found.length === 0) throw { err: true, message: 'No se encontraron subcategorias de esta empresa' }
@@ -55,7 +59,31 @@ export class ProductsService {
       return new HttpException('Ocurrio un error al buscar por id ' + error.message || error, HttpStatus.NOT_FOUND)
     }
   }
-  async save(body: ProductDto): Promise<Products | Object> {
+
+
+
+  async getByEnterpriseById(idprod: ObjectId,token): Promise<Products | HttpException> {
+    try {
+      const decodedToken = this.jwtService.verify(token);
+      let { enterprise_id, usuario_id } = decodedToken
+      enterprise_id = new ObjectId(enterprise_id)
+      let res = await this.EnterpriseService.getId(enterprise_id);
+      if (res instanceof HttpException) throw res
+
+      idprod= new ObjectId(idprod)
+
+      // if(res) throw {err:true,message:'No se encontraron subcategorias de esta empresa'} 
+
+      const found = await this.productssModule.findOne({_id:idprod, enterprise_id, estado: 'A' })
+      if (!found) throw { err: true, message: 'No se encontro el producto de esta empresa' }
+      return found;
+    } catch (error) {
+      return new HttpException('Ocurrio un error al buscar por id ' + error.message || error, HttpStatus.NOT_FOUND)
+    }
+  }
+
+
+  async save(body/* : ProductDto */): Promise<Products | Object> {
     try {
       let { subcategoria_id } = body
       subcategoria_id = new ObjectId(subcategoria_id)
@@ -63,6 +91,28 @@ export class ProductsService {
       const save = await this.productssModule.create({ ...body, subcategoria_id });
       if (!save) throw { err: true, message: 'No se guardardo' }
       return save
+      /* return {err:false,message:"Se guardo con éxito"} */
+    } catch (error) {
+      return new HttpException('Ocurrio un error al guardar' + error.message || error, HttpStatus.NOT_FOUND);
+    }
+  }
+
+  async saveimg( enterprise_id: ObjectId,product_id:ObjectId ,files:Array<Object>): Promise<Products | Object> {
+    try { 
+      let found =await this.getByEnterprise(enterprise_id)
+      if(!found) throw {err:true,message:'No se encontor esta empresa'} 
+
+      let foundpro = await this.productssModule.findOne({ _id: product_id });
+      if(!foundpro) throw {err:true,message:'No se encontor este producto'} 
+
+      let imagenes = [...foundpro.imagenes,...files];
+    
+      const update = await this.productssModule.updateOne({ _id: product_id }, { $set: {imagenes} });
+      if (update.modifiedCount === 0) return new HttpException('No se logro actualizar', HttpStatus.NOT_FOUND);
+
+      return { err: false, message: "Se actualizo con éxito" }  
+     /*  if (!save) throw { err: true, message: 'No se guardardo' }
+      return save */
       /* return {err:false,message:"Se guardo con éxito"} */
     } catch (error) {
       return new HttpException('Ocurrio un error al guardar' + error.message || error, HttpStatus.NOT_FOUND);
@@ -97,7 +147,6 @@ export class ProductsService {
   }
   async update(id: number, body: UpdateProductDto): Promise<Products | Object> {
     try {
-
       let found = await this.productssModule.findOne({ _id: id, estado: "A" });
       if (!found) return new HttpException('No existe este product', HttpStatus.NOT_FOUND);
 
@@ -113,7 +162,7 @@ export class ProductsService {
       return new HttpException('Ocurrio un error al update, ' + error.message || error, HttpStatus.NOT_FOUND);
     }
   }
-  async delete(id: string) {
+  async delete(id: ObjectId,token) {
     try {
       let found = await this.productssModule.find({ _id: id });
       if (!found) return new HttpException('No se encontro registro a eliminar', HttpStatus.NOT_FOUND);
@@ -124,7 +173,6 @@ export class ProductsService {
 
       const update = await this.productssModule.updateOne({ _id: id }, { $set: { estado: 'D' } });
       if (!update) return new HttpException('ocurrio un error al eliminar', HttpStatus.NOT_FOUND);
-
       return { err: false, message: "Se elimino con éxito" }
     } catch (error) {
       return new HttpException('Ocurrio un error al eliminar, VERIFIQUE', HttpStatus.NOT_FOUND);
@@ -158,11 +206,11 @@ export class ProductsService {
             as: "cat"
           }
         },
-        {
+       /*  {
           $addFields: {
             precio_promoventa: { $ifNull: ['$precio_promoventa', 0] },
           }
-        },
+        }, */
         {
           $project: {
             _id: 0,
@@ -170,14 +218,14 @@ export class ProductsService {
             subcategoria_id: { $arrayElemAt: ['$subcat._id', 0] },
             nomcomp: '$nombre',
             descomp: '$descripcion',
-            precio_venta: 1,
+            precio_venta:{ $round: ['$precio_venta', 2] },
             stock: 1,
             subcatnombre: { $arrayElemAt: ['$subcat.nombre', 0] },
             subcatimg: { $arrayElemAt: ['$subcat.imagen', 0] },
             nomcat: { $arrayElemAt: ['$cat.nombre', 0] },
             idcat: { $arrayElemAt: ['$subcat.categoria_id', 0] },
             imagenes: '$imagenes',
-            precio_promoventa: 1
+           // precio_promoventa: { $round: ['$precio_promoventa', 2] }
           }
         }
       ])
@@ -230,7 +278,7 @@ export class ProductsService {
           subcategoria_id: { $arrayElemAt: ['$subcat._id', 0] },
           nomcomp: '$nombre',
           descomp: '$descripcion',
-          precio_venta: 1,
+          precio_venta: { $round: ['$precio_venta', 2] },
           stock: 1,
           subcatnombre: { $arrayElemAt: ['$subcat.nombre', 0] },
           subcatimg: { $arrayElemAt: ['$subcat.imagen', 0] },
@@ -278,7 +326,7 @@ export class ProductsService {
           subcategoria_id: { $arrayElemAt: ['$subcat._id', 0] },
           nomcomp: '$nombre',
           descomp: '$descripcion',
-          precio_venta: 1,
+          precio_venta: { $round: ['$precio_venta', 2] },
           stock: 1,
           subcatnombre: { $arrayElemAt: ['$subcat.nombre', 0] },
           subcatimg: { $arrayElemAt: ['$subcat.imagen', 0] },
@@ -298,8 +346,6 @@ export class ProductsService {
   }
   async getByIdProd(id: ObjectId) {
     try {
-       const startTime = new Date().getTime();
-
       let res = await this.productssModule.aggregate([
         { $match: { _id: new ObjectId(id), stock: { $gt: 0 }, estado: 'A' } },
         {
@@ -318,11 +364,11 @@ export class ProductsService {
             as: "cat"
           }
         },
-        {
+      /*   {
           $addFields: {
             precio_promoventa: { $ifNull: ['$precio_promoventa', 0] },
           }
-        },
+        }, */
         {
           $project: {
             _id: 0,
@@ -332,31 +378,26 @@ export class ProductsService {
             url_pro: 1,
             nomcomp: '$nombre',
 /*                         fechafinpromo: { $dateToString: { format: '%d-%m-%Y', date: '$fechafinpromo' } },
- */                        descomp: '$descripcion',
-            precio_venta: 1,
+ */                       
+            descomp: '$descripcion',
+            precio_venta:{ $round: ['$precio_venta', 2] },
             stock: 1,
             subcatnombre: { $arrayElemAt: ['$subcat.nombre', 0] },
             subcatimg: { $arrayElemAt: ['$subcat.imagen', 0] },
             nomcat: { $arrayElemAt: ['$cat.nombre', 0] },
-
             imagenes: '$imagenes',
             idcat: { $arrayElemAt: ['$subcat.categoria_id', 0] },
-            precio_promoventa: 1,
+           // precio_promoventa: { $round: ['$precio_promoventa', 2] },
             especificaciones: 1
 
           }
         }
       ]);
-
-      const endTime = new Date().getTime();
-      const responseTime = endTime - startTime;
-      console.log(`Tiempo total solo un producto ${responseTime}ms`)
-
       if (res.length === 0) throw { err: true, message: "No hay productos a mostrar" };
 
       return res[0]
     } catch (error) {
-      return new HttpException('Ocurrio un error al buscar por id ' + error.message || error, HttpStatus.NOT_FOUND)
+      return new HttpException('Ocurrio un error al buscar por id csmr ' + error.message || error, HttpStatus.NOT_FOUND)
     }
   }
 
@@ -397,7 +438,7 @@ export class ProductsService {
             nomcomp: '$nombre',
             /* fechafinpromo: { $dateToString: { format: '%d-%m-%Y', date: '$fechafinpromo' } }, */
             descomp: '$descripcion',
-            precio_venta: 1,
+            precio_venta:{ $round: ['$precio_venta', 2] },
             stock: 1,
             subcatnombre: { $arrayElemAt: ['$subcat.nombre', 0] },
             subcatimg: { $arrayElemAt: ['$subcat.imagen', 0] },
@@ -418,7 +459,6 @@ export class ProductsService {
   }
   async getPromo() {
     try {
-      const startTime = new Date().getTime();
       let res = await this.productssModule.aggregate([
         {
           $match: {
@@ -447,7 +487,7 @@ export class ProductsService {
 
         {
           $addFields: {
-            precio_promoventa: { $ifNull: ['$precio_promoventa', 0] },
+           // precio_promoventa: { $ifNull: ['$precio_promoventa', 0] },
           }
         },
         {
@@ -457,25 +497,19 @@ export class ProductsService {
             subcategoria_id: { $arrayElemAt: ['$subcat._id', 0] },
             nomcomp: '$nombre',
             descomp: '$descripcion',
-            precio_venta: 1,
+            precio_venta: { $round: ['$precio_venta', 2] },
             stock: 1,
             subcatnombre: { $arrayElemAt: ['$subcat.nombre', 0] },
             subcatimg: { $arrayElemAt: ['$subcat.imagen', 0] },
             nomcat: { $arrayElemAt: ['$cat.nombre', 0] },
             idcat: { $arrayElemAt: ['$subcat.categoria_id', 0] },
             imagenes: '$imagenes',
-            precio_promoventa: 1,
+           // precio_promoventa: { $round: ['$precio_promoventa', 2] },
 
           }
         }
       ])
 
-
-
-      const endTime = new Date().getTime();
-
-      const responseTime = endTime - startTime;
-      console.log(`Tiempo total productos ${responseTime}ms`)
       if (res.length === 0) throw { err: true, message: "No hay productos a mostrar" }
       return res
 
@@ -513,11 +547,11 @@ export class ProductsService {
             as: "cat"
           }
         },
-        {
+     /*    {
           $addFields: {
             precio_promoventa: { $ifNull: ['$precio_promoventa', 0] },
           }
-        },
+        }, */
         {
           $project: {
             _id: 0,
@@ -525,14 +559,14 @@ export class ProductsService {
             subcategoria_id: { $arrayElemAt: ['$subcat._id', 0] },
             nomcomp: '$nombre',
             descomp: '$descripcion',
-            precio_venta: 1,
+            precio_venta: { $round: ['$precio_venta', 2] },
             stock: 1,
             subcatnombre: { $arrayElemAt: ['$subcat.nombre', 0] },
             subcatimg: { $arrayElemAt: ['$subcat.imagen', 0] },
             nomcat: { $arrayElemAt: ['$cat.nombre', 0] },
             idcat: { $arrayElemAt: ['$subcat.categoria_id', 0] },
             imagenes: '$imagenes',
-            precio_promoventa: 1,
+            //precio_promoventa: { $round: ['$precio_promoventa', 2] },
           }
         }
       ])
@@ -547,6 +581,29 @@ export class ProductsService {
   }
 
 
+
+  /* ENTERPRISE */
+  async saveEnterprise(body: ProductDto): Promise<Products | Object> {
+    try {
+      let { subcategoria_id, enterprise_id, usuario_id } = body
+
+      subcategoria_id = new ObjectId(subcategoria_id)
+      enterprise_id = new ObjectId(enterprise_id)
+      usuario_id = new ObjectId(usuario_id)
+
+      const save = await this.productssModule.create({ ...body, subcategoria_id });
+      if (!save) throw { err: true, message: 'No se guardardo' }
+      return save
+      /* return {err:false,message:"Se guardo con éxito"} */
+    } catch (error) {
+            console.log(error)
+            return new HttpException('Ocurrio un error al guardar' + error.message || error, HttpStatus.NOT_FOUND);
+    }
+  }
+
+
+
+  
 
 }
 

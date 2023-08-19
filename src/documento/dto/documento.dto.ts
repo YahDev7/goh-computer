@@ -1,14 +1,15 @@
-import { IsNotEmpty, IsNumber, IsString, Length, MaxLength, MinLength, ValidateNested } from 'class-validator';
+import { IsNotEmpty, IsNumber, IsOptional, IsString, Length, MaxLength, MinLength,IsNotEmptyObject, ValidateNested, IsArray } from 'class-validator';
 import { Type } from 'class-transformer';
 import { ObjectId } from 'mongodb';
 
 import {PartialType} from '@nestjs/mapped-types'
 
 export class DocumentoByCustomerDTO {
+  @IsOptional()
   @IsString()
   customer_id: ObjectId;
 
-  @IsNotEmpty()
+  @IsOptional()
   enterprise_id: ObjectId;
 
   @IsString()
@@ -54,6 +55,24 @@ export class DocumentoByCustomerDTO {
   @IsNotEmpty()
 /*   @ValidateNested({ each: true }) */
   detalle: Object[];
+
+  @IsString()
+  @IsNotEmpty()
+  metodo_pago: string;
+
+  @IsNotEmptyObject()
+  dataCustomer: {
+    nombres: string;
+    apellidos: string;
+    dni: string;
+    departamento:string;
+    provincia:string;
+    distrito:string;
+    direccion:string;
+    referencia:string;
+    celular:string;
+    correo:string;
+  };
 }
 
 export class DocumentoDTO extends PartialType(DocumentoByCustomerDTO)  {
@@ -62,6 +81,19 @@ export class DocumentoDTO extends PartialType(DocumentoByCustomerDTO)  {
 
   @IsString()
   caja_id: ObjectId;
+  @IsOptional()
+  dataCustomer: {
+    nombres: string;
+    apellidos: string;
+    dni: string;
+    departamento:string;
+    provincia:string;
+    distrito:string;
+    direccion:string;
+    referencia:string;
+    celular:string;
+    correo:string;
+  };
 }
 
 

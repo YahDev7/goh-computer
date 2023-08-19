@@ -7,9 +7,9 @@ export class MovimientoMDto {
   @IsNotEmpty()
   documento_id: ObjectId;
 
-  @IsString()
+  @IsOptional()
   @IsNotEmpty()
-  enterprise_id: ObjectId;
+  enterprise_id: ObjectId; 
 
   @IsOptional()
   @IsString()
@@ -26,20 +26,23 @@ export class MovimientoMDto {
   @IsNotEmpty()
   metodo_pago: string;
 
+  @IsOptional()
   @IsString() 
   @MaxLength(100)
-  @IsNotEmpty()
   nro_operacion: string;
 
+  @IsOptional()
   @IsNumber()
   monto_deposito: number;
 
   @IsNumber()
   monto_pagar: number;
 
+  @IsOptional()
   @IsNumber()
   vuelto: number;
 
+  @IsOptional()
   @IsString()
   @MaxLength(40)
   observacion: string;
@@ -53,4 +56,8 @@ export class MovimientoMDto {
   @MaxLength(10)
   @IsNotEmpty()
   estado: string;
+
+  @IsOptional()
+  @IsNotEmpty()
+  fileAdjunto: Object;
 }

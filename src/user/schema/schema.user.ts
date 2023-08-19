@@ -9,6 +9,9 @@ export class User {
   @Prop({ required: true })
   enterprise_id: ObjectId;
 
+  @Prop() //no se si deberia tener esta propiedad
+  userAdmin_id: string;
+
   @Prop({ required: true })
   nombre: string;
 

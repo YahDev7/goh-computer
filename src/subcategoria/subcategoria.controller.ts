@@ -1,8 +1,10 @@
-import { Body, Controller, Delete, Get, Param, ParseIntPipe, Post, Put } from '@nestjs/common';
+import { Body, Controller,Req, Delete, Get, Param, ParseIntPipe, Post,UseGuards, Put } from '@nestjs/common';
 import { SubcategoriaService } from './subcategoria.service';
 import { SubCategoriaDto, UpdateSubCategoriaDto } from './dto/subcategoria.dto';
 import { ObjectId } from 'mongodb';
+import { JwtUserAuthGuard } from 'src/user/guards/guard.user';
 
+//@UseGuards(JwtUserAuthGuard)
 
 @Controller('subcategoria')
 export class SubcategoriaController {
@@ -16,15 +18,15 @@ export class SubcategoriaController {
         return this.subcategoriaService.get()
     }
 
-    @Get(':id')
+  /*   @Get(':id')
     async getId(@Param('id', ParseIntPipe) id:string){
         return this.subcategoriaService.getId(id)
-    }
+    } */
 
-    @Get('/enterprise/:id')
+  /*   @Get('/enterprise/:id')
     async getByEnterprise(@Param('id') id:ObjectId){
         return this.subcategoriaService.getByEnterprise(id)
-    }
+    } */
 
     @Post()
     async post(@Body() body:SubCategoriaDto){
@@ -45,10 +47,39 @@ export class SubcategoriaController {
     }
 
 
+  
+
     /* GOH */
     @Get('/gohcomputer/bycategoria/:idcat')
     async getBycat(@Param('idcat') idcat:string) {
         return this.subcategoriaService.getBycat(idcat)
     }
+  
 
+    @Get('/enterprise')
+    async getByEnterprise(@Req() req){
+        const token = req.headers.authorization.split(' ')[1];
+        return this.subcategoriaService.getByEnterprise(token)
+    }
+
+    @Get('/enterprise/:id')
+    async getByEnterpriseById(@Param('id') id,@Req() req){
+        const token = req.headers.authorization.split(' ')[1];
+        return this.subcategoriaService.getByEnterpriseId(id,token)
+    }
+    @Post('enterprise')
+    async postByEnterprise(@Body() body:SubCategoriaDto ,@Req() req){
+        const token = req.headers.authorization.split(' ')[1];
+        return this.subcategoriaService.postByEnterprise(body,token)
+    }
+    @Put('/enterprise/:id')
+    async updateByEnterprise(@Param('id') id:ObjectId,@Body() body:UpdateSubCategoriaDto,@Req() req){
+        const token = req.headers.authorization.split(' ')[1];
+        return this.subcategoriaService.updateByEnterpriseId(id,body,token)
+    }
+    @Delete('enterprise/:id')
+    async deleteByEnterprise(@Param('id') id:ObjectId,@Req() req){
+        const token = req.headers.authorization.split(' ')[1];
+        return this.subcategoriaService.deleteByEnterprise(id,token)
+    } 
 }

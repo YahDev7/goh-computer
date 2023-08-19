@@ -6,13 +6,16 @@ import { InjectModel } from '@nestjs/mongoose';
 import { SubCategoriaDto, UpdateSubCategoriaDto } from './dto/subcategoria.dto';
 import { EnterpriseService } from 'src/enterprise/enterprise.service';
 import { SubCategoria, SubCategoriaDocument } from './schema/subcategoria.schema';
+import { JwtService } from '@nestjs/jwt';
 
 @Injectable()
 export class SubcategoriaService {
 
     constructor(
         @InjectModel(SubCategoria.name) private SubCategoriaModule:Model<SubCategoriaDocument> ,
-        private EnterpriseService:EnterpriseService
+        private EnterpriseService:EnterpriseService,
+        private jwtService: JwtService,
+
         ){}
     
         async get():Promise<SubCategoria[]|HttpException>{
@@ -42,8 +45,11 @@ export class SubcategoriaService {
        }
 
        
-       async getByEnterprise(enterprise_id:ObjectId):Promise<SubCategoria[]|HttpException>{
+      async getByEnterprise(token):Promise<SubCategoria[]|HttpException>{
         try {
+            const decodedToken = this.jwtService.verify(token);
+           let {enterprise_id} =decodedToken
+           enterprise_id=new ObjectId(enterprise_id);
           let res =await this.EnterpriseService.getId(enterprise_id);
           if(res instanceof HttpException) throw res
            // if(res) throw {err:true,message:'No se encontraron subcategorias de esta empresa'} 
@@ -141,12 +147,122 @@ export class SubcategoriaService {
             }
         
         }
+        async getByEnterpriseId(id:ObjectId,token): Promise<SubCategoria | HttpException> {
+            try {
+                const decodedToken = this.jwtService.verify(token);
+                let { enterprise_id, usuario_id } = decodedToken
+                enterprise_id = new ObjectId(enterprise_id)
+                /* const found = await this.UserModule.findOne({ _id: usuario_id, estado: 'A' })
+    
+                if (!found) throw { err: true, message: 'error al buscar este user' }
+                if (decodedToken.enterprise_id !== found.enterprise_id.toString()) throw { err: true, message: 'unauthorizedr' } */
+    
+                const subcat = await this.SubCategoriaModule.findOne({_id:id,enterprise_id})
+    
+                return subcat;
+            } catch (error) {
+                return new HttpException('Ocurrio un error ' + error.message || error, HttpStatus.NOT_FOUND)
+            }
+        }
+
+    async postByEnterprise(body: SubCategoriaDto,token): Promise<SubCategoria | Object> {
+        try {
+            const decodedToken = this.jwtService.verify(token);
+            let {enterprise_id,usuario_id} =decodedToken;
+            let {categoria_id}=body
+            enterprise_id = new ObjectId(enterprise_id)
+            usuario_id = new ObjectId(usuario_id)
+            categoria_id=new ObjectId(categoria_id)
+
+           body={...body,enterprise_id,usuario_id,categoria_id } 
+            
+            const insert =await this.SubCategoriaModule.create(body);
+            console.log(insert)
+            if (!insert) return new HttpException('Ocurrio un error al guardar ', HttpStatus.NOT_FOUND)
+            return insert
+            /*  return {err:false,message:"Se guardo con éxito"} */
+        } catch (error) {
+            return new HttpException('Ocurrio un error al guardar ' + error.message || error, HttpStatus.NOT_FOUND)
+        }
+    }
 
 
+    async updateByEnterpriseId(id: ObjectId, body: UpdateSubCategoriaDto, token): Promise<Object | HttpException> {
+        try {
+            const decodedToken = this.jwtService.verify(token);
+            let {enterprise_id}=decodedToken;
+            enterprise_id=new ObjectId(enterprise_id)
+            id=new ObjectId(id)
+            const found = await this.SubCategoriaModule.findOne({enterprise_id, _id: id, estado: 'A'  })
+            if (!found) throw { err: true, message: 'No se encontor esta subcat' }
+
+            //if (enterprise_id !== found.enterprise_id.toString()) throw { err: true, message: 'unauthorized' }
+ 
+           /* 
+            QUE EL DNI NO ESTE SIENDO UTILIZADO POR OTOR A EXCEPCION DEL MISMO
+           const res = await this.verifyAllUpdate(body, id);
+            if (res.err) throw res; */ 
+  
+            const update = await this.SubCategoriaModule.updateOne({ _id: id }, { $set: body });
+            console.log(update)
+            if (update.modifiedCount === 0) return new HttpException('No se logro actualizar', HttpStatus.NOT_FOUND);
+            return { err: false, message: "Se actualizo con éxito" }
+
+            /*  let resUpdate=Object.assign(found,body);
+             return this.UserModule.save(resUpdate); */
+
+        } catch (error) {
+            return new HttpException('Ocurrio un error al guardar ' + error.message || error, HttpStatus.NOT_FOUND)
+        }
+    }
+    async deleteByEnterprise(id: ObjectId, token): Promise<Object> {
+        try {
+            id=new ObjectId(id)
+            const decodedToken = this.jwtService.verify(token);
+            let {enterprise_id}=decodedToken;
+            enterprise_id=new ObjectId(enterprise_id)
+            id=new ObjectId(id)
+            const found = await this.SubCategoriaModule.findOne({ _id: id, estado: 'A',enterprise_id })
+
+            if (!found) throw { err: true, message: 'No se encontor este subcat' }
+
+           // if (decodedToken.enterprise_id !== found.enterprise_id.toString()) throw { err: true, message: 'unauthorized' }
 
 
-        /* GOH */
-       /*  async getIdByCat(){
-            let res =await this.
-        } */
+            const update = await this.SubCategoriaModule.updateOne({ _id: id }, { $set: { estado: 'D' } });
+            if (!update) return new HttpException('ocurrio un error al eliminar', HttpStatus.NOT_FOUND);
+
+            /*  let resUpdate=Object.assign(found,{estado:'D'});
+             const resfinal= await this.UserModule.save(resUpdate); */
+
+            return { err: false, message: 'Enterprise eliminado' }
+        } catch (error) {
+            return new HttpException('Ocurrio un error al eliminar ' + error.message || error, HttpStatus.NOT_FOUND)
+        }
+
+    }
+
+    async saveimg( enterprise_id: ObjectId,id:ObjectId ,files): Promise<SubCategoria | Object> {
+        try { 
+            let {nombre,
+                URL}=files
+          let found =await this.getByEnterprise(enterprise_id)
+          if(!found) throw {err:true,message:'No se encontor esta empresa'} 
+    
+          let foundpro = await this.SubCategoriaModule.findOne({ _id: id });
+          if(!foundpro) throw {err:true,message:'No se encontor este producto'} 
+    
+        
+          const update = await this.SubCategoriaModule.updateOne({ _id: id }, { $set: {imagen:nombre, url_imagen:URL} });
+          if (update.modifiedCount === 0) return new HttpException('No se logro actualizar', HttpStatus.NOT_FOUND);
+    
+          return { err: false, message: "Se actualizo con éxito" }  
+         /*  if (!save) throw { err: true, message: 'No se guardardo' }
+          return save */
+          /* return {err:false,message:"Se guardo con éxito"} */
+        } catch (error) {
+          return new HttpException('Ocurrio un error al guardar' + error.message || error, HttpStatus.NOT_FOUND);
+        }
+      }
+
 }
