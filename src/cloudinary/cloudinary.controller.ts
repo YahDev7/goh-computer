@@ -28,7 +28,7 @@ import { ObjectId } from 'mongodb';
       return this.cloudinaryService.uploadFile(file);
     } */
 
-    @Post('upload/product/:id')
+  /*   @Post('upload/product/:id')
     @UseInterceptors(FilesInterceptor('files', 3))
     async uploadImage(@Param('id') id:ObjectId,@UploadedFiles() files: Express.Multer.File[],@Req() req) {
 
@@ -37,12 +37,17 @@ import { ObjectId } from 'mongodb';
 
       return this.cloudinaryService.uploadFile(files,token,id);
 
-        
-      /*  const uploadPromises = files.map((file) =>
-      this.cloudinaryService.uploadFiles(file)
-    );
-    const responses = await Promise.all(uploadPromises);
-    return responses.map((response) => response.url);  */
+      
+    } */
+    @Post('upload/product/:id')
+    @UseInterceptors(FileInterceptor('file'))
+    async uploadImage(@Param('id') id:ObjectId,@UploadedFile() file: Express.Multer.File,@Req() req) {
+
+      const token = req.headers.authorization.split(' ')[1];
+
+      return this.cloudinaryService.uploadProductos(file,token,id);
+
+      
     }
 
     @Post('upload/billeteravirtual/:id')

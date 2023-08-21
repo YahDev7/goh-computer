@@ -18,7 +18,7 @@ export class CategoriaService {
 
     async get(): Promise<Categoria[] | HttpException> {
         try {
-            const res = await this.CategoriaModule.find();
+            const res = await this.CategoriaModule.find({estado:'A',enterprise_id:new ObjectId('6463b7176f62eabdc5d7329d')});
             if (res.length === 0) return new HttpException('No hay datos que mostrar', HttpStatus.NOT_FOUND)
             return res
         } catch (error) {
