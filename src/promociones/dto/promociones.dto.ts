@@ -41,6 +41,10 @@ export class PromocionesDto {
     @IsNotEmpty()
     @IsNumber()
     precio_venta_promo: number;
+
+    @IsNotEmpty()
+    @IsString()
+    estado: string;
 }
 
 export class UpdatePromocionesDto extends PartialType(PromocionesDto) {} 

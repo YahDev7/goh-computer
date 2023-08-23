@@ -21,6 +21,5 @@ export class CorreoService {
                 total
             }
         })
-        console.log(res)
     }
 }

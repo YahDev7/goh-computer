@@ -455,7 +455,7 @@ export class ProductsService {
             subcategoria_id: new ObjectId(id),
             stock: { $gt: 0 },
             estado: "A",
-          enterprise_id:new ObjectId("6463b7176f62eabdc5d7329d")
+            enterprise_id:new ObjectId("6463b7176f62eabdc5d7329d")
 
           }
         },
@@ -505,7 +505,7 @@ export class ProductsService {
     }
 
   }
-  async getPromo() {
+/*   async getPromo() {
     try {
       let res = await this.productssModule.aggregate([
         {
@@ -567,7 +567,7 @@ export class ProductsService {
       return new HttpException('Ocurrio un error ' + error.message || error, HttpStatus.NOT_FOUND)
 
     }
-  }
+  } */
 
 
 

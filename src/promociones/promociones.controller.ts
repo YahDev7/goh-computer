@@ -15,12 +15,14 @@ export class PromocionesController {
         const token = req.headers.authorization.split(' ')[1];
         return this.PromocionesService.getEnterprise(token)
     }
-
+  
     @Get('/enterprise/:id')
     async getByEnterprise(@Param('id') id:ObjectId,@Req() req){
-        const token = req.headers.authorization.split(' ')[1];
+        const token = req?.headers?.authorization.split(' ')[1];
         return this.PromocionesService.getByEnterpriseById(id,token)
     }
+
+
     @Post('enterprise')
     postEnterprise(@Body() body:PromocionesDto,@Req() req){
         const token = req.headers.authorization.split(' ')[1];
@@ -40,4 +42,25 @@ export class PromocionesController {
         return this.PromocionesService.delete(id,token)
 
     }
+
+    @Get('webpromo')
+    getWeb(@Req() req){ 
+        //const token = req.headers.authorization.split(' ')[1];
+        return this.PromocionesService.getEnterpriseWeb()
+    }
+    @Get('/promo/:id')
+    async getByEnterpriseWeb(@Param('id') id:ObjectId,@Req() req){
+        return this.PromocionesService.getByEnterpriseByIdWeb(id)
+    }
+
+     @Get('enterprise/getBySubcat/:id')
+    getWebByCat(@Param('id') id:ObjectId,@Req() req){
+        //const token = req.headers.authorization.split(' ')[1];
+        return this.PromocionesService.getEnterpriseBySubCatWeb(id)
+    } 
+
+    @Get('/gohcomputer/allpromo')
+    getAll(){
+        return this.PromocionesService.getPromoAdmin()
+    } 
 }

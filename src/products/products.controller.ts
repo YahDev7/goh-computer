@@ -56,11 +56,11 @@ export class ProductsController {
         return this.productsService.search(search)
     }
 
-    @Public()
+ /*    @Public()
     @Get('/gohcomputer/allpromo')
     getAll(){
         return this.productsService.getPromo()
-    }
+    } */
 
     @Public()
     @Get('/gohcomputer/destacados')
