@@ -11,7 +11,6 @@ export class ProductDto {
   @IsString()
   usuario_id: ObjectId;
 
-  @IsNotEmpty()
   @IsString()
   enterprise_id: ObjectId;
 
@@ -40,7 +39,7 @@ export class ProductDto {
   precio_compra_dolar: number;
   
   @IsNotEmpty()
-  @IsDecimal()
+ /*  @IsDecimal() */
   valor_dolar: number;
   
   @IsNotEmpty()

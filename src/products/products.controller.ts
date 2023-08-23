@@ -32,10 +32,10 @@ export class ProductsController {
         return this.productsService.save(body)
     }
 
-    @Put(':id')
-    update(@Param('id') id:number , @Body() body/* :UpdateProductDto */){ //crear nuevamente para poder utilizar ese DTO falla en valdiar
+ /*    @Put(':id')
+    update(@Param('id') id:number , @Body() body :UpdateProductDto ){ //crear nuevamente para poder utilizar ese DTO falla en valdiar
         return this.productsService.update(id,body)
-    }
+    } */
   /*   @Delete(':id')
     delete(@Param('id') id:string){
         return this.productsService.delete(id)
@@ -56,11 +56,11 @@ export class ProductsController {
         return this.productsService.search(search)
     }
 
-    @Public()
+ /*    @Public()
     @Get('/gohcomputer/allpromo')
     getAll(){
         return this.productsService.getPromo()
-    }
+    } */
 
     @Public()
     @Get('/gohcomputer/destacados')
@@ -88,10 +88,22 @@ export class ProductsController {
 
     /* ENTERPRISE */
 
+
+    @Get('enterprise')
+    getEnterprise(@Req() req){
+        const token = req.headers.authorization.split(' ')[1];
+        return this.productsService.getByEnterprise(token)
+    }
+
     @Public()
     @Post('/enterprise')
     postEnterprise(@Body() body:ProductDto){
         return this.productsService.saveEnterprise(body)
+    }
+
+    @Put('/enterprise/:id')
+    putEnterprise(@Param('id') id:ObjectId,@Body() body:UpdateProductDto){
+        return this.productsService.updateEnterprise(id,body)
     }
 
     @Get('/enterprise/:id')

@@ -47,7 +47,7 @@ export class ProductsService {
     }
   }
 
-  async getByEnterprise(enterprise_id: ObjectId): Promise<Products[] | HttpException> {
+/*   async getByEnterprise(enterprise_id: ObjectId): Promise<Products[] | HttpException> {
     try {
       let res = await this.EnterpriseService.getId(enterprise_id);
       if (res instanceof HttpException) throw res
@@ -58,9 +58,26 @@ export class ProductsService {
     } catch (error) {
       return new HttpException('Ocurrio un error al buscar por id ' + error.message || error, HttpStatus.NOT_FOUND)
     }
+  } */
+
+  async getByEnterprise(token): Promise<Products[] | HttpException> {
+    try {
+      const decodedToken = this.jwtService.verify(token);
+      let { enterprise_id } = decodedToken
+      enterprise_id = new ObjectId(enterprise_id)
+      let res = await this.EnterpriseService.getId(enterprise_id);
+      if (res instanceof HttpException) throw res
+
+
+      // if(res) throw {err:true,message:'No se encontraron subcategorias de esta empresa'} 
+
+      const found = await this.productssModule.find({ enterprise_id, estado: 'A', })
+      if (!found) throw { err: true, message: 'No se encontro el producto de esta empresa' }
+      return found;
+    } catch (error) {
+      return new HttpException('Ocurrio un error al buscar ' + error.message || error, HttpStatus.NOT_FOUND)
+    }
   }
-
-
 
   async getByEnterpriseById(idprod: ObjectId,token): Promise<Products | HttpException> {
     try {
@@ -108,6 +125,30 @@ export class ProductsService {
       let imagenes = [...foundpro.imagenes,...files];
     
       const update = await this.productssModule.updateOne({ _id: product_id }, { $set: {imagenes} });
+      if (update.modifiedCount === 0) return new HttpException('No se logro actualizar', HttpStatus.NOT_FOUND);
+
+      return { err: false, message: "Se actualizo con éxito" }  
+     /*  if (!save) throw { err: true, message: 'No se guardardo' }
+      return save */
+      /* return {err:false,message:"Se guardo con éxito"} */
+    } catch (error) {
+      return new HttpException('Ocurrio un error al guardar' + error.message || error, HttpStatus.NOT_FOUND);
+    }
+  }
+
+ 
+  async saveimgOne( enterprise_id: ObjectId,id:ObjectId ,files): Promise<Products | Object> {
+    try { 
+        let {nombre,
+            URL}=files
+
+      let found =await this.getByEnterprise(enterprise_id)
+      if(!found) throw {err:true,message:'No se encontor esta empresa'} 
+
+      let foundpro = await this.productssModule.findOne({ _id: id });
+      if(!foundpro) throw {err:true,message:'No se encontor este producto'} 
+    
+      const update = await this.productssModule.updateOne({ _id: id }, { $set: {imagenes:[{nombre, URL}]} });
       if (update.modifiedCount === 0) return new HttpException('No se logro actualizar', HttpStatus.NOT_FOUND);
 
       return { err: false, message: "Se actualizo con éxito" }  
@@ -187,7 +228,9 @@ export class ProductsService {
         {
           $match: {
             stock: { $gt: 0 },
-            estado: 'A'
+            estado: 'A',
+            enterprise_id:new ObjectId("6463b7176f62eabdc5d7329d")
+
           }
         },
         {
@@ -252,7 +295,8 @@ export class ProductsService {
         $match: {
           stock: { $gt: 0 },
           estado: 'A',
-          ventas: { $gt: 0 }
+          ventas: { $gt: 0 },
+          enterprise_id:new ObjectId("6463b7176f62eabdc5d7329d")
         }
       },
       {
@@ -299,7 +343,9 @@ export class ProductsService {
         $match: {
           stock: { $gt: 0 },
           estado: 'A',
-          ventas: { $gt: 0 }
+          ventas: { $gt: 0 },
+          enterprise_id:new ObjectId("6463b7176f62eabdc5d7329d")
+
         }
       },
       {
@@ -408,7 +454,9 @@ export class ProductsService {
           $match: {
             subcategoria_id: new ObjectId(id),
             stock: { $gt: 0 },
-            estado: "A"
+            estado: "A",
+            enterprise_id:new ObjectId("6463b7176f62eabdc5d7329d")
+
           }
         },
         {
@@ -457,14 +505,16 @@ export class ProductsService {
     }
 
   }
-  async getPromo() {
+/*   async getPromo() {
     try {
       let res = await this.productssModule.aggregate([
         {
           $match: {
             stock: { $gt: 0 },
             estado: 'A',
-            promocion: 'SI'
+            promocion: 'SI',
+          enterprise_id:new ObjectId("6463b7176f62eabdc5d7329d")
+
           }
         },
         {
@@ -517,7 +567,7 @@ export class ProductsService {
       return new HttpException('Ocurrio un error ' + error.message || error, HttpStatus.NOT_FOUND)
 
     }
-  }
+  } */
 
 
 
@@ -529,6 +579,8 @@ export class ProductsService {
             nombre: { $regex: search, $options: 'i' },
             stock: { $gt: 0 },
             estado: 'A',
+          enterprise_id:new ObjectId("6463b7176f62eabdc5d7329d")
+
           },
         },
         {
@@ -591,7 +643,8 @@ export class ProductsService {
       enterprise_id = new ObjectId(enterprise_id)
       usuario_id = new ObjectId(usuario_id)
 
-      const save = await this.productssModule.create({ ...body, subcategoria_id });
+
+      const save = await this.productssModule.create({ ...body, subcategoria_id,enterprise_id,usuario_id });
       if (!save) throw { err: true, message: 'No se guardardo' }
       return save
       /* return {err:false,message:"Se guardo con éxito"} */
@@ -601,7 +654,25 @@ export class ProductsService {
     }
   }
 
+  async updateEnterprise(id: ObjectId, body: UpdateProductDto): Promise<Products | Object> {
+    try {
+      let found = await this.productssModule.findOne({ _id: id, estado: "A" });
+      if (!found) return new HttpException('No existe este product', HttpStatus.NOT_FOUND);
+      let { subcategoria_id, enterprise_id, usuario_id } = body
 
+      subcategoria_id = new ObjectId(subcategoria_id)
+      enterprise_id = new ObjectId(enterprise_id)
+      usuario_id = new ObjectId(usuario_id)
+      const update = await this.productssModule.updateOne({ _id: id }, { $set:{...body,subcategoria_id,
+        enterprise_id,
+        usuario_id} });
+      if (update.modifiedCount === 0) return new HttpException('No se logro actualizar', HttpStatus.NOT_FOUND);
+
+      return { err: false, message: "Se actualizo con éxito" }
+    } catch (error) {
+      return new HttpException('Ocurrio un error al update, ' + error.message || error, HttpStatus.NOT_FOUND);
+    }
+  }
 
   
 
