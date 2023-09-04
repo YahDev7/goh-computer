@@ -42,6 +42,15 @@ export class CustomerController {
         return this.customerService.login(body)
     } 
 
+    @Get('web/getdatauser')
+    async getDataUser(@Req() req){
+        const token = req.headers.authorization.split(' ')[1];
+
+       // res.header('Authorization', `Bearer ${token}`);
+       //ANTES DE ENVIAR AL FRONT  OBTENER EL TOKEN Y ENVIAR EL TOKEN EN LOS HEADERS
+        return this.customerService.getDataUser(token)
+    }
+
     /* ENTERPRISE */
   /*   @Get('/enterprise')
     async getByEnterprise(@Param('id') id:ObjectId){

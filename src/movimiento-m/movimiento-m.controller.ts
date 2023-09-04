@@ -48,10 +48,39 @@ export class MovimientoMController {
     getSumaVenta(){
         return this.MovimientoMService.totalVentas()
     }
-
     @Get('Compras/total')
     getSumaCompra(){
         return this.MovimientoMService.totalCompras()
     }
+    @Get('ventas/totaldia')
+    getSumaVentadia(){
+        return this.MovimientoMService.totalVentasDia()
+    }
+    @Get('ventas/totalmes')
+    getSumaVentames(){
+        return this.MovimientoMService.totalVentasMes()
+    }
+
+    @Get('compras/totaldia')
+    getSumacompradia(){
+        return this.MovimientoMService.totalComprasDia()
+    }
+    @Get('compras/totalmes')
+    getSumacomprames(){
+        return this.MovimientoMService.totalComprasMes()
+    }
+    @Get('enterprise/ingresosMensuales')
+    getingresosMensuales(){
+        return this.MovimientoMService.ingresosMensuales()
+    }  
+    
+    @Get('enterprise/servicios')
+    gettotalVentasServicios(){
+        return this.MovimientoMService.totalVentasServicios()
+    }
+
+  
+
+    
     
 }

@@ -50,8 +50,18 @@ export class UserController {
     async login(@Body() body:LoginUserDto){
        // res.header('Authorization', `Bearer ${token}`);
        //ANTES DE ENVIAR AL FRONT  OBTENER EL TOKEN Y ENVIAR EL TOKEN EN LOS HEADERS
-
         return this.userService.login(body)
+    }
+
+
+    @Public()
+    @Get('web/getdatauser')
+    async getDataUser(@Req() req){
+        const token = req.headers.authorization.split(' ')[1];
+
+       // res.header('Authorization', `Bearer ${token}`);
+       //ANTES DE ENVIAR AL FRONT  OBTENER EL TOKEN Y ENVIAR EL TOKEN EN LOS HEADERS
+        return this.userService.getDataUser(token)
     }
 
 

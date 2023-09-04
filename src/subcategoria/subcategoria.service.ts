@@ -137,7 +137,7 @@ export class SubcategoriaService {
              /*    let est= await this.SubCategoriaModule.findOne({_id:id,estado:'D'});
                 if(est)return new HttpException('No se encontro registro',HttpStatus.NOT_FOUND)  */  
     
-                const found=await this.SubCategoriaModule.find({categoria_id:new ObjectId(id),estado:'A'})
+                const found=await this.SubCategoriaModule.find({categoria_id:new ObjectId(id),estado:'A',  enterprise_id: new ObjectId("6463b7176f62eabdc5d7329d"),})
                 if(found.length===0) throw {err:true,message:'No se encontor ninguna subcategoria por esta categoria'} 
 
                 return found;

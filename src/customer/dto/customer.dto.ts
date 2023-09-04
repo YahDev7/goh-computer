@@ -40,7 +40,7 @@ export class CustomerDto {
   id?: number; */
 
   @IsOptional()
-  @Length(8, 8)
+  @Length(11, 11)
   dni_ruc: string;
 
   @IsNotEmpty()

@@ -10,6 +10,7 @@ import { DocumentoModule } from 'src/documento/documento.module';
 import { JwtModule } from '@nestjs/jwt';
 import config from 'src/config';
 import { ConfigType } from '@nestjs/config';
+import { ProductsModule } from 'src/products/products.module';
 
 @Module({
   imports:[MongooseModule.forFeature([
@@ -27,7 +28,7 @@ import { ConfigType } from '@nestjs/config';
         }
       }
     },
-  }),EnterpriseModule,CustomerModule,DocumentoModule],
+  }),EnterpriseModule,CustomerModule,DocumentoModule,/* ProductsModule */],
   providers: [MovimientoMService],
   controllers: [MovimientoMController],
   exports:[MovimientoMService]
