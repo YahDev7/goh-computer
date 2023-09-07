@@ -7,7 +7,7 @@ import { ObjectId } from 'mongodb';
 import { EnterpriseService } from 'src/enterprise/enterprise.service';
 import { MovimientoM, MovimientoMDocument } from './schema/movimiento-m.schema';
 import { CustomerService } from 'src/customer/customer.service';
-import { MovimientoMDto } from './dto/movimiento-m.dto';
+import { MovimientoMDto, UpdateMovimientoMDto } from './dto/movimiento-m.dto';
 import { DocumentoService } from 'src/documento/documento.service';
 import { JwtService } from '@nestjs/jwt';
 import { ProductsService } from 'src/products/products.service';
@@ -109,7 +109,7 @@ export class MovimientoMService {
         }
     }
 
-    async saveVentaByUserByEnterprise(token, body: MovimientoMDto) {
+    async saveVentaByUserByEnterprise(token, body: UpdateMovimientoMDto) {
         try {
 
             const decodedToken = this.jwtService.verify(token);

@@ -178,7 +178,6 @@ export class CategoriaService {
             const decodedToken = this.jwtService.verify(token);
   
             const update = await this.CategoriaModule.updateOne({ _id: id }, { $set: body });
-            console.log(update)
             if (update.modifiedCount === 0) return new HttpException('No se logro actualizar', HttpStatus.NOT_FOUND);
             return { err: false, message: "Se actualizo con éxito" }
 
@@ -190,7 +189,6 @@ export class CategoriaService {
     async deleteByEnterprise(id: ObjectId, token): Promise<Object|HttpException> {
         try {
             id=new ObjectId(id)
-            console.log(id)
           //  const decodedToken = this.jwtService.verify(token);
            
           const update = await this.CategoriaModule.updateOne({ _id: id }, { $set: {estado:'D'} });

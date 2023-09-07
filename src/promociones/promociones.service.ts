@@ -59,7 +59,6 @@ export class PromocionesService {
 
             
             if (res.length === 0) return new HttpException('No hay productos que mostrar', HttpStatus.NOT_FOUND)
-            console.log(res)
             return res
         } catch (error) {
             return new HttpException('Ocurrio un error al listar', HttpStatus.NOT_FOUND)
@@ -76,7 +75,6 @@ export class PromocionesService {
             enterprise_id = new ObjectId(enterprise_id)
             id = new ObjectId(id)
             const res = await this.PromocionesModule.findOne({ _id: id, enterprise_id, estado: 'A' });
-            console.log(res)
             if (!res) return new HttpException('No hay productos que mostrar', HttpStatus.NOT_FOUND)
             return res
         } catch (error) {
@@ -209,7 +207,6 @@ export class PromocionesService {
                     }
                 }
             ])
-           console.log(res)
             if (res.length === 0) throw { err: true, message: "No hay productos a mostrar" }
             return res
 
@@ -411,7 +408,6 @@ export class PromocionesService {
                 }
             ])
 
-            console.log(res)
             if (res.length === 0) throw { err: true, message: "No hay productos a mostrar" }
             return res
         } catch (error) {

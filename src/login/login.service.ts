@@ -18,13 +18,11 @@ export class LoginService {
         let passhash=await hash(password,10)
         
         body={...body,password:passhash}
-        console.log(body)
         return this.CustomerModule.create(body)
         
     }
 
     async login(body:LoginDto){
-        console.log(body)
         return body
     }
    /*  async getToken(token){

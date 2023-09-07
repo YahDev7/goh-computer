@@ -177,7 +177,6 @@ export class SubcategoriaService {
            body={...body,enterprise_id,usuario_id,categoria_id } 
             
             const insert =await this.SubCategoriaModule.create(body);
-            console.log(insert)
             if (!insert) return new HttpException('Ocurrio un error al guardar ', HttpStatus.NOT_FOUND)
             return insert
             /*  return {err:false,message:"Se guardo con éxito"} */
@@ -204,7 +203,6 @@ export class SubcategoriaService {
             if (res.err) throw res; */ 
   
             const update = await this.SubCategoriaModule.updateOne({ _id: id }, { $set: body });
-            console.log(update)
             if (update.modifiedCount === 0) return new HttpException('No se logro actualizar', HttpStatus.NOT_FOUND);
             return { err: false, message: "Se actualizo con éxito" }
 

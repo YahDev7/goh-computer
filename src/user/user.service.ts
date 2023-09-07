@@ -165,7 +165,6 @@ export class UserService {
 
             const finduser = await this.UserModule.findOne({ email })
             if (!finduser) throw { err: true, message: "Errror de autentication" }
-            console.log(finduser)
             let comparepass = await compare(password, finduser.password)
             if (!comparepass) throw { err: true, message: "Errror de autentication" }
 
@@ -237,7 +236,6 @@ export class UserService {
                 },
               ]); 
  
-              console.log(user)
 
 
             if (!user[0]) throw { err: true, message: 'error al buscar este user' }

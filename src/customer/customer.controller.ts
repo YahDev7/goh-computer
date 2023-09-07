@@ -65,7 +65,6 @@ export class CustomerController {
 
      @Get('enterprise/:id')
     async getByEnterpriseId(@Param('id') id:ObjectId){
-        console.log(id)
         return this.customerService.getIdEnterprise(id)
     } 
     
