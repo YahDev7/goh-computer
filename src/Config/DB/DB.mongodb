@@ -1,4 +1,68 @@
 use("gohcomputer")
+
+
+
+db.movimientoms.aggregate([
+  {
+    $match: {
+      fecha: { $gte: new Date("2023-01-01"), $lt: new Date("2023-12-01") }
+    }
+  },
+  {
+    $group: {
+      _id: { $month: "$fecha" },
+      TotalCompra: { $sum: { $cond: { if: { $eq: ["$tipo_compra_venta", "COMPRA"] }, then: { $sum: "$monto_pagar" }, else: { $literal: 0 } } } },
+      TotalVenta: { $sum: { $cond: { if: { $eq: ["$tipo_compra_venta", "VENTA"] }, then: { $sum: "$monto_pagar" }, else: { $literal: 0 } } } }
+    }
+  },
+  {
+    $addFields:{
+     Total :{$subtract:['$TotalVenta','$TotalCompra']}
+
+    }
+ },
+  {
+    $sort: {
+      _id: 1
+    }
+  },
+ 
+ /*  {
+    $project: {
+      _id: 1,
+      TotalCompra: 1,
+      TotalVenta: 1,
+      Total:1
+
+    }
+  } */
+])
+
+
+/* db.movimientoms.aggregate([
+    {
+      $match: {
+        fecha: { $gte: new Date("2023-01-01"), $lt: new Date("2023-12-01") },
+        tipo_compra_venta:"COMPRA"
+
+      }
+    },
+    {
+      $group: {
+        _id: {$month:"$fecha"},
+       // fechas: {$push:'$fecha'},
+        Totalmes: { $sum: "$monto_pagar" }
+      }
+    },
+    {
+      $sort: {
+        _id: 1
+      }
+    },
+
+
+  ]) */
+
 //FALTA PENSAR COMO SE TIENE QUE GENERAR EL DOCUMENTO CUANDO EMITE COMPRA POR WEB 
 /* db.products.insertOne({
     "subcategoria_id": 123,
@@ -111,11 +175,11 @@ db.documento.insertOne({
 
 
 
- db.moneda.insertOne({
+/*  db.moneda.insertOne({
         "nombre":"dolar" ,
         "valor":3.80 
 
- })
+ }) */
 
 
 
@@ -143,19 +207,19 @@ db.documento.insertOne({
 
 
 
-  /*   db.pedidos.insertOne({
-        "persona_id": 12345,
-        "fecha": "2023-04-24T10:00:00Z",
-        "total": 500,
-        "estado": "espera",
-        "detalle":[
-            {
-                "pedido_id": 123,
-                "producto_id": 567,
-                "cantidad": 2,
-                "precio_unitario": 50,
-                "subtotal": 100
-              }
-        ]
+/*   db.pedidos.insertOne({
+      "persona_id": 12345,
+      "fecha": "2023-04-24T10:00:00Z",
+      "total": 500,
+      "estado": "espera",
+      "detalle":[
+          {
+              "pedido_id": 123,
+              "producto_id": 567,
+              "cantidad": 2,
+              "precio_unitario": 50,
+              "subtotal": 100
+            }
+      ]
 }) */
 

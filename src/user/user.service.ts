@@ -165,7 +165,6 @@ export class UserService {
 
             const finduser = await this.UserModule.findOne({ email })
             if (!finduser) throw { err: true, message: "Errror de autentication" }
-
             let comparepass = await compare(password, finduser.password)
             if (!comparepass) throw { err: true, message: "Errror de autentication" }
 
@@ -237,7 +236,6 @@ export class UserService {
                 },
               ]); 
  
-              console.log(user)
 
 
             if (!user[0]) throw { err: true, message: 'error al buscar este user' }
@@ -326,6 +324,17 @@ export class UserService {
             return { err: false, message: 'Enterprise eliminado' }
         } catch (error) {
             return new HttpException('Ocurrio un error al eliminar ' + error.message || error, HttpStatus.NOT_FOUND)
+        }
+
+    }
+
+       async getDataUser(token): Promise<Object> {
+        try {
+            const decodedToken = this.jwtService.verify(token);
+            //const {nombre}= decodedToken
+            return decodedToken
+        } catch (error) {
+            return new HttpException('Ocurrio un error ' + error.message || error, HttpStatus.NOT_FOUND)
         }
 
     }

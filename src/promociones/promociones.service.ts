@@ -25,7 +25,39 @@ export class PromocionesService {
             let { enterprise_id } = decodedToken
             enterprise_id = new ObjectId(enterprise_id)
 
-            const res = await this.PromocionesModule.find({ enterprise_id, estado: 'A' });
+            //const res = await this.PromocionesModule.find({ enterprise_id, estado: 'A' });
+
+            let res = await this.PromocionesModule.aggregate([
+                {
+                    $match: {
+                        estado: 'A',
+                        enterprise_id: new ObjectId(enterprise_id)
+
+                    }
+                },
+                {
+                    $lookup: {
+                        from: 'products',
+                        localField: 'producto_id',
+                        foreignField: '_id',
+                        as: 'prod'
+                    }
+                },
+                {
+                    $project: {
+                        _id: 1,
+                        valor_dolar:1,
+                        fecha_fin:1,
+                        precio_venta_promo:1,
+                        imagenes: '$prod.imagenes',
+                        // precio_promoventa: { $round: ['$precio_promoventa', 2] },
+
+                    }
+                }
+            ])
+
+
+            
             if (res.length === 0) return new HttpException('No hay productos que mostrar', HttpStatus.NOT_FOUND)
             return res
         } catch (error) {
@@ -43,7 +75,6 @@ export class PromocionesService {
             enterprise_id = new ObjectId(enterprise_id)
             id = new ObjectId(id)
             const res = await this.PromocionesModule.findOne({ _id: id, enterprise_id, estado: 'A' });
-            console.log(res)
             if (!res) return new HttpException('No hay productos que mostrar', HttpStatus.NOT_FOUND)
             return res
         } catch (error) {
@@ -176,7 +207,6 @@ export class PromocionesService {
                     }
                 }
             ])
-           console.log(res)
             if (res.length === 0) throw { err: true, message: "No hay productos a mostrar" }
             return res
 
@@ -298,6 +328,7 @@ export class PromocionesService {
                         nomcomp: { $arrayElemAt: ['$prod.nombre', 0] },
                         descomp: { $arrayElemAt: ['$prod.descripcion', 0] },
                         precio_venta: '$precio_venta_promo',
+                        precio_antes: '$prod.precio_venta',
                         stock: { $arrayElemAt: ['$prod.stock', 0] },
                         //  subcatnombre: { $arrayElemAt: ['$subcat.nombre', 0] }, 
                         // subcatimg: { $arrayElemAt: ['$subcat.imagen', 0] },
@@ -305,11 +336,9 @@ export class PromocionesService {
                         idcat: { $arrayElemAt: ['$subcat.categoria_id', 0] },
                         imagenes: { $arrayElemAt: ['$prod.imagenes', 0] },
                         especificaciones: { $arrayElemAt: ['$prod.especificaciones', 0] },                       // precio_promoventa: { $round: ['$precio_promoventa', 2] },
-
                     }
                 }
             ])
-
 
             if (res.length === 0) throw { err: true, message: "No hay productos a mostrar" }
             return res
@@ -379,7 +408,6 @@ export class PromocionesService {
                 }
             ])
 
-            console.log(res)
             if (res.length === 0) throw { err: true, message: "No hay productos a mostrar" }
             return res
         } catch (error) {

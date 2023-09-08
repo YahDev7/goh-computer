@@ -14,7 +14,7 @@ export class Customer {
   user_id: ObjectId;
 
   @Prop() /* validar por dni */
-  dni_rucs: string;
+  dni_ruc: string;
 
   
   @Prop({ required: true })

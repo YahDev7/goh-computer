@@ -79,6 +79,25 @@ export class ProductsService {
     }
   }
 
+  async getByEnterpriseCantidad(token){
+    try {
+      const decodedToken = this.jwtService.verify(token);
+      let { enterprise_id } = decodedToken
+      enterprise_id = new ObjectId(enterprise_id)
+      let res = await this.EnterpriseService.getId(enterprise_id);
+      if (res instanceof HttpException) throw res
+
+
+      // if(res) throw {err:true,message:'No se encontraron subcategorias de esta empresa'} 
+
+      const cantidad = await this.productssModule.find({ enterprise_id, estado: 'A' }).count()
+      if (!cantidad) throw { err: true, message: 'No se encontro el producto de esta empresa' }
+      return {cantidad};
+    } catch (error) {
+      return new HttpException('Ocurrio un error al buscar ' + error.message || error, HttpStatus.NOT_FOUND)
+    }
+  }
+
   async getByEnterpriseById(idprod: ObjectId,token): Promise<Products | HttpException> {
     try {
       const decodedToken = this.jwtService.verify(token);
@@ -423,8 +442,7 @@ export class ProductsService {
             garantia: 1,
             url_pro: 1,
             nomcomp: '$nombre',
-/*                         fechafinpromo: { $dateToString: { format: '%d-%m-%Y', date: '$fechafinpromo' } },
- */                       
+
             descomp: '$descripcion',
             precio_venta:{ $round: ['$precio_venta', 2] },
             stock: 1,
@@ -674,7 +692,71 @@ export class ProductsService {
     }
   }
 
-  
+  async getEnterpriseBySubCatWeb(id:ObjectId/* ,token */): Promise<Products[] | HttpException> {
+    try {
+
+        let res = await this.productssModule.aggregate([
+            
+            {
+                $match: {
+                    estado: 'A',
+                    enterprise_id: new ObjectId("6463b7176f62eabdc5d7329d"),
+                    subcategoria_id: new ObjectId(id)
+                }
+            },
+            {
+              $lookup: {
+                  from: "promociones",
+                  localField: "_id",
+                  foreignField: "producto_id",
+                  as: "promo"
+              }
+          },
+            {
+                $lookup: {
+                    from: "subcategorias",
+                    localField: "subcategoria_id",
+                    foreignField: "_id",
+                    as: "subcat"
+                }
+            },
+            {
+                $lookup: {
+                    from: "categorias",
+                    localField: "subcat.categoria_id",
+                    foreignField: "_id",
+                    as: "cat"
+                }
+            },
+            {
+                $project: {
+                    _id: 0,
+                    //promo: { $arrayElemAt: ['$promo._id', 0] },
+                    idpromo: { $arrayElemAt: ['$promo._id', 0] },
+                    idcomp:'$_id',/*  { $arrayElemAt: ['$promo.producto_id', 0] }, */
+                    url_pro: 1,
+                    garantia:1,
+                    subcategoria_id: { $arrayElemAt: ['$subcat._id', 0] },
+                    nomcomp:'$nombre',
+                    descomp: '$descripcion',
+                    precio_venta:  { $arrayElemAt: ['$promo.precio_venta_promo', 0] },
+                    precio_antes: '$precio_venta',
+                    stock:1,
+                    nomcat: { $arrayElemAt: ['$cat.nombre', 0] },
+                    idcat: { $arrayElemAt: ['$subcat.categoria_id', 0] },
+                    imagenes: '$imagenes',
+                    especificaciones: { $arrayElemAt: ['$especificaciones', 0] },           
+                }
+            }
+        ])
+
+        if (res.length === 0) throw { err: true, message: "No hay productos a mostrar" }
+        return res
+    } catch (error) {
+        console.log(error)
+        return new HttpException('Ocurrio un error al listar '+error.message || error, HttpStatus.NOT_FOUND)
+    }
+}
 
 }
 

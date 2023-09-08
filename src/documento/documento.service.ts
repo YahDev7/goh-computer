@@ -37,6 +37,7 @@ export class DocumentoService {
     async getVentas() {
         try {
             const res = await this.DocumentoModule.find({ tipo_compra_venta: 'VENTA' });
+
             if (res.length === 0) return new HttpException('No hay Documentos que mostrar', HttpStatus.NOT_FOUND)
             return res
         } catch (error) {
@@ -167,7 +168,6 @@ export class DocumentoService {
                 }
 
                 if ( key === "celular") {
-                    console.log(dataCustomer[key].length===9)
                     if (dataCustomer[key].length < 9) {
                         customervacio.push('Celular tiene que ser de 9 digitos')
                     }
@@ -179,7 +179,6 @@ export class DocumentoService {
                 }
 
               }
-              console.log(dataCustomer)
               if(customervacio.length>0) return { err: true, data:customervacio}
             const decodedTokencarr = this.jwtService.verify(tokcarr);
             const decodedToken = this.jwtService.verify(tokensession);
@@ -297,7 +296,8 @@ export class DocumentoService {
 
             enterprise_id = new ObjectId(enterprise_id)
 
-            const res = await this.DocumentoModule.find({ enterprise_id, estado: { $ne: 'ANULADO' },});
+            const res = await this.DocumentoModule.find({ enterprise_id/* , estado: { $ne: 'ANULADO' } */,}).sort({ fecha: -1 });
+
             if (res.length === 0) return new HttpException('No hay Documentos que mostrar', HttpStatus.NOT_FOUND)
             return res
         } catch (error) {
@@ -308,7 +308,6 @@ export class DocumentoService {
     async getByEnterpriseWeb(token /* enterprise_id: ObjectId */) {
         try {
             const decodedToken = this.jwtService.verify(token);
-            console.log(decodedToken)
             let { enterprise_id,id } = decodedToken
 
             let resEnterprise = await this.EnterpriseService.getId(enterprise_id)
@@ -317,7 +316,7 @@ export class DocumentoService {
             id = new ObjectId(id)
             enterprise_id = new ObjectId(enterprise_id)
 
-            const res = await this.DocumentoModule.find({ enterprise_id, customer_id:id , estado: { $ne: 'ANULADO' },});
+            const res = await this.DocumentoModule.find({ enterprise_id, customer_id:id , estado: { $ne: 'ANULADO' },}).sort({ fecha: -1 });
             if (res.length === 0) return new HttpException('No hay Documentos que mostrar', HttpStatus.NOT_FOUND)
             return res
         } catch (error) {
@@ -376,10 +375,19 @@ export class DocumentoService {
 
     async updateEstado(id: ObjectId) {
         try {
-            const res = await this.DocumentoModule.updateOne({ _id: id }, { $set: { estado: 'CONFIRMANDO' } });
-
+            const res = await this.DocumentoModule.updateOne({ _id: new ObjectId(id) }, { $set: { estado: 'CANCELADO' } });
             if (res.modifiedCount === 0) return { err: true, message: "Ocurrio un error al cancelar el documento" }
             return { err: false, message: "CANCELADO" }
+        } catch (error) {
+            return error
+        }
+    }
+
+    async getConfirm(id: ObjectId) {
+        try {
+            const res = await this.DocumentoModule.findOne({ _id: new ObjectId(id),estado:"CANCELADO" } );
+            if (res) return { err: true, message: "Este documento Ya esta cancelado" }
+            return  { err: false }
         } catch (error) {
             return error
         }

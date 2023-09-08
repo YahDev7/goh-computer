@@ -95,6 +95,19 @@ export class ProductsController {
         return this.productsService.getByEnterprise(token)
     }
 
+    @Get('enterprise/cantidad')
+    getEnterpriseCantidad(@Req() req){
+        const token = req.headers.authorization.split(' ')[1];
+        return this.productsService.getByEnterpriseCantidad(token)
+    }
+    
+    @Public()
+    @Get('enterprise/getBySubcat/:id')
+    getEnterpriseBySubCatWeb(@Param('id') id,@Req() req){
+      //  const token = req.headers.authorization.split(' ')[1];
+        return this.productsService.getEnterpriseBySubCatWeb(id/* ,token */)
+    }
+
     @Public()
     @Post('/enterprise')
     postEnterprise(@Body() body:ProductDto){

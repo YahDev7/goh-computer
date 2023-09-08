@@ -1,6 +1,6 @@
 import { Body, Controller, Get, Param, ParseIntPipe, Post, Req } from '@nestjs/common';
 import { MovimientoMService } from './movimiento-m.service';
-import { MovimientoMDto } from './dto/movimiento-m.dto';
+import { MovimientoMDto, UpdateMovimientoMDto } from './dto/movimiento-m.dto';
 import { ObjectId } from 'mongodb';
 
 @Controller('movimiento-m')
@@ -26,7 +26,7 @@ export class MovimientoMController {
 
     }
     @Post('/enterprise')
-    saveByEnterprise(@Body() body,@Req() req){
+    saveByEnterprise(@Body() body:UpdateMovimientoMDto,@Req() req){
         const token = req.headers.authorization.split(' ')[1];
         return this.MovimientoMService.saveVentaByUserByEnterprise(token,body)
     }
@@ -48,10 +48,39 @@ export class MovimientoMController {
     getSumaVenta(){
         return this.MovimientoMService.totalVentas()
     }
-
     @Get('Compras/total')
     getSumaCompra(){
         return this.MovimientoMService.totalCompras()
     }
+    @Get('ventas/totaldia')
+    getSumaVentadia(){
+        return this.MovimientoMService.totalVentasDia()
+    }
+    @Get('ventas/totalmes')
+    getSumaVentames(){
+        return this.MovimientoMService.totalVentasMes()
+    }
+
+    @Get('compras/totaldia')
+    getSumacompradia(){
+        return this.MovimientoMService.totalComprasDia()
+    }
+    @Get('compras/totalmes')
+    getSumacomprames(){
+        return this.MovimientoMService.totalComprasMes()
+    }
+    @Get('enterprise/ingresosMensuales')
+    getingresosMensuales(){
+        return this.MovimientoMService.ingresosMensuales()
+    }  
+    
+    @Get('enterprise/servicios')
+    gettotalVentasServicios(){
+        return this.MovimientoMService.totalVentasServicios()
+    }
+
+  
+
+    
     
 }

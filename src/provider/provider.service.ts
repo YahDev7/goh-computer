@@ -23,7 +23,6 @@ export class ProviderService {
         async get():Promise<Provider[]|HttpException>{
             try {
                 const res= await this.ProviderModule.find();
-                console.log(res)
                 if(res.length===0) throw {err:true,message:'No hay datos que mostrar'} 
                  return res
             } catch (error) {
@@ -34,7 +33,6 @@ export class ProviderService {
        async getId(id:ObjectId):Promise<Provider|HttpException>{
             try {
                 const found=await this.ProviderModule.findOne({_id:id,estado:'A'})
-                console.log(found)
 
                 if(!found) throw {err:true,message:'error al buscar este provider'} 
                 return found;

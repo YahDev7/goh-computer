@@ -154,6 +154,7 @@ export class CustomerService {
 
             let payload = {
                 id: finduser._id,
+                email: finduser.email,
                 nombre: finduser.nombres,
                 enterprise_id: finduser.enterprise_id
             }
@@ -237,7 +238,6 @@ export class CustomerService {
             if (res.err) throw res; */ 
   
             const update = await this.CustomerModule.updateOne({ _id: id }, { $set: body });
-            console.log(update)
             if (update.modifiedCount === 0) return new HttpException('No se logro actualizar', HttpStatus.NOT_FOUND);
             return { err: false, message: "Se actualizo con éxito" }
 
@@ -270,6 +270,18 @@ export class CustomerService {
             return { err: false, message: 'Enterprise eliminado' }
         } catch (error) {
             return new HttpException('Ocurrio un error al eliminar ' + error.message || error, HttpStatus.NOT_FOUND)
+        }
+
+    }
+    async getDataUser(token): Promise<Object> {
+        try {
+            const decodedToken = this.jwtService.verify(token);
+            //const {nombre}= decodedToken
+            return {nombre:decodedToken.nombre,
+                email:decodedToken.email
+            }
+        } catch (error) {
+            return new HttpException('Ocurrio un error ' + error.message || error, HttpStatus.NOT_FOUND)
         }
 
     }
