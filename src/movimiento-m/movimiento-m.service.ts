@@ -35,18 +35,25 @@ export class MovimientoMService {
     }
 
 
-    async getId(id: string): Promise<MovimientoM | HttpException> {
+    async getId(id: ObjectId,token): Promise<MovimientoM | HttpException> {
         try {
+            const decodedToken = this.jwtService.verify(token);
+            let { enterprise_id } = decodedToken
+            enterprise_id=new ObjectId(enterprise_id)
+           id = new ObjectId(id)
+            let res = await this.EnterpriseService.getId(enterprise_id);
 
+            if (res instanceof HttpException) throw res
             /*        let est= await this.MovimientoModule.findOne({_id:id,estado:'D'});
                    if(est)return new HttpException('No se encontro deposito',HttpStatus.NOT_FOUND)   
         */
-            let found = await this.MovimientoModule.findOne({ _id: id });
+            let found = await this.MovimientoModule.findOne({ _id: id,enterprise_id });
             if (!found) return new HttpException('No se encontro deposito', HttpStatus.NOT_FOUND);
 
             return found
         } catch (error) {
-            return new HttpException('Ocurrio un error al listar por id' + error, HttpStatus.NOT_FOUND)
+            console.log(error)
+            return new HttpException('Ocurrio un error al listar por id ' + error, HttpStatus.NOT_FOUND)
         }
     }
     async getByEnterprise(token): Promise<MovimientoM[] | HttpException> {
@@ -58,7 +65,7 @@ export class MovimientoMService {
 
             if (res instanceof HttpException) throw res
 
-            const found = await this.MovimientoModule.find({ enterprise_id:new ObjectId(enterprise_id)  })
+            const found = await this.MovimientoModule.find({ enterprise_id:new ObjectId(enterprise_id)  }).sort({fecha:-1})
             if (found.length === 0) throw { err: true, message: 'No se encontraron depositos' }
 
             return found;

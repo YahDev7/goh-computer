@@ -184,7 +184,7 @@ export class CustomerService {
             if (res instanceof HttpException) throw res
             // if(res) throw {err:true,message:'No se encontraron subcategorias de esta empresa'} 
 
-            const found = await this.CustomerModule.find({ enterprise_id, estado: 'A' })
+            const found = await this.CustomerModule.find({ enterprise_id, estado: 'A' }).sort({fecha:-1,_id:-1})
             if (found.length === 0) throw { err: true, message: 'No se encontraron subcategorias de esta empresa' }
             return found;
         } catch (error) {

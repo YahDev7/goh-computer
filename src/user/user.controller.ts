@@ -27,24 +27,23 @@ export class UserController {
         return this.userService.getId(id)
     } */
   
-    @RolesDecorator(Roles.ADMIN)
+   /*  @RolesDecorator(Roles.ADMIN)
     @Put(':id')
     async update(@Param('id', ParseIntPipe) id:ObjectId,@Body() body:UpdateUserDto){
         return this.userService.update(id,body)
     }
-    
-    @RolesDecorator(Roles.ADMIN)
+     */
+   /*  @RolesDecorator(Roles.ADMIN)
     @Delete(':id')
     async delete(@Param('id', ParseIntPipe) id:ObjectId){
         return this.userService.delete(id)
-    }
+    } */
 
-    @RolesDecorator(Roles.ADMIN)
+    @Public()
     @Post('register')
     async register(@Body() body:RegisterUserDto){
         return this.userService.post(body)
     }
-
     @Public()
     @Post('login')
     async login(@Body() body:LoginUserDto){
@@ -52,8 +51,6 @@ export class UserController {
        //ANTES DE ENVIAR AL FRONT  OBTENER EL TOKEN Y ENVIAR EL TOKEN EN LOS HEADERS
         return this.userService.login(body)
     }
-
-
     @Public()
     @Get('web/getdatauser')
     async getDataUser(@Req() req){
@@ -72,6 +69,7 @@ export class UserController {
         return this.userService.getByEnterprise(id)
     } */
 //    @RolesDecorator(Roles.ADMINCUSTOMER)
+    @RolesDecorator(Roles.ADMIN)
     @Get('enterprise')
     async getByEnterprise(@Req() req){
         const token = req.headers.authorization.split(' ')[1];

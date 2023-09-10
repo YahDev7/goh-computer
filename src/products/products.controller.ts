@@ -5,8 +5,10 @@ import { ObjectId } from 'mongodb';
 import { JwtUserAuthGuard } from 'src/user/guards/guard.user';
 import { RolesGuard } from 'src/user/guards/roles.guard';
 import { Public } from 'src/user/decorators/public.decorator';
+import { RolesDecorator } from 'src/user/decorators/roles.decorator';
+import { Roles } from 'src/constants/roles';
 
-@UseGuards(JwtUserAuthGuard/* ,RolesGuard */)
+@UseGuards(JwtUserAuthGuard ,RolesGuard)
 
 @Controller('products')
 export class ProductsController {
@@ -27,6 +29,7 @@ export class ProductsController {
         return this.productsService.getId(id)
     } */
    
+    @RolesDecorator(Roles.ADMIN)
     @Post()
     post(@Body() body/* :ProductDto */){
         return this.productsService.save(body)
@@ -89,12 +92,14 @@ export class ProductsController {
     /* ENTERPRISE */
 
 
+    @RolesDecorator(Roles.ADMIN)
     @Get('enterprise')
     getEnterprise(@Req() req){
         const token = req.headers.authorization.split(' ')[1];
         return this.productsService.getByEnterprise(token)
     }
 
+    @RolesDecorator(Roles.ADMIN)
     @Get('enterprise/cantidad')
     getEnterpriseCantidad(@Req() req){
         const token = req.headers.authorization.split(' ')[1];
@@ -114,17 +119,20 @@ export class ProductsController {
         return this.productsService.saveEnterprise(body)
     }
 
+    @RolesDecorator(Roles.ADMIN)
     @Put('/enterprise/:id')
     putEnterprise(@Param('id') id:ObjectId,@Body() body:UpdateProductDto){
         return this.productsService.updateEnterprise(id,body)
     }
 
+    @RolesDecorator(Roles.ADMIN)
     @Get('/enterprise/:id')
     async getByEnterprise(@Param('id') id:ObjectId,@Req() req){
         const token = req.headers.authorization.split(' ')[1];
         return this.productsService.getByEnterpriseById(id,token)
     }
 
+    @RolesDecorator(Roles.ADMIN)
     @Delete('/enterprise/:id')
     async DeleteByEnterprise(@Param('id') id:ObjectId,@Req() req){
         const token = req.headers.authorization.split(' ')[1];
