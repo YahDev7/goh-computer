@@ -40,18 +40,18 @@ export class CustomerDto {
   id?: number; */
 
   @IsOptional()
-  @Length(11, 11)
+  @Length(8, 11)
   dni_ruc: string;
 
   @IsNotEmpty()
   nombres: string;
 
   @IsOptional()
-  @Length(1, 20)
+  @Length(0, 20)
   ap_paterno: string;
 
   @IsOptional()
-  @Length(1, 20)
+  @Length(0, 20)
   ap_materno: string;
 
   @IsOptional()
@@ -60,24 +60,24 @@ export class CustomerDto {
   telefono?: string;
 
   @IsOptional()
-  @Length(1, 20)
+  @Length(0, 20)
   departamento?: string;
 
   @IsOptional()
-  @Length(1, 20)
+  @Length(0, 20)
   provincia?: string;
 
   @IsOptional()
-  @Length(1, 20)
+  @Length(0, 20)
   distrito?: string;
 
   @IsOptional()
-  @Length(1, 40)
+  @Length(0, 40)
   direccion?: string;
 
   @IsNotEmpty()
   @IsEmail()
-  @Length(1, 30)
+  @Length(0, 30)
   email: string;
 
   @IsNotEmpty()

@@ -71,7 +71,7 @@ export class ProductsService {
 
       // if(res) throw {err:true,message:'No se encontraron subcategorias de esta empresa'} 
 
-      const found = await this.productssModule.find({ enterprise_id, estado: 'A', })
+      const found = await this.productssModule.find({ enterprise_id, estado: 'A', }).sort({fecha:-1,_id:-1})
       if (!found) throw { err: true, message: 'No se encontro el producto de esta empresa' }
       return found;
     } catch (error) {

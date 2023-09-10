@@ -5,7 +5,13 @@ import { ObjectId } from 'mongodb';
 import { LoginDto, RegisterDto } from './dto/login.dto';
 import { AuthGuard } from '@nestjs/passport';
 import { JwtAuthGuard } from './guards/guard.customer'; 
+import { JwtUserAuthGuard } from 'src/user/guards/guard.user';
+import { RolesGuard } from 'src/user/guards/roles.guard';
+import { Roles } from 'src/constants/roles';
+import { RolesDecorator } from 'src/user/decorators/roles.decorator';
+import { Public } from 'src/user/decorators/public.decorator';
 
+@UseGuards(JwtUserAuthGuard,RolesGuard)
 @Controller('customer')
 export class CustomerController {
 
@@ -13,7 +19,7 @@ export class CustomerController {
         private customerService:CustomerService
     ){}
    /*  @UseGuards(AuthGuard('jwtlogin'))  */
-   @UseGuards(JwtAuthGuard)
+    @Public()
     @Get()
     async get(){
         return this.customerService.get()
@@ -28,20 +34,23 @@ export class CustomerController {
     async update(@Param('id', ParseIntPipe) id:number,@Body() body:UpdateCustomerDto){
         return this.customerService.update(id,body)
     } */
+    @RolesDecorator(Roles.ADMIN)
     @Delete(':id')
     async delete(@Param('id', ParseIntPipe) id:number){
         return this.customerService.delete(id)
     }
-
+    @Public()
     @Post('gohcomputer/register') //generalizar
     register(@Body() body:RegisterCustomerDto){
         return this.customerService.post(body)
     }
+    @Public()
     @Post('gohcomputer/login')
     login(@Body() body:LoginCustomerDto){
         return this.customerService.login(body)
     } 
 
+    @Public()
     @Get('web/getdatauser')
     async getDataUser(@Req() req){
         const token = req.headers.authorization.split(' ')[1];
@@ -56,6 +65,7 @@ export class CustomerController {
     async getByEnterprise(@Param('id') id:ObjectId){
         return this.customerService.getByEnterprise(id)
     } */
+    @RolesDecorator(Roles.ADMIN)
     @Get('/enterprise')
     async getByEnterprise(@Req() req){
         const token = req.headers.authorization.split(' ')[1];
@@ -63,22 +73,26 @@ export class CustomerController {
     }
 
 
+    @RolesDecorator(Roles.ADMIN)
      @Get('enterprise/:id')
     async getByEnterpriseId(@Param('id') id:ObjectId){
         return this.customerService.getIdEnterprise(id)
     } 
     
+    @RolesDecorator(Roles.ADMIN)
     @Post('/enterprise')
     async postEnterprise(@Body() body:CustomerDto,@Req() req){
         const token = req.headers.authorization.split(' ')[1];
         return this.customerService.postEnterprise(token,body)
     }
+    @RolesDecorator(Roles.ADMIN)
     @Put('enterprise/:id')
     async updateEnterpise(@Param('id') id:ObjectId,@Body() body:UpdateCustomerDto,@Req() req){
         const token = req.headers.authorization.split(' ')[1];
 
         return this.customerService.updateByEnterprise(id,body,token)
     }
+    @RolesDecorator(Roles.ADMIN)
     @Delete('enterprise/:id')
     async deleteEnterpise(@Param('id') id:ObjectId,@Req() req){
         const token = req.headers.authorization.split(' ')[1];
