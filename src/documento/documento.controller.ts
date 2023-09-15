@@ -16,16 +16,19 @@ export class DocumentoController {
         private DocumentoService: DocumentoService
     ) {}
     
-    @Get()
-    get() {
-        return this.DocumentoService.getAll()
-    }
 
     @RolesDecorator(Roles.ADMIN)
     @Get('/enterprise')
     getByEnterprise(@Req() req) {
         const token = req.headers.authorization.split(' ')[1];
         return this.DocumentoService.getByEnterprise(token)
+    }
+
+    @RolesDecorator(Roles.ADMIN)
+    @Get('/enterprise/compra')
+    getByEnterpriseCompra(@Req() req) {
+        const token = req.headers.authorization.split(' ')[1];
+        return this.DocumentoService.getByEnterpriseCompra(token)
     }
 
     @Public()
@@ -72,12 +75,23 @@ export class DocumentoController {
         const token = req.headers.authorization.split(' ')[1];
         return this.DocumentoService.saveVentaAdmin(body, token)
     }
+
     @RolesDecorator(Roles.ADMIN)
+    @Post('enterprise/compra')
+    postAdminCompra(@Body() body, @Req() req/* :DocumentoByCustomerDTO */) {
+        const token = req.headers.authorization.split(' ')[1];
+        return this.DocumentoService.saveCompraAdmin(body, token)
+    }
+  //  @RolesDecorator(Roles.ADMIN)
+    @Public()
     @Post('enterprise/anular/:id')
     anular(@Param('id') id: ObjectId, @Req() req) {
-      //  const token = req.headers.authorization.split(' ')[1];
+       // const token = req.headers.authorization.split(' ')[1];
         return this.DocumentoService.anular(id/* , token */)
     }
+
+
+
     @Public()
     @Get('web/enterprise/:id')
     getByEnterpriseWebById(@Param('id') id: ObjectId, @Req() req) {
@@ -90,6 +104,14 @@ export class DocumentoController {
         const token = req.headers.authorization.split(' ')[1];
         return this.DocumentoService.getByEnterpriseVenta_id(id, token)
     }
+
+    @RolesDecorator(Roles.ADMIN)
+    @Get('/enterprise/compra/:id')
+    getByEnterpriseByIdCompra(@Param('id') id: ObjectId, @Req() req) {
+        const token = req.headers.authorization.split(' ')[1];
+        return this.DocumentoService.getByEnterpriseCompra_id(id, token)
+    }
+
     /*   @Get('gohcomputer/getone/:id')
       GetById(@Param('id') id:ObjectId /* ){
           return this.DocumentoService.getByVenta_id(id)

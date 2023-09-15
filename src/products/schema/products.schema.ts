@@ -79,7 +79,14 @@ export class Products {
     marca: string;
     
     @Prop([Object])
-    imagenes: Object[];
+    imagenes: Image[];
+    
 }
+
+interface Image {
+    public_id: string;
+    nombre?: string;
+    URL?: string;
+  }
 
 export const ProductsSchema = SchemaFactory.createForClass(Products);

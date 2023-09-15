@@ -100,6 +100,22 @@ export class ProductsController {
     }
 
     @RolesDecorator(Roles.ADMIN)
+    @Post('enterprise/stock/:id')
+    disminuirStock(@Body() body,@Param('id') id, @Req() req){
+        const token = req.headers.authorization.split(' ')[1];
+        return this.productsService.disminuirStock(id,token,body)
+    }
+    
+    
+    @RolesDecorator(Roles.ADMIN)
+    @Get('enterprise/withstock')
+    getEnterpriseWithStock(@Req() req){
+        const token = req.headers.authorization.split(' ')[1];
+        return this.productsService.getByEnterpriseWithStock(token)
+    }
+
+
+    @RolesDecorator(Roles.ADMIN)
     @Get('enterprise/cantidad')
     getEnterpriseCantidad(@Req() req){
         const token = req.headers.authorization.split(' ')[1];
@@ -137,6 +153,14 @@ export class ProductsController {
     async DeleteByEnterprise(@Param('id') id:ObjectId,@Req() req){
         const token = req.headers.authorization.split(' ')[1];
         return this.productsService.delete(id,token)
+
+    }
+
+    @RolesDecorator(Roles.ADMIN)
+    @Post('/enterprise/img')
+    async DeleteByEnterpriseOneImg(/* @Param('id') id:ObjectId */@Body() body,@Req() req){
+        const token = req.headers.authorization.split(' ')[1];
+        return this.productsService.deleteOneImg(token,body)
 
     }
 }

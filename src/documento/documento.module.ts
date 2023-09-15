@@ -10,6 +10,7 @@ import { ProviderModule } from 'src/provider/provider.module';
 import { JwtModule } from '@nestjs/jwt';
 import config from 'src/config';
 import { ConfigType } from '@nestjs/config';
+import { ProductsModule } from 'src/products/products.module';
 
 @Module({
   imports:[MongooseModule.forFeature([
@@ -28,7 +29,7 @@ import { ConfigType } from '@nestjs/config';
         }
       }
     },
-  }),EnterpriseModule,CustomerModule,UserModule,ProviderModule],
+  }),EnterpriseModule,CustomerModule,UserModule,ProviderModule,ProductsModule],
   providers: [DocumentoService],
   controllers: [DocumentoController],
   exports:[DocumentoService]

@@ -1,4 +1,4 @@
-import { IsArray, IsDecimal, IsEmpty, IsNotEmpty, IsNumber, IsString, Length, MaxLength } from 'class-validator';
+import { IsArray, IsDecimal, IsEmpty, IsNotEmpty, IsNumber, IsOptional, IsString, Length, MaxLength } from 'class-validator';
 import {PartialType} from '@nestjs/mapped-types'
 import { ObjectId } from 'mongodb';
 
@@ -104,7 +104,8 @@ export class ProductDto {
   @IsNumber()
   ventas: number;
 
- /*  @IsArray()
+ /*  @IsOptional()
+   @IsArray()
   imagenes: Object[]; */
 }
 export class UpdateProductDto extends PartialType(ProductDto) {} 

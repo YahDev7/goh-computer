@@ -46,6 +46,14 @@ export class PromocionesController {
 
         return this.PromocionesService.updateEnterprise(id,body,token)
     }
+
+    @RolesDecorator(Roles.ADMIN)
+    @Put('/enterprise/activar/:id')
+    ActivarEnterprise(@Param('id') id:ObjectId,@Body() body:UpdatePromocionesDto,@Req() req){
+        const token = req.headers.authorization.split(' ')[1];
+
+        return this.PromocionesService.activarEnterprise(id,token)
+    }
     @RolesDecorator(Roles.ADMIN)
     @Delete('/enterprise/:id')
     async DeleteByEnterprise(@Param('id') id:ObjectId,@Req() req){
