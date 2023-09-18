@@ -1,5 +1,6 @@
 // app.controller.ts
 import {
+  Body,
   Controller,
   Param,
   Post,
@@ -50,13 +51,12 @@ export class CloudinaryController {
   }
 
 
-  @Post('/product/delete/:id')
-  @UseInterceptors(FileInterceptor('file'))
-  async deleteOneImg(@Param('id') id: ObjectId, @UploadedFile() file: Express.Multer.File, @Req() req) {
+  @Post('/product/delete')
+  async deleteOneImg(@Body() body /* , @UploadedFile() file: Express.Multer.File, @Req() req */) {
+    let {public_id}=body
+  //  const token = req.headers.authorization.split(' ')[1];
 
-    const token = req.headers.authorization.split(' ')[1];
-
-//    return this.cloudinaryService.deleteOneImg();
+    return this.cloudinaryService.deleteOneImg(public_id);
 
   }
 

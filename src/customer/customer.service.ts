@@ -226,11 +226,12 @@ export class CustomerService {
     async updateByEnterprise(id: ObjectId, body: UpdateCustomerDto, token): Promise<Object | HttpException> {
         try {
             const decodedToken = this.jwtService.verify(token);
+            let { enterprise_id, usuario_id } = decodedToken
 
             const found = await this.CustomerModule.findOne({ _id: id, estado: 'A'  })
             if (!found) throw { err: true, message: 'No se encontor este customer' }
 
-            if (decodedToken.enterprise_id !== found.enterprise_id.toString()) throw { err: true, message: 'unauthorized' }
+            if (enterprise_id !== found.enterprise_id.toString()) throw { err: true, message: 'unauthorized' }
 
            /* 
             QUE EL DNI NO ESTE SIENDO UTILIZADO POR OTOR A EXCEPCION DEL MISMO

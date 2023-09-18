@@ -138,7 +138,7 @@ export class MovimientoMService {
              if (resuser instanceof HttpException) throw resuser */
 
 
-            const save = await this.MovimientoModule.create({ ...body, documento_id, enterprise_id });
+            const save = await this.MovimientoModule.create({ ...body,estado:"CANCELADO", documento_id, enterprise_id });
             if (!save) throw { err: true, message: 'No se guardardo' }
 
             const update = await this.DocumentoService.updateEstado(documento_id);

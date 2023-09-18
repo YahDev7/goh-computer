@@ -54,7 +54,7 @@ export class Documento{
     tipo_compra_venta: string;
     
     @Prop([Object])
-    detalle: Object[];
+    detalle: Detalle[];
 
     @Prop([Object])
     dataCustomer: Object[];
@@ -64,6 +64,19 @@ export class Documento{
 
     @Prop([Object])
     archivoAdj: Object;
+}
+
+
+
+
+interface Detalle {
+    _id: ObjectId,
+    nombre: string,
+    cantidad: number,
+    descuento: number,
+    importe: number,
+    precioUnitario:number
+  
 }
 
 export const DocumentoSchema = SchemaFactory.createForClass(Documento);

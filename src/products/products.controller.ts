@@ -17,33 +17,67 @@ export class ProductsController {
         private productsService:ProductsService
     ){}
 
-    @Public()
-    @Get()
-    get(){
-        return this.productsService.get()
-    }
 
-    /* @Public()
-    @Get(':id')
-    getId(@Param('id') id:string ){
-        return this.productsService.getId(id)
-    } */
-   
-    @RolesDecorator(Roles.ADMIN)
-    @Post()
-    post(@Body() body/* :ProductDto */){
-        return this.productsService.save(body)
-    }
-
- /*    @Put(':id')
-    update(@Param('id') id:number , @Body() body :UpdateProductDto ){ //crear nuevamente para poder utilizar ese DTO falla en valdiar
-        return this.productsService.update(id,body)
-    } */
-  /*   @Delete(':id')
-    delete(@Param('id') id:string){
-        return this.productsService.delete(id)
-    } */
-
+     /* ENTERPRISE */
+     @RolesDecorator(Roles.ADMIN)
+     @Get('enterprise')
+     getEnterprise(@Req() req){
+         const token = req.headers.authorization.split(' ')[1];
+         return this.productsService.getByEnterprise(token)
+     }
+     @RolesDecorator(Roles.ADMIN)
+     @Get('/enterprise/getone/:id')
+     async getByEnterprise(@Param('id') id:ObjectId,@Req() req){
+         const token = req.headers.authorization.split(' ')[1];
+         return this.productsService.getByEnterpriseById(id,token)
+     }
+     @RolesDecorator(Roles.ADMIN)
+     @Post('/enterprise/save')
+     postEnterprise(@Body() body:ProductDto){
+         return this.productsService.saveEnterprise(body)
+     }
+     @RolesDecorator(Roles.ADMIN)
+     @Put('/enterprise/update/:id')
+     putEnterprise(@Param('id') id:ObjectId,@Body() body:UpdateProductDto){
+         return this.productsService.updateEnterprise(id,body)
+     }
+     @RolesDecorator(Roles.ADMIN)
+     @Post('enterprise/stock/:id')
+     disminuirStock(@Body() body,@Param('id') id, @Req() req){
+         const token = req.headers.authorization.split(' ')[1];
+         return this.productsService.disminuirStock(id,token,body)
+     }
+     @RolesDecorator(Roles.ADMIN)
+     @Delete('/enterprise/delete/:id')
+     async DeleteByEnterprise(@Param('id') id:ObjectId,@Req() req){
+         const token = req.headers.authorization.split(' ')[1];
+         return this.productsService.delete(id,token)
+     }
+     @RolesDecorator(Roles.ADMIN)
+     @Get('enterprise/withstock')
+     getEnterpriseWithStock(@Req() req){
+         const token = req.headers.authorization.split(' ')[1];
+         return this.productsService.getByEnterpriseWithStock(token)
+     }
+     @RolesDecorator(Roles.ADMIN)
+     @Get('enterprise/cantidad')
+     getEnterpriseCantidad(@Req() req){
+         const token = req.headers.authorization.split(' ')[1];
+         return this.productsService.getByEnterpriseCantidad(token)
+     }
+     @Public()
+     @Get('enterprise/getBySubcat/:id')
+     getEnterpriseBySubCatWeb(@Param('id') id,@Req() req){
+       //  const token = req.headers.authorization.split(' ')[1];
+         return this.productsService.getEnterpriseBySubCatWeb(id/* ,token */)
+     }
+     @RolesDecorator(Roles.ADMIN)
+     @Post('/enterprise/img')
+     async DeleteByEnterpriseOneImg(/* @Param('id') id:ObjectId */@Body() body,@Req() req){
+         const token = req.headers.authorization.split(' ')[1];
+         return this.productsService.deleteOneImg(token,body)
+ 
+     }
 
 
 
@@ -58,12 +92,6 @@ export class ProductsController {
     search(@Param('search') search :string){
         return this.productsService.search(search)
     }
-
- /*    @Public()
-    @Get('/gohcomputer/allpromo')
-    getAll(){
-        return this.productsService.getPromo()
-    } */
 
     @Public()
     @Get('/gohcomputer/destacados')
@@ -89,78 +117,5 @@ export class ProductsController {
         return this.productsService.getBySubcat(id)
     }
 
-    /* ENTERPRISE */
-
-
-    @RolesDecorator(Roles.ADMIN)
-    @Get('enterprise')
-    getEnterprise(@Req() req){
-        const token = req.headers.authorization.split(' ')[1];
-        return this.productsService.getByEnterprise(token)
-    }
-
-    @RolesDecorator(Roles.ADMIN)
-    @Post('enterprise/stock/:id')
-    disminuirStock(@Body() body,@Param('id') id, @Req() req){
-        const token = req.headers.authorization.split(' ')[1];
-        return this.productsService.disminuirStock(id,token,body)
-    }
-    
-    
-    @RolesDecorator(Roles.ADMIN)
-    @Get('enterprise/withstock')
-    getEnterpriseWithStock(@Req() req){
-        const token = req.headers.authorization.split(' ')[1];
-        return this.productsService.getByEnterpriseWithStock(token)
-    }
-
-
-    @RolesDecorator(Roles.ADMIN)
-    @Get('enterprise/cantidad')
-    getEnterpriseCantidad(@Req() req){
-        const token = req.headers.authorization.split(' ')[1];
-        return this.productsService.getByEnterpriseCantidad(token)
-    }
-    
-    @Public()
-    @Get('enterprise/getBySubcat/:id')
-    getEnterpriseBySubCatWeb(@Param('id') id,@Req() req){
-      //  const token = req.headers.authorization.split(' ')[1];
-        return this.productsService.getEnterpriseBySubCatWeb(id/* ,token */)
-    }
-
-    @Public()
-    @Post('/enterprise')
-    postEnterprise(@Body() body:ProductDto){
-        return this.productsService.saveEnterprise(body)
-    }
-
-    @RolesDecorator(Roles.ADMIN)
-    @Put('/enterprise/:id')
-    putEnterprise(@Param('id') id:ObjectId,@Body() body:UpdateProductDto){
-        return this.productsService.updateEnterprise(id,body)
-    }
-
-    @RolesDecorator(Roles.ADMIN)
-    @Get('/enterprise/:id')
-    async getByEnterprise(@Param('id') id:ObjectId,@Req() req){
-        const token = req.headers.authorization.split(' ')[1];
-        return this.productsService.getByEnterpriseById(id,token)
-    }
-
-    @RolesDecorator(Roles.ADMIN)
-    @Delete('/enterprise/:id')
-    async DeleteByEnterprise(@Param('id') id:ObjectId,@Req() req){
-        const token = req.headers.authorization.split(' ')[1];
-        return this.productsService.delete(id,token)
-
-    }
-
-    @RolesDecorator(Roles.ADMIN)
-    @Post('/enterprise/img')
-    async DeleteByEnterpriseOneImg(/* @Param('id') id:ObjectId */@Body() body,@Req() req){
-        const token = req.headers.authorization.split(' ')[1];
-        return this.productsService.deleteOneImg(token,body)
-
-    }
+   
 }

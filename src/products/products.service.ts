@@ -24,31 +24,6 @@ export class ProductsService {
 
   ) { }
 
-  async get(): Promise<Products[] | HttpException> {
-    try {
-      const res = await this.productssModule.find();
-      if (res.length === 0) return new HttpException('No hay productos que mostrar', HttpStatus.NOT_FOUND)
-      return res
-    } catch (error) {
-      return new HttpException('Ocurrio un error al listar', HttpStatus.NOT_FOUND)
-    }
-  }
-
-  async getId(id: string): Promise<Products | HttpException> {
-    try {
-      let est = await this.productssModule.findOne({ _id: id, estado: 'D' });
-      if (est) return new HttpException('No se encontro registro', HttpStatus.NOT_FOUND)
-
-      let found = await this.productssModule.findOne({ _id: id });
-      if (!found) return new HttpException('No se encontro registro', HttpStatus.NOT_FOUND);
-
-      found.precio_venta = parseFloat(found.precio_venta.toFixed(2));
-      return found
-    } catch (error) {
-      return new HttpException('Ocurrio un error al listar' + error, HttpStatus.NOT_FOUND)
-    }
-  }
-
   /*   async getByEnterprise(enterprise_id: ObjectId): Promise<Products[] | HttpException> {
       try {
         let res = await this.EnterpriseService.getId(enterprise_id);
@@ -77,7 +52,7 @@ export class ProductsService {
       if (!found) throw { err: true, message: 'No se encontro el producto de esta empresa' }
       return found;
     } catch (error) {
-      return new HttpException('Ocurrio un error al buscar ' + error.message || error, HttpStatus.NOT_FOUND)
+      return new HttpException('Ocurrio un error al buscar todos los productos ' + error.message || error, HttpStatus.NOT_FOUND)
     }
   }
 
@@ -96,7 +71,7 @@ export class ProductsService {
       if (!found) throw { err: true, message: 'No se encontro el producto de esta empresa' }
       return found;
     } catch (error) {
-      return new HttpException('Ocurrio un error al buscar ' + error.message || error, HttpStatus.NOT_FOUND)
+      return new HttpException('Ocurrio un error al buscar por admin ' + error.message || error, HttpStatus.NOT_FOUND)
     }
   }
 
@@ -115,7 +90,7 @@ export class ProductsService {
       if (!cantidad) throw { err: true, message: 'No se encontro el producto de esta empresa' }
       return { cantidad };
     } catch (error) {
-      return new HttpException('Ocurrio un error al buscar ' + error.message || error, HttpStatus.NOT_FOUND)
+      return new HttpException('Ocurrio un error al buscar la cantidad total de los productos' + error.message || error, HttpStatus.NOT_FOUND)
     }
   }
 
@@ -132,25 +107,11 @@ export class ProductsService {
       // if(res) throw {err:true,message:'No se encontraron subcategorias de esta empresa'} 
 
       const found = await this.productssModule.findOne({ _id: idprod, enterprise_id, estado: 'A' })
+
       if (!found) throw { err: true, message: 'No se encontro el producto de esta empresa' }
       return found;
     } catch (error) {
-      return new HttpException('Ocurrio un error al buscar por id ' + error.message || error, HttpStatus.NOT_FOUND)
-    }
-  }
-
-
-  async save(body/* : ProductDto */): Promise<Products | Object> {
-    try {
-      let { subcategoria_id } = body
-      subcategoria_id = new ObjectId(subcategoria_id)
-
-      const save = await this.productssModule.create({ ...body, subcategoria_id });
-      if (!save) throw { err: true, message: 'No se guardardo' }
-      return save
-      /* return {err:false,message:"Se guardo con éxito"} */
-    } catch (error) {
-      return new HttpException('Ocurrio un error al guardar' + error.message || error, HttpStatus.NOT_FOUND);
+      return new HttpException('Ocurrio un error al buscar por id del producto ' + error.message || error, HttpStatus.NOT_FOUND)
     }
   }
 
@@ -226,27 +187,6 @@ export class ProductsService {
     }
   }
 
-  /*   async getImgsById( id: ObjectId,token): Promise<Products | Object> {
-      try {
-        const decodedToken = this.jwtService.verify(token);
-        let { enterprise_id, usuario_id } = decodedToken
-        enterprise_id = new ObjectId(enterprise_id)
-  
-        let found = await this.getByEnterprise(enterprise_id)
-        if (!found) throw { err: true, message: 'No se encontor esta empresa' }
-  
-        let foundpro = await this.productssModule.findOne({ _id: id });
-        if (!foundpro) throw { err: true, message: 'No se encontor este producto' }
-  
-        if (foundpro.imagenes.length >= 3) throw { err: true, message: 'Cantidad suficiente, no se puede agregar mas' }
-        let imagenes = [...foundpro?.imagenes, files];
-  
-        return { err: false, message: "Se actualizo con éxito" }
-   
-      } catch (error) {
-        return new HttpException('Ocurrio un error al guardar' + error.message || error, HttpStatus.NOT_FOUND);
-      }
-    } */
 
   async verifyUnique(param: Object): Promise<Products> { //param es un obj con keys "string" y sus valores de cualquier tipo
     try {
@@ -272,23 +212,6 @@ export class ProductsService {
 
     } catch (error) {
       return error
-    }
-  }
-  async update(id: number, body: UpdateProductDto): Promise<Products | Object> {
-    try {
-      let found = await this.productssModule.findOne({ _id: id, estado: "A" });
-      if (!found) return new HttpException('No existe este product', HttpStatus.NOT_FOUND);
-
-      let res = await this.verifyAllUpdate(body, id)
-      if (res.err) throw res;
-
-
-      const update = await this.productssModule.updateOne({ _id: id }, { $set: body });
-      if (update.modifiedCount === 0) return new HttpException('No se logro actualizar', HttpStatus.NOT_FOUND);
-
-      return { err: false, message: "Se actualizo con éxito" }
-    } catch (error) {
-      return new HttpException('Ocurrio un error al update, ' + error.message || error, HttpStatus.NOT_FOUND);
     }
   }
   async delete(id: ObjectId, token) {
@@ -319,12 +242,12 @@ export class ProductsService {
           }
         }
       });
-
+      console.log(public_id)
       //LLAMAR A ELIMINAR LA IMG
      //  let resclouImg= await this.CloudinaryService.deleteOneImg(public_id)
       let resimgs = found.imagenes.filter(el => el.public_id !== public_id);
       console.log(resimgs)
-      if(resimgs.length===0) throw {err:true,message:"no ocurrio un error al eliminar esta img"}
+    //  if(resimgs.length===0) throw {err:true,message:"no ocurrio un error al eliminar esta img"}
       
       const update = await this.productssModule.updateOne({ _id: found._id }, { $set: { imagenes: resimgs } });
       if(update.modifiedCount===0) throw {err:true,message:"no ocurrio un error al eliminar esta img"}
@@ -629,71 +552,6 @@ export class ProductsService {
     }
 
   }
-  /*   async getPromo() {
-      try {
-        let res = await this.productssModule.aggregate([
-          {
-            $match: {
-              stock: { $gt: 0 },
-              estado: 'A',
-              promocion: 'SI',
-            enterprise_id:new ObjectId("6463b7176f62eabdc5d7329d")
-  
-            }
-          },
-          {
-            $lookup: {
-              from: 'subcategorias',
-              localField: 'subcategoria_id',
-              foreignField: '_id',
-              as: 'subcat'
-            }
-          },
-  
-          {
-            $lookup: {
-              from: "categorias",
-              localField: "subcat.categoria_id",
-              foreignField: "_id",
-              as: "cat"
-            }
-          },
-  
-          {
-            $addFields: {
-             // precio_promoventa: { $ifNull: ['$precio_promoventa', 0] },
-            }
-          },
-          {
-            $project: {
-              _id: 0,
-              idcomp: '$_id',
-              subcategoria_id: { $arrayElemAt: ['$subcat._id', 0] },
-              nomcomp: '$nombre',
-              descomp: '$descripcion',
-              precio_venta: { $round: ['$precio_venta', 2] },
-              stock: 1,
-              subcatnombre: { $arrayElemAt: ['$subcat.nombre', 0] },
-              subcatimg: { $arrayElemAt: ['$subcat.imagen', 0] },
-              nomcat: { $arrayElemAt: ['$cat.nombre', 0] },
-              idcat: { $arrayElemAt: ['$subcat.categoria_id', 0] },
-              imagenes: '$imagenes',
-             // precio_promoventa: { $round: ['$precio_promoventa', 2] },
-  
-            }
-          }
-        ])
-  
-        if (res.length === 0) throw { err: true, message: "No hay productos a mostrar" }
-        return res
-  
-      } catch (error) {
-        return new HttpException('Ocurrio un error ' + error.message || error, HttpStatus.NOT_FOUND)
-  
-      }
-    } */
-
-
 
   async search(search: string) {
     try {
@@ -869,27 +727,6 @@ export class ProductsService {
   }
 
 
-/*   async disminuirStock(id: ObjectId, token, body) {
-    try {
-      let { cantidad } = body
-      let found = await this.productssModule.findOne({ _id: id, stock: { $gte: 1 } });
-      console.log(found)
-      if (!found) return new HttpException('este registro no tiene el stock', HttpStatus.NOT_FOUND);
-      let { stock } = found
-
-      let unidadNew = Number(stock) - Number(cantidad)
-      console.log(unidadNew)
-      if (unidadNew < 0) return new HttpException('No hay suficiente stock para esta cantidad ', HttpStatus.NOT_FOUND);
-      let est = await this.productssModule.updateOne({ _id: id }, { $set: { stock: unidadNew } })
-
-      if (est.modifiedCount === 0) return new HttpException('Ocurrio un error en es stock', HttpStatus.NOT_FOUND)
-
-      return { err: false }
-    } catch (error) {
-      return new HttpException('Ocurrio un error al eliminar, VERIFIQUE', HttpStatus.NOT_FOUND);
-    }
-
-  } */
 
   async disminuirStock(id: ObjectId, token, cantidad) {
     try {
@@ -910,7 +747,46 @@ export class ProductsService {
 
   }
 
+  async disminuirStockByAnular(id: ObjectId, cantidad) {
+    try {
+      
+      let found = await this.productssModule.findOne({ _id: id, stock: { $gte: 1 } });
+      if (!found) return new HttpException('este registro no tiene el stock', HttpStatus.NOT_FOUND);
+      let { stock } = found
+
+      let unidadNew = Number(stock) - Number(cantidad)
+      if (unidadNew < 0) return new HttpException('No hay suficiente stock para esta cantidad ', HttpStatus.NOT_FOUND);
+      let est = await this.productssModule.updateOne({ _id: id }, { $set: { stock: unidadNew } })
+      if (est.modifiedCount === 0) return new HttpException('Ocurrio un error en es stock', HttpStatus.NOT_FOUND)
+
+      return { err: false }
+    } catch (error) {
+      return new HttpException('Ocurrio un error al eliminar, VERIFIQUE', HttpStatus.NOT_FOUND);
+    }
+
+  }
+
   async aumentarrStock(id: ObjectId, token, cantidad) {
+    try {
+      
+      let found = await this.productssModule.findOne({ _id: id, stock: { $gte: 1 } });
+      if (!found) return new HttpException('este registro no tiene el stock', HttpStatus.NOT_FOUND);
+      let { stock } = found
+
+      let unidadNew = Number(stock) + Number(cantidad)
+      if (unidadNew < 0) return new HttpException('No hay suficiente stock para esta cantidad ', HttpStatus.NOT_FOUND);
+      let est = await this.productssModule.updateOne({ _id: id }, { $set: { stock: unidadNew } })
+      if (est.modifiedCount === 0) return new HttpException('Ocurrio un error en es stock', HttpStatus.NOT_FOUND)
+
+      return { err: false }
+    } catch (error) {
+      return new HttpException('Ocurrio un error al eliminar, VERIFIQUE', HttpStatus.NOT_FOUND);
+    }
+
+  }
+
+
+  async aumentarrStockByAnulacion(id: ObjectId, cantidad) {
     try {
       
       let found = await this.productssModule.findOne({ _id: id, stock: { $gte: 1 } });

@@ -189,12 +189,17 @@ export class SubcategoriaService {
     async updateByEnterpriseId(id: ObjectId, body: UpdateSubCategoriaDto, token): Promise<Object | HttpException> {
         try {
             const decodedToken = this.jwtService.verify(token);
-            let {enterprise_id}=decodedToken;
+            let {enterprise_id,usuario_id} =decodedToken;
+            usuario_id = new ObjectId(usuario_id)
             enterprise_id=new ObjectId(enterprise_id)
+            let {categoria_id}=body
+
+            categoria_id=new ObjectId(categoria_id)
             id=new ObjectId(id)
             const found = await this.SubCategoriaModule.findOne({enterprise_id, _id: id, estado: 'A'  })
             if (!found) throw { err: true, message: 'No se encontor esta subcat' }
 
+            body={...body,enterprise_id,usuario_id,categoria_id } 
             //if (enterprise_id !== found.enterprise_id.toString()) throw { err: true, message: 'unauthorized' }
  
            /* 
