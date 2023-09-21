@@ -1,6 +1,6 @@
 import { Body, Controller,Get, Post,Put,Param,UseGuards, Delete, Req } from '@nestjs/common';
 import { ProductsService } from './products.service';
-import { ProductDto, UpdateProductDto } from './dto/products.dto';
+import { ProductDto, ProductServiceDto, UpdateProductDto, UpdateProductServiceDto } from './dto/products.dto';
 import { ObjectId } from 'mongodb';
 import { JwtUserAuthGuard } from 'src/user/guards/guard.user';
 import { RolesGuard } from 'src/user/guards/roles.guard';
@@ -31,15 +31,33 @@ export class ProductsController {
          const token = req.headers.authorization.split(' ')[1];
          return this.productsService.getByEnterpriseById(id,token)
      }
+  /*    @RolesDecorator(Roles.ADMIN)
+     @Get('/enterprise/service/getone/:id')
+     async getByEnterpriseService(@Param('id') id:ObjectId,@Req() req){
+         const token = req.headers.authorization.split(' ')[1];
+         return this.productsService.getByEnterpriseByIdService(id,token)
+     } */
      @RolesDecorator(Roles.ADMIN)
      @Post('/enterprise/save')
      postEnterprise(@Body() body:ProductDto){
          return this.productsService.saveEnterprise(body)
      }
+
+     @RolesDecorator(Roles.ADMIN)
+     @Post('/enterprise/save/service')
+     postEnterpriseService(@Body() body:ProductServiceDto){
+         return this.productsService.saveEnterpriseService(body)
+     }
      @RolesDecorator(Roles.ADMIN)
      @Put('/enterprise/update/:id')
      putEnterprise(@Param('id') id:ObjectId,@Body() body:UpdateProductDto){
          return this.productsService.updateEnterprise(id,body)
+     }
+
+     @RolesDecorator(Roles.ADMIN)
+     @Put('/enterprise/update/service/:id')
+     putEnterpriseService(@Param('id') id:ObjectId,@Body() body:UpdateProductServiceDto){
+         return this.productsService.updateEnterpriseService(id,body)
      }
      @RolesDecorator(Roles.ADMIN)
      @Post('enterprise/stock/:id')

@@ -51,7 +51,7 @@ export class MovimientoMController {
     }
 
     @RolesDecorator(Roles.ADMIN)
-    @Get('/enterprise/:id')
+    @Get('/enterprise/getone/:id')
     async getById(@Param('id') id: ObjectId,@Req() req) {
         const token = req.headers.authorization.split(' ')[1];
         return this.MovimientoMService.getId(id,token)
@@ -78,9 +78,9 @@ export class MovimientoMController {
         return this.MovimientoMService.totalVentasDia()
     }
     @RolesDecorator(Roles.ADMIN)
-    @Get('ventas/totalmes')
-    getSumaVentames(){
-        return this.MovimientoMService.totalVentasMes()
+    @Get('ventas/totalmes/:meses')
+    getSumaVentames(@Param("meses") meses){
+        return this.MovimientoMService.totalVentasMes(meses)
     }
 
     @RolesDecorator(Roles.ADMIN)
@@ -89,9 +89,9 @@ export class MovimientoMController {
         return this.MovimientoMService.totalComprasDia()
     }
     @RolesDecorator(Roles.ADMIN)
-    @Get('compras/totalmes')
-    getSumacomprames(){
-        return this.MovimientoMService.totalComprasMes()
+    @Get('compras/totalmes/:meses')
+    getSumacomprames(@Param("meses") meses){
+        return this.MovimientoMService.totalComprasMes(meses)
     }
     @RolesDecorator(Roles.ADMIN)
     @Get('enterprise/ingresosMensuales')
@@ -103,6 +103,19 @@ export class MovimientoMController {
     @Get('enterprise/servicios')
     gettotalVentasServicios(){
         return this.MovimientoMService.totalVentasServicios()
+    }
+
+     
+    @RolesDecorator(Roles.ADMIN)
+    @Get('enterprise/servicios/:mes')
+    gettotalVentasServiciosMes(@Param("mes") mes){
+        return this.MovimientoMService.totalServiciosMes(mes)
+    }
+
+    @RolesDecorator(Roles.ADMIN)
+    @Get('enterprise/servicios/dia')
+    gettotalVentasServiciosDia(){
+        return this.MovimientoMService.totalServiciosDia()
     }
 
   

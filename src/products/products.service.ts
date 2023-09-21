@@ -4,7 +4,7 @@ import { HttpException, HttpStatus } from '@nestjs/common';
 import { Model } from 'mongoose';
 
 import { Products, ProductsDocument } from './schema/products.schema';
-import { ProductDto, UpdateProductDto } from './dto/products.dto';
+import { ProductDto, ProductServiceDto, UpdateProductDto, UpdateProductServiceDto } from './dto/products.dto';
 import { EnterpriseService } from 'src/enterprise/enterprise.service';
 import { SubcategoriaService } from 'src/subcategoria/subcategoria.service';
 import { ObjectId } from 'mongodb';
@@ -114,6 +114,27 @@ export class ProductsService {
       return new HttpException('Ocurrio un error al buscar por id del producto ' + error.message || error, HttpStatus.NOT_FOUND)
     }
   }
+
+   /*  async getByEnterpriseByIdService(idprod: ObjectId, token): Promise<Products | HttpException> {
+    try {
+      const decodedToken = this.jwtService.verify(token);
+      let { enterprise_id, usuario_id } = decodedToken
+      enterprise_id = new ObjectId(enterprise_id)
+      let res = await this.EnterpriseService.getId(enterprise_id);
+      if (res instanceof HttpException) throw res
+
+      idprod = new ObjectId(idprod)
+
+      // if(res) throw {err:true,message:'No se encontraron subcategorias de esta empresa'} 
+
+      const found = await this.productssModule.findOne({ _id: idprod, enterprise_id, estado: 'A' })
+
+      if (!found) throw { err: true, message: 'No se encontro el producto de esta empresa' }
+      return found;
+    } catch (error) {
+      return new HttpException('Ocurrio un error al buscar por id del producto ' + error.message || error, HttpStatus.NOT_FOUND)
+    }
+  } */
 
   async saveimg(enterprise_id: ObjectId, product_id: ObjectId, files: Array<Object>): Promise<Products | Object> {
     try {
@@ -636,7 +657,50 @@ export class ProductsService {
     }
   }
 
+  async saveEnterpriseService(body: ProductServiceDto): Promise<Products | Object> {
+    try {
+      let { subcategoria_id, enterprise_id, usuario_id } = body
+
+      subcategoria_id = new ObjectId(subcategoria_id)
+      enterprise_id = new ObjectId(enterprise_id)
+      usuario_id = new ObjectId(usuario_id)
+
+
+      const save = await this.productssModule.create({ ...body, subcategoria_id, enterprise_id, usuario_id });
+      if (!save) throw { err: true, message: 'No se guardardo' }
+      return save
+      /* return {err:false,message:"Se guardo con éxito"} */
+    } catch (error) {
+      console.log(error)
+      return new HttpException('Ocurrio un error al guardar' + error.message || error, HttpStatus.NOT_FOUND);
+    }
+  }
+
   async updateEnterprise(id: ObjectId, body: UpdateProductDto): Promise<Products | Object> {
+    try {
+      let found = await this.productssModule.findOne({ _id: id, estado: "A" });
+      if (!found) return new HttpException('No existe este product', HttpStatus.NOT_FOUND);
+      let { subcategoria_id, enterprise_id, usuario_id } = body
+
+      subcategoria_id = new ObjectId(subcategoria_id)
+      enterprise_id = new ObjectId(enterprise_id)
+      usuario_id = new ObjectId(usuario_id)
+      const update = await this.productssModule.updateOne({ _id: id }, {
+        $set: {
+          ...body, subcategoria_id,
+          enterprise_id,
+          usuario_id
+        }
+      });
+      if (update.modifiedCount === 0) return new HttpException('No se logro actualizar', HttpStatus.NOT_FOUND);
+
+      return { err: false, message: "Se actualizo con éxito" }
+    } catch (error) {
+      return new HttpException('Ocurrio un error al update, ' + error.message || error, HttpStatus.NOT_FOUND);
+    }
+  }
+
+  async updateEnterpriseService(id: ObjectId, body: UpdateProductServiceDto): Promise<Products | Object> {
     try {
       let found = await this.productssModule.findOne({ _id: id, estado: "A" });
       if (!found) return new HttpException('No existe este product', HttpStatus.NOT_FOUND);
