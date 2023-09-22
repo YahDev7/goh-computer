@@ -39,7 +39,6 @@ export class DocumentoController {
         return this.DocumentoService.saveVentaByUserByEnterprise(token, body)
     } */
 
-    @RolesDecorator(Roles.ADMIN)
     @Post('/enterprise/customer')
     saveByEnterpriseCustomer(@Body() body:DocumentoByCustomerDTO, @Req() req) {
         // const token = req.headers.authorization.split(' ')[1];
@@ -47,9 +46,9 @@ export class DocumentoController {
     }
 
 
-    @RolesDecorator(Roles.ADMIN)
+    @Public()
     @Post()
-    postCustomer(@Body() body:DocumentoByCustomerDTO) {
+    postCustomer(@Body() body/* :DocumentoByCustomerDTO */) {
         return this.DocumentoService.saveVentaByCustomerLogin(body)
     }
 

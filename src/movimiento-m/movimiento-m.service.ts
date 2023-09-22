@@ -498,11 +498,9 @@ export class MovimientoMService {
             for (const item of res) {
                 for (const detalle of item.detalle) {
                     if(detalle.unidad==="UNIDAD")
-                    console.log(detalle.importe)
                     suma += detalle.importe;
                   }
             }
-            console.log(suma)
             return { total:suma,mes } 
 
             //if(res.length===0) return new HttpException('No hay Documentos que mostrar',HttpStatus.NOT_FOUND) 

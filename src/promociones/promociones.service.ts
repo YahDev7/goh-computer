@@ -239,6 +239,7 @@ export class PromocionesService {
 
     async getByEnterpriseByIdWeb(id: ObjectId)/* : Promise<Promociones | HttpException> */ {
         try {
+            console.log(id)
             let res = await this.PromocionesModule.aggregate([
                 {
                     $match: {
@@ -282,6 +283,7 @@ export class PromocionesService {
                         subcategoria_id: { $arrayElemAt: ['$subcat._id', 0] },
                         nomcomp: { $arrayElemAt: ['$prod.nombre', 0] },
                         descomp: { $arrayElemAt: ['$prod.descripcion', 0] },
+                        precio_antes:{ $arrayElemAt: ['$prod.precio_venta', 0] },
                         precio_venta: '$precio_venta_promo',
                         subcatnombre: { $arrayElemAt: ['$subcat.nombre', 0] }, 
                         stock: { $arrayElemAt: ['$prod.stock', 0] },
@@ -293,7 +295,7 @@ export class PromocionesService {
                     }
                 }
             ])
-
+            console.log(res)
             if (res.length === 0) throw { err: true, message: "No hay productos a mostrar" }
             return res[0]
         } catch (error) {

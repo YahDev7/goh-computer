@@ -163,38 +163,38 @@ export class DocumentoService {
 
 
     //ENTERPRISES
-/*     async saveVentaByUserByEnterprise(token, body: DocumentoDTO) {
-        try {
-
-            const decodedToken = this.jwtService.verify(token);
-            let { enterprise_id, usuario_id } = decodedToken;
-            enterprise_id = new ObjectId(enterprise_id)
-            usuario_id = new ObjectId(usuario_id)
-
-            let { customer_id } = body
-
-            //   let { user_id, customer_id, enterprise_id } = body
-
-            let resEnterprise = await this.EnterpriseService.getId(enterprise_id)
-            if (resEnterprise instanceof HttpException) throw resEnterprise
-
-            let resuser = await this.UserService.getId(usuario_id)
-            if (resuser instanceof HttpException) throw resuser
-
-            if (customer_id) {
-                let rescustomer = await this.CustomerService.getId(customer_id)
-                if (rescustomer instanceof HttpException) throw rescustomer
+    /*     async saveVentaByUserByEnterprise(token, body: DocumentoDTO) {
+            try {
+    
+                const decodedToken = this.jwtService.verify(token);
+                let { enterprise_id, usuario_id } = decodedToken;
+                enterprise_id = new ObjectId(enterprise_id)
+                usuario_id = new ObjectId(usuario_id)
+    
+                let { customer_id } = body
+    
+                //   let { user_id, customer_id, enterprise_id } = body
+    
+                let resEnterprise = await this.EnterpriseService.getId(enterprise_id)
+                if (resEnterprise instanceof HttpException) throw resEnterprise
+    
+                let resuser = await this.UserService.getId(usuario_id)
+                if (resuser instanceof HttpException) throw resuser
+    
+                if (customer_id) {
+                    let rescustomer = await this.CustomerService.getId(customer_id)
+                    if (rescustomer instanceof HttpException) throw rescustomer
+                }
+    
+    
+    
+                const save = await this.DocumentoModule.create(body);
+                if (!save) throw { err: true, message: 'No se guardardo' }
+                return save
+            } catch (error) {
+                return new HttpException('Ocurrio un error al guardar ' + error.message || error, HttpStatus.NOT_FOUND);
             }
-
-
-
-            const save = await this.DocumentoModule.create(body);
-            if (!save) throw { err: true, message: 'No se guardardo' }
-            return save
-        } catch (error) {
-            return new HttpException('Ocurrio un error al guardar ' + error.message || error, HttpStatus.NOT_FOUND);
-        }
-    } */
+        } */
 
     async saveVentaByCustomerLogin(body/* : DocumentoByCustomerDTO */) {
         try {
@@ -234,13 +234,12 @@ export class DocumentoService {
             if (customervacio.length > 0) return { err: true, data: customervacio }
             const decodedTokencarr = this.jwtService.verify(tokcarr);
             const decodedToken = this.jwtService.verify(tokensession);
-
             const { id, enterprise_id } = decodedToken
 
             let doc = {
                 customer_id: new ObjectId(id),
                 enterprise_id: new ObjectId(enterprise_id),
-                tipo_documento: "Boleta",
+                tipo_documento: "Boleta", 
                 serie: "A00",
                 nro_documento: "001",
                 fecha: new Date(),
@@ -262,8 +261,15 @@ export class DocumentoService {
             if (rescustomer instanceof HttpException) throw rescustomer
 
 
+
             const save = await this.DocumentoModule.create({ ...doc });
 
+            decodedTokencarr.payload.forEach(async el => {
+                let { cantidad, _id } = el
+                _id = new ObjectId(_id)
+                let minusStock = await this.ProductsService.disminuirStock(_id, tokensession, cantidad)
+                if (minusStock instanceof HttpException) throw minusStock
+            })
 
             if (!save) throw { err: true, message: 'No se guardardo' }
             return { err: false, message: "Guardado con exito", data: save._id }
@@ -275,7 +281,7 @@ export class DocumentoService {
     }
 
 
-    async saveVentaAdmin(body: DocumentoDTO ,token) {
+    async saveVentaAdmin(body: DocumentoDTO, token) {
         try {
             //   const {subtotal,dataCustomer,metodo_pago } = body
             const decodedToken = this.jwtService.verify(token);
@@ -308,7 +314,7 @@ export class DocumentoService {
         }
     }
 
-    async saveCompraAdmin(body/* : DocumentoCompraDTO */ ,token) {
+    async saveCompraAdmin(body/* : DocumentoCompraDTO */, token) {
         try {
             //   const {subtotal,dataCustomer,metodo_pago } = body
             const decodedToken = this.jwtService.verify(token);
@@ -341,24 +347,24 @@ export class DocumentoService {
         }
     }
 
-  /*   async saveCompra(body: DocumentoCompraDTO) {
-        //NINGUN CUSTOMER PUEDE HACER ESTO
-        try {
-            let { enterprise_id, provider_id } = body
-
-            let resEnterprise = await this.EnterpriseService.getId(enterprise_id)
-            if (resEnterprise instanceof HttpException) throw resEnterprise
-
-            let resProvider = await this.ProviderService.getId(provider_id)
-            if (resProvider instanceof HttpException) throw resProvider
-
-            const save = await this.DocumentoModule.create(body);
-            if (!save) throw { err: true, message: 'No se guardardo' }
-            return save
-        } catch (error) {
-            return new HttpException('Ocurrio un error al guardar' + error.message || error, HttpStatus.NOT_FOUND);
-        }
-    } */
+    /*   async saveCompra(body: DocumentoCompraDTO) {
+          //NINGUN CUSTOMER PUEDE HACER ESTO
+          try {
+              let { enterprise_id, provider_id } = body
+  
+              let resEnterprise = await this.EnterpriseService.getId(enterprise_id)
+              if (resEnterprise instanceof HttpException) throw resEnterprise
+  
+              let resProvider = await this.ProviderService.getId(provider_id)
+              if (resProvider instanceof HttpException) throw resProvider
+  
+              const save = await this.DocumentoModule.create(body);
+              if (!save) throw { err: true, message: 'No se guardardo' }
+              return save
+          } catch (error) {
+              return new HttpException('Ocurrio un error al guardar' + error.message || error, HttpStatus.NOT_FOUND);
+          }
+      } */
 
     async anular(id: ObjectId /* ,token  */) {
         try {
@@ -426,7 +432,7 @@ export class DocumentoService {
             id = new ObjectId(id)
             enterprise_id = new ObjectId(enterprise_id)
 
-            const res = await this.DocumentoModule.find({ enterprise_id, customer_id: id, estado: { $ne: 'ANULADO' }, }).sort({ fecha: -1 });
+            const res = await this.DocumentoModule.find({ enterprise_id, customer_id: id/* , estado: { $ne: 'ANULADO' } */, }).sort({ fecha: -1 });
             if (res.length === 0) return new HttpException('No hay Documentos que mostrar', HttpStatus.NOT_FOUND)
             return res
         } catch (error) {

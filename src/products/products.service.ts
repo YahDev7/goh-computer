@@ -853,7 +853,8 @@ export class ProductsService {
   async aumentarrStockByAnulacion(id: ObjectId, cantidad) {
     try {
       
-      let found = await this.productssModule.findOne({ _id: id, stock: { $gte: 1 } });
+      let found = await this.productssModule.findOne({ _id: id });
+      console.log(found)
       if (!found) return new HttpException('este registro no tiene el stock', HttpStatus.NOT_FOUND);
       let { stock } = found
 
