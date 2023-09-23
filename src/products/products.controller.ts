@@ -77,6 +77,13 @@ export class ProductsController {
          const token = req.headers.authorization.split(' ')[1];
          return this.productsService.getByEnterpriseWithStock(token)
      }
+
+     @RolesDecorator(Roles.ADMIN)
+     @Get('enterprise/all')
+     getEnterpriseAll(@Req() req){
+         const token = req.headers.authorization.split(' ')[1];
+         return this.productsService.getByEnterpriseAll(token)
+     }
      @RolesDecorator(Roles.ADMIN)
      @Get('enterprise/cantidad')
      getEnterpriseCantidad(@Req() req){

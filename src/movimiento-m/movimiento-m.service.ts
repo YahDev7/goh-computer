@@ -501,6 +501,8 @@ export class MovimientoMService {
                     suma += detalle.importe;
                   }
             }
+            console.log({total:suma,mes })
+
             return { total:suma,mes } 
 
             //if(res.length===0) return new HttpException('No hay Documentos que mostrar',HttpStatus.NOT_FOUND) 

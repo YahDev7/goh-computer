@@ -75,6 +75,25 @@ export class ProductsService {
     }
   }
 
+  async getByEnterpriseAll(token): Promise<Products[] | HttpException> {
+    try {
+      const decodedToken = this.jwtService.verify(token);
+      let { enterprise_id } = decodedToken
+      enterprise_id = new ObjectId(enterprise_id)
+      let res = await this.EnterpriseService.getId(enterprise_id);
+      if (res instanceof HttpException) throw res
+
+
+      // if(res) throw {err:true,message:'No se encontraron subcategorias de esta empresa'} 
+
+      const found = await this.productssModule.find({ enterprise_id}).sort({ fecha: -1, _id: -1 })
+      if (!found) throw { err: true, message: 'No se encontro el producto de esta empresa' }
+      return found;
+    } catch (error) {
+      return new HttpException('Ocurrio un error al buscar por admin ' + error.message || error, HttpStatus.NOT_FOUND)
+    }
+  }
+
   async getByEnterpriseCantidad(token) {
     try {
       const decodedToken = this.jwtService.verify(token);
@@ -106,7 +125,7 @@ export class ProductsService {
 
       // if(res) throw {err:true,message:'No se encontraron subcategorias de esta empresa'} 
 
-      const found = await this.productssModule.findOne({ _id: idprod, enterprise_id, estado: 'A' })
+      const found = await this.productssModule.findOne({ _id: idprod, enterprise_id })
 
       if (!found) throw { err: true, message: 'No se encontro el producto de esta empresa' }
       return found;
@@ -665,7 +684,6 @@ export class ProductsService {
       enterprise_id = new ObjectId(enterprise_id)
       usuario_id = new ObjectId(usuario_id)
 
-
       const save = await this.productssModule.create({ ...body, subcategoria_id, enterprise_id, usuario_id });
       if (!save) throw { err: true, message: 'No se guardardo' }
       return save
@@ -678,7 +696,7 @@ export class ProductsService {
 
   async updateEnterprise(id: ObjectId, body: UpdateProductDto): Promise<Products | Object> {
     try {
-      let found = await this.productssModule.findOne({ _id: id, estado: "A" });
+      let found = await this.productssModule.findOne({ _id: id});
       if (!found) return new HttpException('No existe este product', HttpStatus.NOT_FOUND);
       let { subcategoria_id, enterprise_id, usuario_id } = body
 
@@ -702,7 +720,7 @@ export class ProductsService {
 
   async updateEnterpriseService(id: ObjectId, body: UpdateProductServiceDto): Promise<Products | Object> {
     try {
-      let found = await this.productssModule.findOne({ _id: id, estado: "A" });
+      let found = await this.productssModule.findOne({ _id: id });
       if (!found) return new HttpException('No existe este product', HttpStatus.NOT_FOUND);
       let { subcategoria_id, enterprise_id, usuario_id } = body
 
