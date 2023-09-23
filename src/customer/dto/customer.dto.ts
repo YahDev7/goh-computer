@@ -1,4 +1,4 @@
-import { IsNotEmpty, IsOptional, IsEmail, Length, IsNumberString, MaxLength } from 'class-validator';
+import { IsNotEmpty, IsOptional, IsEmail, Length, IsNumberString, MaxLength, IsEmpty, ValidateIf } from 'class-validator';
 import { Type } from 'class-transformer';
 import {PartialType} from '@nestjs/mapped-types'
 import { ObjectId } from 'mongodb';
@@ -30,6 +30,7 @@ export class RegisterCustomerDto {
 
    @IsNotEmpty()
    nombres: string;
+
    @IsNotEmpty()
    estado: string;
  
@@ -39,7 +40,10 @@ export class CustomerDto {
   @Type(() => Number)
   id?: number; */
 
-  @IsOptional()
+  @IsNotEmpty()
+  tipo_doc: string;
+
+  @IsNotEmpty()
   @Length(8, 11)
   dni_ruc: string;
 
@@ -75,13 +79,14 @@ export class CustomerDto {
   @Length(0, 40)
   direccion?: string;
 
-  @IsNotEmpty()
+  @IsOptional()
+  @ValidateIf((o, value) => value !== null && value !== undefined && value!=="")
   @IsEmail()
   @Length(0, 30)
   email: string;
 
-  @IsNotEmpty()
-  @Length(1, 20)
+  @IsOptional()
+  @Length(0, 20)
   password: string;
 
   @IsNotEmpty()

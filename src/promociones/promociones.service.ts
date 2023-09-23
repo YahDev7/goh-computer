@@ -30,7 +30,7 @@ export class PromocionesService {
             let res = await this.PromocionesModule.aggregate([
                 {
                     $match: {
-                        estado: 'A',
+                       // estado: 'A',
                         enterprise_id: new ObjectId(enterprise_id)
 
                     }
@@ -50,12 +50,12 @@ export class PromocionesService {
                         fecha_fin:1,
                         precio_venta_promo:1,
                         imagenes: '$prod.imagenes',
+                        estado:1
                         // precio_promoventa: { $round: ['$precio_promoventa', 2] },
 
                     }
                 }
             ])
-
 
             
             if (res.length === 0) return new HttpException('No hay productos que mostrar', HttpStatus.NOT_FOUND)
@@ -127,6 +127,25 @@ export class PromocionesService {
             return { err: false, message: "Se actualizo con éxito" }
         } catch (error) {
             return new HttpException('Ocurrio un error al update, ' + error.message || error, HttpStatus.NOT_FOUND);
+        }
+    }
+
+    async activarEnterprise(id: ObjectId, token): Promise<Promociones | Object> {
+        try {
+            id = new ObjectId(id)
+
+            let found = await this.PromocionesModule.findOne({ _id: id });
+            if (!found) return new HttpException('No se encontro registro a eliminar', HttpStatus.NOT_FOUND);
+
+            let est = await this.PromocionesModule.findOne({ _id: id, estado: 'D' });
+            if (!est) return new HttpException('Este registro no esta eliminado', HttpStatus.NOT_FOUND)
+
+
+            const update = await this.PromocionesModule.updateOne({ _id: id }, { $set: { estado: 'A' } });
+            if (!update) return new HttpException('ocurrio un error al activar', HttpStatus.NOT_FOUND);
+            return { err: false, message: "Se activo con éxito" }
+        } catch (error) {
+            return new HttpException('Ocurrio un error al activar, ' + error.message || error, HttpStatus.NOT_FOUND);
         }
     }
 
@@ -220,6 +239,7 @@ export class PromocionesService {
 
     async getByEnterpriseByIdWeb(id: ObjectId)/* : Promise<Promociones | HttpException> */ {
         try {
+            console.log(id)
             let res = await this.PromocionesModule.aggregate([
                 {
                     $match: {
@@ -263,6 +283,7 @@ export class PromocionesService {
                         subcategoria_id: { $arrayElemAt: ['$subcat._id', 0] },
                         nomcomp: { $arrayElemAt: ['$prod.nombre', 0] },
                         descomp: { $arrayElemAt: ['$prod.descripcion', 0] },
+                        precio_antes:{ $arrayElemAt: ['$prod.precio_venta', 0] },
                         precio_venta: '$precio_venta_promo',
                         subcatnombre: { $arrayElemAt: ['$subcat.nombre', 0] }, 
                         stock: { $arrayElemAt: ['$prod.stock', 0] },
@@ -274,7 +295,7 @@ export class PromocionesService {
                     }
                 }
             ])
-
+            console.log(res)
             if (res.length === 0) throw { err: true, message: "No hay productos a mostrar" }
             return res[0]
         } catch (error) {

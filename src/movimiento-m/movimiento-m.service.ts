@@ -18,7 +18,7 @@ export class MovimientoMService {
         @InjectModel(MovimientoM.name) private MovimientoModule: Model<MovimientoMDocument>,
         private EnterpriseService: EnterpriseService,
         private DocumentoService: DocumentoService,
-       // private ProductService: ProductsService,
+        // private ProductService: ProductsService,
         private CustomerService: CustomerService,
         private jwtService: JwtService,
 
@@ -35,19 +35,19 @@ export class MovimientoMService {
     }
 
 
-    async getId(id: ObjectId,token): Promise<MovimientoM | HttpException> {
+    async getId(id: ObjectId, token): Promise<MovimientoM | HttpException> {
         try {
             const decodedToken = this.jwtService.verify(token);
             let { enterprise_id } = decodedToken
-            enterprise_id=new ObjectId(enterprise_id)
-           id = new ObjectId(id)
+            enterprise_id = new ObjectId(enterprise_id)
+            id = new ObjectId(id)
             let res = await this.EnterpriseService.getId(enterprise_id);
 
             if (res instanceof HttpException) throw res
             /*        let est= await this.MovimientoModule.findOne({_id:id,estado:'D'});
                    if(est)return new HttpException('No se encontro deposito',HttpStatus.NOT_FOUND)   
         */
-            let found = await this.MovimientoModule.findOne({ _id: id,enterprise_id });
+            let found = await this.MovimientoModule.findOne({ _id: id, enterprise_id });
             if (!found) return new HttpException('No se encontro deposito', HttpStatus.NOT_FOUND);
 
             return found
@@ -65,7 +65,7 @@ export class MovimientoMService {
 
             if (res instanceof HttpException) throw res
 
-            const found = await this.MovimientoModule.find({ enterprise_id:new ObjectId(enterprise_id)  }).sort({fecha:-1})
+            const found = await this.MovimientoModule.find({ enterprise_id: new ObjectId(enterprise_id) }).sort({ fecha: -1 })
             if (found.length === 0) throw { err: true, message: 'No se encontraron depositos' }
 
             return found;
@@ -138,7 +138,7 @@ export class MovimientoMService {
              if (resuser instanceof HttpException) throw resuser */
 
 
-            const save = await this.MovimientoModule.create({ ...body, documento_id, enterprise_id });
+            const save = await this.MovimientoModule.create({ ...body, estado: "CANCELADO", documento_id, enterprise_id });
             if (!save) throw { err: true, message: 'No se guardardo' }
 
             const update = await this.DocumentoService.updateEstado(documento_id);
@@ -244,10 +244,44 @@ export class MovimientoMService {
     }
     async totalVentas() {//MAIN
         try {
-            const res = await this.MovimientoModule.find({ tipo_compra_venta: 'VENTA',estado:"CANCELADO" });
-            const total = res.reduce((acc, movimiento) => acc + movimiento.monto_pagar, 0);
+         //   const res = await this.MovimientoModule.find({ tipo_compra_venta: 'VENTA', estado: "CANCELADO" });
+           // const total = res.reduce((acc, movimiento) => acc + movimiento.monto_pagar, 0);
             //if(res.length===0) return new HttpException('No hay Documentos que mostrar',HttpStatus.NOT_FOUND) 
-            return { total }
+            //return { total }
+
+
+             let res = await this.MovimientoModule.aggregate([
+                {
+                    $match: {
+                        estado: 'CANCELADO',
+                        enterprise_id: new ObjectId("6463b7176f62eabdc5d7329d"),
+                        tipo_compra_venta:"VENTA"
+                    }
+                },
+                {
+                    $lookup: {
+                        from: "documentos",
+                        localField: "documento_id",
+                        foreignField: "_id",
+                        as: "doc"
+                    }
+                },
+                {
+                    $project: {
+                        _id: 0,
+                        detalle:{ $arrayElemAt: ["$doc.detalle", 0] } ,
+
+                    }
+                } 
+            ])
+            let suma = 0;
+            for (const item of res) {
+                for (const detalle of item.detalle) {
+                    if(detalle.unidad==="UNIDAD")
+                    suma += detalle.importe;
+                  }
+            }
+            return { total:suma }
             /*  let ventasIds = await this.getVentasIds();
              let ventasIdsNew = ventasIds.map(doc => doc._id);
              let res = await this.MovimientoModule.aggregate([
@@ -278,55 +312,59 @@ export class MovimientoMService {
         }
     }
 
-
     async totalVentasDia() {//MAIN
         try {
 
-            const res = await this.MovimientoModule.find({ tipo_compra_venta: 'VENTA', fecha: { $gte: new Date() },estado:"CANCELADO" });
-            const total = res.reduce((acc, movimiento) => acc + movimiento.monto_pagar, 0);
+          //  const res = await this.MovimientoModule.find({ tipo_compra_venta: 'VENTA', fecha: { $gte: new Date() }, estado: "CANCELADO" });
+            //const total = res.reduce((acc, movimiento) => acc + movimiento.monto_pagar, 0);
             //if(res.length===0) return new HttpException('No hay Documentos que mostrar',HttpStatus.NOT_FOUND) 
-            return { total }
-        } catch (error) {
-            return new HttpException('Ocurrio un error al guardar' + error.message || error, HttpStatus.NOT_FOUND);
-        }
-    }
-
-    async totalVentasMes() {//MAIN
-        try {
+           // return { total }
 
             let res = await this.MovimientoModule.aggregate([
                 {
                     $match: {
-                        fecha: { $gte: new Date("2023-01-01"), $lt: new Date("2023-12-01") },
-                        tipo_compra_venta: "VENTA",
-                        estado:"CANCELADO"
+                        estado: 'CANCELADO',
+                        enterprise_id: new ObjectId("6463b7176f62eabdc5d7329d"),
+                        tipo_compra_venta:"VENTA",
+                        fecha: { $gte: new Date() }
                     }
                 },
                 {
-                    $group: {
-                        _id: { $month: "$fecha" },
-                        // fechas: {$push:'$fecha'},
-                        Totalmes: { $sum: "$monto_pagar" }
+                    $lookup: {
+                        from: "documentos",
+                        localField: "documento_id",
+                        foreignField: "_id",
+                        as: "doc"
                     }
                 },
                 {
-                    $sort: {
-                        _id: 1
+                    $project: {
+                        _id: 0,
+                        detalle:{ $arrayElemAt: ["$doc.detalle", 0] } ,
+
                     }
-                },
-            ]);
-            //if(res.length===0) return new HttpException('No hay Documentos que mostrar',HttpStatus.NOT_FOUND) 
-            return res
+                } 
+            ])
+            let suma = 0;
+            for (const item of res) {
+                for (const detalle of item.detalle) {
+                    if(detalle.unidad==="UNIDAD")
+                    suma += detalle.importe;
+                  }
+            }
+            return { total:suma }
         } catch (error) {
             return new HttpException('Ocurrio un error al guardar' + error.message || error, HttpStatus.NOT_FOUND);
         }
     }
+
+   
 
 
     async totalComprasDia() {//MAIN
         try {
 
-            const res = await this.MovimientoModule.find({ tipo_compra_venta: 'COMPRA', fecha: { $gte: new Date() },estado:"CANCELADO" });
+            const res = await this.MovimientoModule.find({ tipo_compra_venta: 'COMPRA', fecha: { $gte: new Date() }, estado: "CANCELADO" });
             const total = res.reduce((acc, movimiento) => acc + movimiento.monto_pagar, 0);
             //if(res.length===0) return new HttpException('No hay Documentos que mostrar',HttpStatus.NOT_FOUND) 
             return { total }
@@ -335,15 +373,16 @@ export class MovimientoMService {
         }
     }
 
-    async totalComprasMes() {//MAIN
-        try {
 
+    async totalVentasMes(mes) {//MAIN
+        try {
+/* 
             let res = await this.MovimientoModule.aggregate([
                 {
                     $match: {
                         fecha: { $gte: new Date("2023-01-01"), $lt: new Date("2023-12-01") },
-                        tipo_compra_venta: "COMPRA",
-                        estado:"CANCELADO"
+                        tipo_compra_venta: "VENTA",
+                        estado: "CANCELADO"
                     }
                 },
                 {
@@ -360,7 +399,116 @@ export class MovimientoMService {
                 },
             ]);
             //if(res.length===0) return new HttpException('No hay Documentos que mostrar',HttpStatus.NOT_FOUND) 
-            return res
+            return res */
+
+             let res = await this.MovimientoModule.aggregate([
+                {
+                    $match: {
+                        estado: 'CANCELADO',
+                        enterprise_id: new ObjectId("6463b7176f62eabdc5d7329d"),
+                        tipo_compra_venta:"VENTA",
+                        fecha: { $gte: new Date(`2023-${mes}-01`), $lt: new Date(`2023-${Number(mes)+1}-01`) },
+                    }
+                },
+                {
+                    $lookup: {
+                        from: "documentos",
+                        localField: "documento_id",
+                        foreignField: "_id",
+                        as: "doc"
+                    }
+                },
+                {
+                    $project: {
+                        _id: 0,
+                        detalle:{ $arrayElemAt: ["$doc.detalle", 0] } ,
+
+                    }
+                } ,
+               
+            
+            ]) 
+                 let suma = 0;
+            for (const item of res) {
+                for (const detalle of item.detalle) {
+                    if(detalle.unidad==="UNIDAD")
+                    suma += detalle.importe;
+                  }
+            }
+            return { total:suma,mes } 
+
+        } catch (error) {
+            return new HttpException('Ocurrio un error al guardar' + error.message || error, HttpStatus.NOT_FOUND);
+        }
+    }
+    async totalComprasMes(mes) {//MAIN
+        try {
+
+           /*  let res = await this.MovimientoModule.aggregate([
+                {
+                    $match: {
+                        fecha: { $gte: new Date("2023-01-01"), $lt: new Date("2023-12-01") },
+                        tipo_compra_venta: "COMPRA",
+                        estado: "CANCELADO"
+                    }
+                },
+                {
+                    $group: {
+                        _id: { $month: "$fecha" },
+                        // fechas: {$push:'$fecha'},
+                        Totalmes: { $sum: "$monto_pagar" }
+                    }
+                },
+                {
+                    $sort: {
+                        _id: 1
+                    }
+                },
+            ]); 
+
+            console.log(res)
+            return res */
+             let res = await this.MovimientoModule.aggregate([
+                {
+                    $match: {
+                        estado: 'CANCELADO',
+                        enterprise_id: new ObjectId("6463b7176f62eabdc5d7329d"),
+                        tipo_compra_venta:"COMPRA",
+                        fecha: { $gte: new Date(`2023-${mes}-01`), $lt: new Date(`2023-${Number(mes)+1}-01`) },
+                    }
+                },
+                {
+                    $lookup: {
+                        from: "documentos",
+                        localField: "documento_id",
+                        foreignField: "_id",
+                        as: "doc"
+                    }
+                },
+                {
+                    $project: {
+                        _id: 0,
+                        detalle:{ $arrayElemAt: ["$doc.detalle", 0] } ,
+
+                    }
+                } 
+            ])
+
+            let suma = 0;
+            for (const item of res) {
+                for (const detalle of item.detalle) {
+                    if(detalle.unidad==="UNIDAD")
+                    suma += detalle.importe;
+                  }
+            }
+            console.log({total:suma,mes })
+
+            return { total:suma,mes } 
+
+            //if(res.length===0) return new HttpException('No hay Documentos que mostrar',HttpStatus.NOT_FOUND) 
+            return []
+           // return res
+
         } catch (error) {
             return new HttpException('Ocurrio un error al guardar' + error.message || error, HttpStatus.NOT_FOUND);
         }
@@ -372,7 +520,7 @@ export class MovimientoMService {
                 {
                     $match: {
                         fecha: { $gte: new Date("2023-01-01"), $lt: new Date("2023-12-01") },
-                        estado:"CANCELADO"
+                        estado: "CANCELADO"
                     }
                 },
                 {
@@ -380,78 +528,253 @@ export class MovimientoMService {
                         _id: { $month: "$fecha" },
                         TotalCompra: { $sum: { $cond: { if: { $eq: ["$tipo_compra_venta", "COMPRA"] }, then: { $sum: "$monto_pagar" }, else: { $literal: 0 } } } },
                         TotalVenta: { $sum: { $cond: { if: { $eq: ["$tipo_compra_venta", "VENTA"] }, then: { $sum: "$monto_pagar" }, else: { $literal: 0 } } } }
-                      }
+                    }
                 },
                 {
-                    $addFields:{
-                     Total :{$round:[{$subtract:['$TotalVenta','$TotalCompra']},2]},
-                     TotalCompra:{$round:["$TotalCompra",2]},
-                     TotalVenta:{$round:["$TotalVenta",2]} 
+                    $addFields: {
+                        Total: { $round: [{ $subtract: ['$TotalVenta', '$TotalCompra'] }, 2] },
+                        TotalCompra: { $round: ["$TotalCompra", 2] },
+                        TotalVenta: { $round: ["$TotalVenta", 2] }
                     }
-                 },
+                },
                 {
                     $sort: {
                         _id: 1
                     }
                 },
             ]);
-            //if(res.length===0) return new HttpException('No hay Documentos que mostrar',HttpStatus.NOT_FOUND) 
+            //if(res.length===0) return new HttpException('No hay Documentos que mostrar',HttpStatus.NOT_FOUND)
             return res
         } catch (error) {
             return new HttpException('Ocurrio un error al guardar' + error.message || error, HttpStatus.NOT_FOUND);
         }
     }
+   /*  async ingresosMensuales() {//MAIN
+        try {
 
+            let res = await this.MovimientoModule.aggregate([
+                {
+                    $match: {
+                        fecha: { $gte: new Date("2023-01-01"), $lt: new Date("2023-12-01") },
+                        estado: "CANCELADO"
+                    }
+                },
+                {
+                    $group: {
+                        _id: { $month: "$fecha" },
+                        TotalCompra: { $sum: { $cond: { if: { $eq: ["$tipo_compra_venta", "COMPRA"] }, then: { $sum: "$monto_pagar" }, else: { $literal: 0 } } } },
+                        TotalVenta: { $sum: { $cond: { if: { $eq: ["$tipo_compra_venta", "VENTA"] }, then: { $sum: "$monto_pagar" }, else: { $literal: 0 } } } }
+                    }
+                },
+                {
+                    $addFields: {
+                        Total: { $round: [{ $subtract: ['$TotalVenta', '$TotalCompra'] }, 2] },
+                        TotalCompra: { $round: ["$TotalCompra", 2] },
+                        TotalVenta: { $round: ["$TotalVenta", 2] }
+                    }
+                },
+                {
+                    $sort: {
+                        _id: 1
+                    }
+                },
+            ]);
+            //if(res.length===0) return new HttpException('No hay Documentos que mostrar',HttpStatus.NOT_FOUND)
+            return res
+        } catch (error) {
+            return new HttpException('Ocurrio un error al guardar' + error.message || error, HttpStatus.NOT_FOUND);
+        }
+    } */
 
 
 
     async totalVentasServicios() {//MAIN
         try {
-        let res = await this.MovimientoModule.aggregate([
-            {
-                $match: {
-                    estado: 'CANCELADO',
-                    enterprise_id: new ObjectId("6463b7176f62eabdc5d7329d"),
-                }
-            },
-             {
-              $lookup: {
-                  from: "documentos",
-                  localField: "documento_id",
-                  foreignField: "_id",
-                  as: "doc"
-              }
-          },
-           {
-            $lookup: {
-                from: "product",
-                pipeline:[{
-                    $match:{'unidad':'SERVICIO'}
-                }],
-                localField: "doc.detalle.id",
-                foreignField: "_id",
-                as: "prod"
-            }
-        }, 
-        {
-            $project: {
-                _id: 0,
-                monto_pagar:1
-               
-            }
-        }
-        ])
+            let res = await this.MovimientoModule.aggregate([
+                {
+                    $match: {
+                        estado: 'CANCELADO',
+                        enterprise_id: new ObjectId("6463b7176f62eabdc5d7329d"),
+                        tipo_compra_venta:"VENTA"
+                    }
+                },
+                {
+                    $lookup: {
+                        from: "documentos",
+                        localField: "documento_id",
+                        foreignField: "_id",
+                        as: "doc"
+                    }
+                },/* ,
+                {
+                    $lookup: {
+                      from: "products",
+                      localField: "doc.detalle._id",
+                      foreignField: "_id",
+                      as: "prod"
+                    }
+                  }, */
 
-            const total = res.reduce((acc, movimiento) => acc + movimiento.monto_pagar, 0);
+
+               /*  {
+                    $unwind: '$doc'
+                 }, */
+                 //{
+                   /*  $lookup: {
+                        from: "products",
+                        let:{
+                            aliasDetalle:new ObjectId("$detalle._id")
+                        }, 
+                          pipeline:[{
+                          $match:{
+                           
+                                   _id:'$$aliasDetalle'
+                                
+                            
+                          }
+                        }],  */
+                        //pipeline:[{
+                        //  $match:{'unidad':'SERVICIO'}
+                        //}],
+                       //  localField: "$$aliasDetalle",
+                        //foreignField: "_id", 
+                       // as: "prod"
+                    //}
+                //}, 
+              /*   {
+                    $unwind: '$prod'
+                 }, */
+                {
+                    $project: {
+                        _id: 0,
+                       // doc_id:"$doc._id",
+                        detalle:{ $arrayElemAt: ["$doc.detalle", 0] } ,
+                       // monto_pagar: 1
+
+                    }
+                } 
+            ])
+            let suma = 0;
+            for (const item of res) {
+                for (const detalle of item.detalle) {
+                    if(detalle.unidad==="SERVICIO")
+                    suma += detalle.importe;
+                  }
+            }
+          /*   let resimporte =res.reduce((acumulador, elemento) => {
+                console.log(elemento.detalle)
+                return acumulador + elemento.detalle.importe;
+              }, 0);
+              console.log(resimporte) */
+            return {total:suma}
+            //const total = res.reduce((acc, movimiento) => acc + movimiento.monto_pagar, 0);
             //if(res.length===0) return new HttpException('No hay Documentos que mostrar',HttpStatus.NOT_FOUND) 
-            return { total }
-           
+            //return { total }
+
         } catch (error) {
             return new HttpException('Ocurrio un error al guardar' + error.message || error, HttpStatus.NOT_FOUND);
         }
     }
 
 
+    async totalServiciosMes(mes) {//MAIN
+        try {
+            let res = await this.MovimientoModule.aggregate([
+                {
+                    $match: {
+                        estado: 'CANCELADO',
+                        enterprise_id: new ObjectId("6463b7176f62eabdc5d7329d"),
+                        tipo_compra_venta:"VENTA",
+                        fecha: { $gte: new Date(`2023-${mes}-01`), $lt: new Date(`2023-${Number(mes)+1}-01`) },
+                    }
+                },
+                {
+                    $lookup: {
+                        from: "documentos",
+                        localField: "documento_id",
+                        foreignField: "_id",
+                        as: "doc"
+                    }
+                },
+                {
+                    $project: {
+                        _id: 0,
+                        detalle:{ $arrayElemAt: ["$doc.detalle", 0] } ,
+
+                    }
+                } 
+            ])
+            let suma = 0;
+            for (const item of res) {
+                for (const detalle of item.detalle) {
+                    if(detalle.unidad==="SERVICIO")
+                    suma += detalle.importe;
+                  }
+            }
+          /*   let resimporte =res.reduce((acumulador, elemento) => {
+                console.log(elemento.detalle)
+                return acumulador + elemento.detalle.importe;
+              }, 0);
+              console.log(resimporte) */
+            return {total:suma,mes}
+            //const total = res.reduce((acc, movimiento) => acc + movimiento.monto_pagar, 0);
+            //if(res.length===0) return new HttpException('No hay Documentos que mostrar',HttpStatus.NOT_FOUND) 
+            //return { total }
+
+        } catch (error) {
+            return new HttpException('Ocurrio un error al guardar' + error.message || error, HttpStatus.NOT_FOUND);
+        }
+    }
+
+    async totalServiciosDia() {//MAIN
+        try {
+            let res = await this.MovimientoModule.aggregate([
+                {
+                    $match: {
+                        estado: 'CANCELADO',
+                        enterprise_id: new ObjectId("6463b7176f62eabdc5d7329d"),
+                        tipo_compra_venta:"VENTA",
+                        fecha: { $gte: new Date() }
+                    }
+                },
+                {
+                    $lookup: {
+                        from: "documentos",
+                        localField: "documento_id",
+                        foreignField: "_id",
+                        as: "doc"
+                    }
+                },
+                {
+                    $project: {
+                        _id: 0,
+                        detalle:{ $arrayElemAt: ["$doc.detalle", 0] } ,
+
+                    }
+                } 
+            ])
+            let suma = 0;
+            for (const item of res) {
+                for (const detalle of item.detalle) {
+                    if(detalle.unidad==="SERVICIO")
+                    suma += detalle.importe;
+                  }
+            }
+
+          /*   let resimporte =res.reduce((acumulador, elemento) => {
+                console.log(elemento.detalle)
+                return acumulador + elemento.detalle.importe;
+              }, 0);
+              console.log(resimporte) */
+            return {total:suma}
+            //const total = res.reduce((acc, movimiento) => acc + movimiento.monto_pagar, 0);
+            //if(res.length===0) return new HttpException('No hay Documentos que mostrar',HttpStatus.NOT_FOUND) 
+            //return { total }
+
+        } catch (error) {
+            return new HttpException('Ocurrio un error al guardar' + error.message || error, HttpStatus.NOT_FOUND);
+        }
+    }
 
 
 

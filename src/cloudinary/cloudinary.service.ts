@@ -61,6 +61,7 @@ export class CloudinaryService {
       uploadPromises.push(uploadPromise);
     });
     
+    
 /*       let res= uploadPromises.map((el)=>{
         return{
         nombre:el["public_id"],
@@ -74,6 +75,7 @@ export class CloudinaryService {
         return {
           nombre: el.public_id,
           URL: el.secure_url,
+          public_id:el.public_id
         };
       });
 
@@ -123,6 +125,9 @@ export class CloudinaryService {
   
   } 
 
+
+
+
 uploadProductos(file: Express.Multer.File,token:string,id:ObjectId): Promise<CloudinaryResponse> {
   
     const decodedToken = this.jwtService.verify(token);
@@ -145,11 +150,14 @@ uploadProductos(file: Express.Multer.File,token:string,id:ObjectId): Promise<Clo
    
     uploadfile.then((resultado) => {
       // Hacer algo con el resultado
+      console.log(resultado)
+
     let res ={
       nombre:resultado.public_id,
       URL: resultado.secure_url,
+      public_id:resultado.public_id
     }
-    this.ProductoService.saveimgOne(decodedToken.enterprise_id,id,res)
+    this.ProductoService.saveimgAll(decodedToken.enterprise_id,id,res)
     }).catch((error) => {
       console.log(error)
       return {err:true,message:"ocurrio un error al subir el archivo"}
@@ -233,8 +241,9 @@ uploadProductos(file: Express.Multer.File,token:string,id:ObjectId): Promise<Clo
 
   
   } 
-  
-
+     async deleteOneImg(publicId: string) {
+    return await cloudinary.uploader.destroy(publicId);
+  } 
 
 }
 

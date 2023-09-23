@@ -18,7 +18,7 @@ export class CategoriaService {
 
     async get(): Promise<Categoria[] | HttpException> {
         try {
-            const res = await this.CategoriaModule.find({estado:'A',enterprise_id:new ObjectId('6463b7176f62eabdc5d7329d')});
+            const res = await this.CategoriaModule.find({estado:'A', nombre:{ $nin: ['Sevicios','Servicios'] }, enterprise_id:new ObjectId('6463b7176f62eabdc5d7329d')});
             if (res.length === 0) return new HttpException('No hay datos que mostrar', HttpStatus.NOT_FOUND)
             return res
         } catch (error) {
@@ -74,13 +74,12 @@ export class CategoriaService {
             return new HttpException('Ocurrio un error al buscar por id ' + error.message || error, HttpStatus.NOT_FOUND)
         }
     }
-    async post(body: CategoriaDto): Promise<Categoria | Object> {
+ /*    async post(body: CategoriaDto): Promise<Categoria | Object> {
         try {
 
             const insert = this.CategoriaModule.create(body);
             if (!insert) return new HttpException('Ocurrio un error al guardar ', HttpStatus.NOT_FOUND)
             return insert
-            /*  return {err:false,message:"Se guardo con éxito"} */
         } catch (error) {
             return new HttpException('Ocurrio un error al guardar ' + error.message || error, HttpStatus.NOT_FOUND)
         }
@@ -99,7 +98,7 @@ export class CategoriaService {
         } catch (error) {
             return new HttpException('Ocurrio un error al guardar ' + error.message || error, HttpStatus.NOT_FOUND)
         }
-    }
+    } */
 
     async delete(id: ObjectId): Promise<Object> {
         try {
@@ -176,7 +175,13 @@ export class CategoriaService {
     async updateByEnterprise(id: ObjectId, body: CategoriaDto, token): Promise<Object | HttpException> {
         try {
             const decodedToken = this.jwtService.verify(token);
-  
+            let {enterprise_id,usuario_id} =decodedToken;
+
+            enterprise_id = new ObjectId(enterprise_id)
+            usuario_id = new ObjectId(usuario_id)
+           body={...body,enterprise_id,usuario_id } 
+
+
             const update = await this.CategoriaModule.updateOne({ _id: id }, { $set: body });
             if (update.modifiedCount === 0) return new HttpException('No se logro actualizar', HttpStatus.NOT_FOUND);
             return { err: false, message: "Se actualizo con éxito" }

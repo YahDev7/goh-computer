@@ -71,10 +71,20 @@ export class CustomerController {
         const token = req.headers.authorization.split(' ')[1];
         return this.customerService.getByEnterprise(token)
     }
+    @Get('/enterprise/dni')
+    async getByEnterpriseDNI(@Req() req){
+        const token = req.headers.authorization.split(' ')[1];
+        return this.customerService.getByEnterpriseDNI(token)
+    }
+    @Get('/enterprise/ruc')
+    async getByEnterpriseRUC(@Req() req){
+        const token = req.headers.authorization.split(' ')[1];
+        return this.customerService.getByEnterpriseRUC(token)
+    }
 
 
     @RolesDecorator(Roles.ADMIN)
-     @Get('enterprise/:id')
+     @Get('enterprise/getone/:id')
     async getByEnterpriseId(@Param('id') id:ObjectId){
         return this.customerService.getIdEnterprise(id)
     } 

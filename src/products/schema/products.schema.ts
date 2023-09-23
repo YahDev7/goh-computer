@@ -15,7 +15,7 @@ export class Products {
     @Prop()
     enterprise_id: ObjectId;
     
-    @Prop({required:true,unique:true})
+    @Prop( {unique:false}/* {required:true,unique:true} */)
     codigo: string;
     
     @Prop({required:true})
@@ -24,34 +24,34 @@ export class Products {
     @Prop({required:true})
     descripcion: string;
     
-    @Prop({required:true})
+    @Prop(/* {required:true} */)
     palabra_clave: string;
     
-    @Prop({required:true})
+    @Prop(/* {required:true} */)
     precio_compra_dolar: number;
 
-    @Prop({required:true})
+    @Prop(/* {required:true} */)
     valor_dolar: number;
     
-    @Prop({required:true})
+    @Prop(/* {required:true} */)
     precio_compra_dolar_igv: number;
     
-    @Prop({required:true})
+    @Prop(/* {required:true} */)
     precio_compra_dolar_con_IGV:number;
 
-    @Prop({required:true})
+    @Prop(/* {required:true} */)
     precio_compra_soles: number;
 
-    @Prop({required:true})
+    @Prop(/* {required:true} */)
     ganancia: number;
 
     @Prop({required:true})
     precio_venta: number;
 
-    @Prop([Object])
+    @Prop({required:false})
     especificaciones:Object[]    
         
-    @Prop({length:10,unique:true})
+    @Prop(/* {length:10,unique:true} */)
     codfabricante: string;
     
     @Prop()
@@ -75,11 +75,18 @@ export class Products {
     @Prop({required:true,length:10})
     unidad: string;
     
-    @Prop({required:true})
+    @Prop(/* {required:true} */)
     marca: string;
     
-    @Prop([Object])
-    imagenes: Object[];
+    @Prop({required:false})
+    imagenes: Image[];
+    
 }
+
+interface Image {
+    public_id: string;
+    nombre?: string;
+    URL?: string;
+  }
 
 export const ProductsSchema = SchemaFactory.createForClass(Products);
