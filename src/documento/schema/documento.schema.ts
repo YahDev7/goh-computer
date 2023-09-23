@@ -62,8 +62,6 @@ export class Documento{
     @Prop({ required: true })
     metodo_pago: string;
 
-    @Prop([Object])
-    archivoAdj: Object;
 }
 
 

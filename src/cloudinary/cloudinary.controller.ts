@@ -75,6 +75,14 @@ export class CloudinaryController {
   return responses.map((response) => response.url);  */
   }
 
+  @Post('upload/admin/billeteravirtual/:id')
+  @UseInterceptors(FileInterceptor('file'))
+  async uploadBilleteraVirtualAdmin(@Param('id') id_mov: ObjectId, @UploadedFile() file: Express.Multer.File, @Req() req) {
+    const token = req.headers.authorization.split(' ')[1];
+    return this.cloudinaryService.uploadFileBilletera(file, token, id_mov);
+
+  }
+
 
   @Post('upload/categoria/:id')
   @UseInterceptors(FileInterceptor('file'))

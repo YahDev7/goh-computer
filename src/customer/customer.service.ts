@@ -192,6 +192,40 @@ export class CustomerService {
         }
     }
 
+    async getByEnterpriseDNI(token: string /* enterprise_id: ObjectId */): Promise<Customer[] | HttpException> {
+        try {
+            const decodedToken = this.jwtService.verify(token);
+            let { enterprise_id } = decodedToken;
+            enterprise_id = new ObjectId(enterprise_id)
+            let res = await this.EnterpriseService.getId(enterprise_id);
+            if (res instanceof HttpException) throw res
+            // if(res) throw {err:true,message:'No se encontraron subcategorias de esta empresa'} 
+
+            const found = await this.CustomerModule.find({ enterprise_id, estado: 'A',tipo_doc:'DNI' }).sort({fecha:-1,_id:-1})
+          //  if (found.length === 0) throw { err: true, message: 'No hay customer por DNI' }
+            return found;
+        } catch (error) {
+            return new HttpException('Ocurrio un error al buscar' + error.message || error, HttpStatus.NOT_FOUND)
+        }
+    }
+
+    async getByEnterpriseRUC(token: string /* enterprise_id: ObjectId */): Promise<Customer[] | HttpException> {
+        try {
+            const decodedToken = this.jwtService.verify(token);
+            let { enterprise_id } = decodedToken;
+            enterprise_id = new ObjectId(enterprise_id)
+            let res = await this.EnterpriseService.getId(enterprise_id);
+            if (res instanceof HttpException) throw res
+            // if(res) throw {err:true,message:'No se encontraron subcategorias de esta empresa'} 
+
+            const found = await this.CustomerModule.find({ enterprise_id, estado: 'A',tipo_doc:'RUC' }).sort({fecha:-1,_id:-1})
+          //  if (found.length === 0) throw { err: true, message: 'No hay customer por RUC' }
+            return found;
+        } catch (error) {
+            return new HttpException('Ocurrio un error al buscar' + error.message || error, HttpStatus.NOT_FOUND)
+        }
+    }
+
     async getIdEnterprise(id: ObjectId): Promise<Customer | HttpException> {
         try {
 

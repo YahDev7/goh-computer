@@ -13,9 +13,11 @@ export class Customer {
   @Prop()
   user_id: ObjectId;
 
-  @Prop() /* validar por dni */
-  dni_ruc: string;
+  @Prop({ required: true }) /* validar por dni */
+  tipo_doc: string;
 
+  @Prop({ required: true }) /* validar por dni */
+  dni_ruc: string;
   
   @Prop({ required: true })
   nombres: string; 
@@ -41,10 +43,10 @@ export class Customer {
   @Prop()
   direccion: string;
 
-  @Prop({ required: true })
+  @Prop()
   email: string;
 
-  @Prop({ required: true })
+  @Prop()
   password: string;
 
   @Prop({required:true})

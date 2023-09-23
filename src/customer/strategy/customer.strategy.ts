@@ -18,7 +18,6 @@ export class JwtLoginStrategy extends PassportStrategy(Strategy,'jwtlogin')  {
     validate(payload){//esta funcion se ejecuta por defecto es lo que hace un strategy
        //console.log(payload)
        //podemos desencriptar para ver de donde vieiene esa peticion
-       console.log(payload)
         return payload;
     }
 }

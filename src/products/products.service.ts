@@ -205,16 +205,13 @@ export class ProductsService {
     try {
       let { nombre,
         URL } = files
-        console.log(files)
       let found = await this.getByEnterprise(enterprise_id)
       if (!found) throw { err: true, message: 'No se encontor esta empresa' }
 
       let foundpro = await this.productssModule.findOne({ _id: id });
-        console.log(foundpro.imagenes)
         if (!foundpro) throw { err: true, message: 'No se encontor este producto' }
     //  if (foundpro.imagenes.length >= 3) throw { err: true, message: 'Cantidad suficiente, no se puede agregar mas' }
       let imagenes = [...foundpro?.imagenes, files];
-      console.log(imagenes)
       const update = await this.productssModule.updateOne({ _id: id }, { $set: { imagenes } });
       if (update.modifiedCount === 0) return new HttpException('No se logro actualizar', HttpStatus.NOT_FOUND);
 
@@ -282,11 +279,9 @@ export class ProductsService {
           }
         }
       });
-      console.log(public_id)
       //LLAMAR A ELIMINAR LA IMG
      //  let resclouImg= await this.CloudinaryService.deleteOneImg(public_id)
       let resimgs = found.imagenes.filter(el => el.public_id !== public_id);
-      console.log(resimgs)
     //  if(resimgs.length===0) throw {err:true,message:"no ocurrio un error al eliminar esta img"}
       
       const update = await this.productssModule.updateOne({ _id: found._id }, { $set: { imagenes: resimgs } });
@@ -872,7 +867,6 @@ export class ProductsService {
     try {
       
       let found = await this.productssModule.findOne({ _id: id });
-      console.log(found)
       if (!found) return new HttpException('este registro no tiene el stock', HttpStatus.NOT_FOUND);
       let { stock } = found
 

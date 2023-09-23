@@ -376,7 +376,6 @@ export class DocumentoService {
 
 
             res.detalle.forEach(async el => {
-                console.log(el)
                 let { cantidad, _id } = el
                 _id = new ObjectId(_id)
                 let minusStock = await this.ProductsService.aumentarrStockByAnulacion(_id, cantidad)
