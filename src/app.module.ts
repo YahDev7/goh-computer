@@ -31,8 +31,8 @@ import config from './config';
 import { MailerModule } from '@nestjs-modules/mailer';
 import { join } from 'path';
 import { CorreoModule } from './correo/correo.module';
+import { AuthModule } from './auth/auth.module';
 
-console.log(__dirname)
 @Module({ 
   imports: [
     MailerModule.forRootAsync({
@@ -104,7 +104,8 @@ console.log(__dirname)
     PromocionesModule,
     CloudinaryModule,
     ServiciosModule,
-    CorreoModule]
+    CorreoModule,
+    AuthModule]
  /*  controllers: [AppController],
   providers: [AppService, EnterpriseService], */
 })

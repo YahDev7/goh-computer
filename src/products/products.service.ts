@@ -602,6 +602,17 @@ export class ProductsService {
         },
         {
           $lookup: {
+            from: "promociones",
+            pipeline:[{
+              $match:{'estado':'A'}
+            }],
+            localField: "_id",
+            foreignField: "producto_id",
+            as: "promo"
+          }
+        },
+        {
+          $lookup: {
             from: 'subcategorias',
             localField: 'subcategoria_id',
             foreignField: '_id',
@@ -621,21 +632,24 @@ export class ProductsService {
                precio_promoventa: { $ifNull: ['$precio_promoventa', 0] },
              }
            }, */
-        {
+         {
           $project: {
             _id: 0,
-            idcomp: '$_id',
+            //promo: { $arrayElemAt: ['$promo._id', 0] },
+            idpromo: { $arrayElemAt: ['$promo._id', 0] },
+            idcomp: '$_id',/*  { $arrayElemAt: ['$promo.producto_id', 0] }, */
+            url_pro: 1,
+            garantia: 1,
             subcategoria_id: { $arrayElemAt: ['$subcat._id', 0] },
             nomcomp: '$nombre',
             descomp: '$descripcion',
-            precio_venta: { $round: ['$precio_venta', 2] },
+            precio_venta: { $arrayElemAt: ['$promo.precio_venta_promo', 0] },
+            precio_antes: '$precio_venta',
             stock: 1,
-            subcatnombre: { $arrayElemAt: ['$subcat.nombre', 0] },
-            subcatimg: { $arrayElemAt: ['$subcat.imagen', 0] },
             nomcat: { $arrayElemAt: ['$cat.nombre', 0] },
             idcat: { $arrayElemAt: ['$subcat.categoria_id', 0] },
             imagenes: '$imagenes',
-            //precio_promoventa: { $round: ['$precio_promoventa', 2] },
+            especificaciones: { $arrayElemAt: ['$especificaciones', 0] },
           }
         }
       ])
@@ -741,22 +755,25 @@ export class ProductsService {
     try {
 
       let res = await this.productssModule.aggregate([
-
         {
           $match: {
             estado: 'A',
             enterprise_id: new ObjectId("6463b7176f62eabdc5d7329d"),
-            subcategoria_id: new ObjectId(id)
+            subcategoria_id: new ObjectId(id),
           }
         },
         {
           $lookup: {
             from: "promociones",
+            pipeline:[{
+              $match:{'estado':'A'}
+            }],
             localField: "_id",
             foreignField: "producto_id",
             as: "promo"
           }
         },
+       
         {
           $lookup: {
             from: "subcategorias",

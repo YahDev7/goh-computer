@@ -116,6 +116,7 @@ export class CloudinaryService {
     }
     this.MovimientoService.saveimg(decodedToken.enterprise_id,id,res)
     }).catch((error) => {
+      console.log(error)
       return {err:true,message:"ocurrio un error al subir el archivo"}
     });
 

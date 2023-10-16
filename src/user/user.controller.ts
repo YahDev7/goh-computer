@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Param, ParseIntPipe, Post,Put,Delete, UseGuards, Req } from '@nestjs/common';
+import { Body, Controller, Get, Param, ParseIntPipe, Post,Put,Delete, UseGuards, Req, UseInterceptors, ClassSerializerInterceptor } from '@nestjs/common';
 import { UserService } from './user.service';
 import { CreateUserDto, LoginUserDto, RegisterUserDto, UpdateUserDto } from './dto/user.dto';
 import { ObjectId } from 'mongodb';

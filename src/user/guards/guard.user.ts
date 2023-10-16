@@ -15,6 +15,10 @@ export class JwtUserAuthGuard extends AuthGuard('jwtloginuser') {
   if(is_public){//si es pubico te dare permiso si no continua con lo otro
     return true;
   }
+/*   const req = contexto.switchToHttp().getRequest();
+  const token = req.headers.authorization.split(' ')[1];
+  console.log(token) */
+  //poodemos tener un metodo de user o auth en el cual valido el token y lo desencriptoo
 /* 
   const req = contexto.switchToHttp().getRequest();
   const token = req.headers.authorization.split(' ')[1];

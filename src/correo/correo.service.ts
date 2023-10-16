@@ -8,7 +8,7 @@ export class CorreoService {
     async sendMail(body) {
         const {formData,itemsCarr}=body;
 
-        let total = itemsCarr.reduce((accumulator, item) => accumulator + item.precio, 0);
+        let total = itemsCarr.reduce((accumulator, item) => accumulator + item.importe, 0);
         let res =await this.mailerService.sendMail({
             to: `gohcomputertechnology@gmail.com`,
             from:`tecnologiagoh@gmail.com`,

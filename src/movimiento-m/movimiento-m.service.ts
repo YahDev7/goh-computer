@@ -493,6 +493,7 @@ export class MovimientoMService {
                     }
                 } 
             ])
+            console.log(JSON.stringify(res))
 
             let suma = 0;
             for (const item of res) {

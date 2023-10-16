@@ -1,4 +1,5 @@
 import { Schema, Prop, SchemaFactory } from '@nestjs/mongoose';
+import { Exclude } from 'class-transformer';
 import { ObjectId } from 'mongodb';
 import {  HydratedDocument } from 'mongoose';
 
@@ -28,6 +29,7 @@ export class User {
   email: string;
 
   @Prop({ required: true })
+/*   @Exclude() */
   password: string;
 
   @Prop({ required: true })
