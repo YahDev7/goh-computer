@@ -6,10 +6,10 @@ import { LoginDto, RegisterDto } from './dto/login.dto';
 import { AuthGuard } from '@nestjs/passport';
 import { JwtAuthGuard } from './guards/guard.customer'; 
 import { JwtUserAuthGuard } from 'src/user/guards/guard.user';
-import { RolesGuard } from 'src/user/guards/roles.guard';
 import { Roles } from 'src/constants/roles';
 import { RolesDecorator } from 'src/user/decorators/roles.decorator';
 import { Public } from 'src/user/decorators/public.decorator';
+import { RolesGuard } from 'src/auth/guards/roles.guard';
 
 @UseGuards(JwtUserAuthGuard,RolesGuard)
 @Controller('customer')
@@ -34,7 +34,7 @@ export class CustomerController {
     async update(@Param('id', ParseIntPipe) id:number,@Body() body:UpdateCustomerDto){
         return this.customerService.update(id,body)
     } */
-    @RolesDecorator(Roles.ADMIN)
+    @RolesDecorator(Roles.COMUN)
     @Delete(':id')
     async delete(@Param('id', ParseIntPipe) id:number){
         return this.customerService.delete(id)
@@ -65,17 +65,19 @@ export class CustomerController {
     async getByEnterprise(@Param('id') id:ObjectId){
         return this.customerService.getByEnterprise(id)
     } */
-    @RolesDecorator(Roles.ADMIN)
+    @RolesDecorator(Roles.COMUN)
     @Get('/enterprise')
     async getByEnterprise(@Req() req){
         const token = req.headers.authorization.split(' ')[1];
         return this.customerService.getByEnterprise(token)
     }
+    @RolesDecorator(Roles.COMUN)
     @Get('/enterprise/dni')
     async getByEnterpriseDNI(@Req() req){
         const token = req.headers.authorization.split(' ')[1];
         return this.customerService.getByEnterpriseDNI(token)
     }
+    @RolesDecorator(Roles.COMUN)
     @Get('/enterprise/ruc')
     async getByEnterpriseRUC(@Req() req){
         const token = req.headers.authorization.split(' ')[1];
@@ -83,26 +85,26 @@ export class CustomerController {
     }
 
 
-    @RolesDecorator(Roles.ADMIN)
+    @RolesDecorator(Roles.COMUN)
      @Get('enterprise/getone/:id')
     async getByEnterpriseId(@Param('id') id:ObjectId){
         return this.customerService.getIdEnterprise(id)
     } 
     
-    @RolesDecorator(Roles.ADMIN)
+    @RolesDecorator(Roles.COMUN)
     @Post('/enterprise')
     async postEnterprise(@Body() body:CustomerDto,@Req() req){
         const token = req.headers.authorization.split(' ')[1];
         return this.customerService.postEnterprise(token,body)
     }
-    @RolesDecorator(Roles.ADMIN)
+    @RolesDecorator(Roles.COMUN)
     @Put('enterprise/:id')
     async updateEnterpise(@Param('id') id:ObjectId,@Body() body:UpdateCustomerDto,@Req() req){
         const token = req.headers.authorization.split(' ')[1];
 
         return this.customerService.updateByEnterprise(id,body,token)
     }
-    @RolesDecorator(Roles.ADMIN)
+    @RolesDecorator(Roles.COMUN)
     @Delete('enterprise/:id')
     async deleteEnterpise(@Param('id') id:ObjectId,@Req() req){
         const token = req.headers.authorization.split(' ')[1];

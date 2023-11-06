@@ -7,9 +7,11 @@ import { JwtModule } from '@nestjs/jwt';
 import config from 'src/config';
 import { ConfigType } from '@nestjs/config';
 import { JwtStrategy } from './strategy/jwt.strategy';
+import { EnterpriseService } from 'src/enterprise/enterprise.service';
+import { EnterpriseModule } from 'src/enterprise/enterprise.module';
 
 @Module({
-  imports:[UserModule,PassportModule,
+  imports:[UserModule,PassportModule,EnterpriseModule,
      JwtModule.registerAsync({
       inject:[config.KEY],
       useFactory:(cofigService:ConfigType<typeof config>)=>{

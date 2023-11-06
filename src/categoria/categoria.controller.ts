@@ -3,10 +3,10 @@ import { CategoriaService } from './categoria.service';
 import { CategoriaDto, UpdateCategoriaDto } from './dto/categoria.dto';
 import { ObjectId } from 'mongodb';
 import { JwtUserAuthGuard } from 'src/user/guards/guard.user';
-import { RolesGuard } from 'src/user/guards/roles.guard';
 import { Public } from 'src/user/decorators/public.decorator';
 import { RolesDecorator } from 'src/user/decorators/roles.decorator';
 import { Roles } from 'src/constants/roles';
+import { RolesGuard } from 'src/auth/guards/roles.guard';
 
 @UseGuards(JwtUserAuthGuard,RolesGuard)
 @Controller('categoria')
@@ -43,7 +43,7 @@ export class CategoriaController {
     async delete(@Param('id') id){
         return this.categoriaService.delete(id)
     } */
-    @RolesDecorator(Roles.ADMIN)
+    @RolesDecorator(Roles.COMUN)
     @Delete('/deleteimg/:id')
     async deleteimg(@Param('id') id){
         return this.categoriaService.deleteImg(id)
@@ -68,32 +68,32 @@ export class CategoriaController {
     
 
     /* ENTERPRISE */
-    @RolesDecorator(Roles.ADMIN)
+    @RolesDecorator(Roles.COMUN)
     @Get('enterprise')
     async GetByEnterprise(@Req() req){
         const token = req.headers.authorization.split(' ')[1];
 
         return this.categoriaService.getByEnterprise(token)
     }
-    @RolesDecorator(Roles.ADMIN)
+    @RolesDecorator(Roles.COMUN)
     @Get('enterprise/:id')
     async GetByEnterpriseById(@Param('id') id:ObjectId,@Req() req){
         const token = req.headers.authorization.split(' ')[1];
         return this.categoriaService.getByEnterpriseId(id,token)
     }
-    @RolesDecorator(Roles.ADMIN)
+    @RolesDecorator(Roles.COMUN)
     @Post('enterprise')
     async postByEnterprise(@Body() body:CategoriaDto ,@Req() req){
         const token = req.headers.authorization.split(' ')[1];
         return this.categoriaService.postByEnterprise(body,token)
     }
-    @RolesDecorator(Roles.ADMIN)
+    @RolesDecorator(Roles.COMUN)
     @Put('enterprise/:id')
     async putByEnterprise(@Param('id') id:ObjectId,@Body() body:CategoriaDto ,@Req() req){
         const token = req.headers.authorization.split(' ')[1];
         return this.categoriaService.updateByEnterprise(id,body,token)
     }
-    @RolesDecorator(Roles.ADMIN)
+    @RolesDecorator(Roles.COMUN)
     @Delete('enterprise/:id')
     async delete(@Param('id') id:ObjectId,@Req() req){
         const token = req.headers.authorization.split(' ')[1];

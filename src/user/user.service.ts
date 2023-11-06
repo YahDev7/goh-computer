@@ -47,8 +47,7 @@ export class UserService {
 
     async getId(id: ObjectId)/* : Promise<User | HttpException> */ {
         try {
-            const found = await this.UserModule.findOne({ _id: id, estado: 'A' })
-
+            const found = await this.UserModule.findOne({ _id:id, estado: 'A' })
             if (!found) throw { err: true, message: 'error al buscar este user' }
             return found;
         } catch (error) {

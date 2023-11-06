@@ -21,8 +21,7 @@ export class RolesGuard implements CanActivate {
     const roles = this.reflector.get<Roles[]>(ROLES_KEY, context.getHandler())//Si existe el doecorador publico me deje pasar
     const req = context.switchToHttp().getRequest()//manera de obtener el requesst en un componente
     const user = req.user; /* as PayLoadToken */; // el as es opcional
-    let userAdmin = await this.UserService.getId(user._id)
-    
+    let userAdmin = await this.UserService.getId(user.usuario_id)
     if (userAdmin['rol'] === "ADMIN") return true
     const isAuth = roles.some((role) => role === userAdmin['rol']);
 

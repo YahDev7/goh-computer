@@ -163,11 +163,42 @@ uploadProductos(file: Express.Multer.File,token:string,id:ObjectId): Promise<Clo
       console.log(error)
       return {err:true,message:"ocurrio un error al subir el archivo"}
     });
-
-    
     return uploadfile;
+  } 
 
+  uploadOnly(file: Express.Multer.File): Promise<CloudinaryResponse> {
   
+    let uploadfile= new Promise<CloudinaryResponse>((resolve, reject) => {
+      const uploadStream = cloudinary.uploader.upload_stream(
+        {
+         folder: 'GOHComputer/Images' ,
+        allowed_formats: ['jpg', 'png'],
+        max_allowed_size: 1000000, // 2MB en bytes
+        },
+        (error, result) => {
+          if (error) return reject(error);
+          resolve(result);
+        },
+      );
+
+      streamifier.createReadStream(file.buffer).pipe(uploadStream);
+    });
+/*     uploadfile.then((resultado) => {
+      // Hacer algo con el resultado
+      console.log(resultado)
+
+    let res ={
+      nombre:resultado.public_id,
+      URL: resultado.secure_url,
+      public_id:resultado.public_id
+    }
+    return res
+   // this.ProductoService.saveimgAll(decodedToken.enterprise_id,id,res)
+    }).catch((error) => {
+      console.log(error)
+      return {err:true,message:"ocurrio un error al subir el archivo"}
+    }); */
+    return uploadfile;
   } 
 
   uploadCategoria(file: Express.Multer.File,token:string,id:ObjectId): Promise<CloudinaryResponse> {
@@ -245,6 +276,7 @@ uploadProductos(file: Express.Multer.File,token:string,id:ObjectId): Promise<Clo
      async deleteOneImg(publicId: string) {
     return await cloudinary.uploader.destroy(publicId);
   } 
+
 
 }
 

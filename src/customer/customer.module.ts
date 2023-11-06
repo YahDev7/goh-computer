@@ -9,6 +9,7 @@ import { JwtModule } from '@nestjs/jwt';
 import config from 'src/config';
 import { ConfigType } from '@nestjs/config';
 import { JwtLoginStrategy } from './strategy/customer.strategy';
+import { UserModule } from 'src/user/user.module';
 
 @Module({
   imports:[MongooseModule.forFeature([
@@ -34,7 +35,7 @@ import { JwtLoginStrategy } from './strategy/customer.strategy';
       expiresIn:'10d'
     }
   }) */
-  /* TypeOrmModule.forFeature([Customer]) */,EnterpriseModule],
+  /* TypeOrmModule.forFeature([Customer]) */,EnterpriseModule,UserModule],
   providers: [CustomerService,JwtLoginStrategy],
   controllers: [CustomerController],
   exports:[CustomerService]

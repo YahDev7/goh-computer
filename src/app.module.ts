@@ -32,6 +32,8 @@ import { MailerModule } from '@nestjs-modules/mailer';
 import { join } from 'path';
 import { CorreoModule } from './correo/correo.module';
 import { AuthModule } from './auth/auth.module';
+import { SrapingModule } from './sraping/sraping.module';
+import { ImagesModule } from './images/images.module';
 
 @Module({ 
   imports: [
@@ -60,7 +62,7 @@ import { AuthModule } from './auth/auth.module';
       inject: [ConfigService]
     }), ConfigModule.forRoot(),
     ConfigModule.forRoot({
-    envFilePath:enviroments[process.env.NODE_ENV]||'.env',
+    envFilePath:enviroments[process.env.NODE_ENV]||'./env/.env',
     load:[config],
     isGlobal:true, //para que a todos los servicios sin tener la necesidad de llamar en cada archivo
     validationSchema:Joi.object({//validar que variables de entorno tenego que tener al hacer deploy        
@@ -105,7 +107,9 @@ import { AuthModule } from './auth/auth.module';
     CloudinaryModule,
     ServiciosModule,
     CorreoModule,
-    AuthModule]
+    AuthModule,
+    SrapingModule,
+    ImagesModule]
  /*  controllers: [AppController],
   providers: [AppService, EnterpriseService], */
 })

@@ -493,7 +493,6 @@ export class MovimientoMService {
                     }
                 } 
             ])
-            console.log(JSON.stringify(res))
 
             let suma = 0;
             for (const item of res) {
@@ -502,7 +501,6 @@ export class MovimientoMService {
                     suma += detalle.importe;
                   }
             }
-            console.log({total:suma,mes })
 
             return { total:suma,mes } 
 
