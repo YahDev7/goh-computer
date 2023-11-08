@@ -37,8 +37,8 @@ export class ImagesService {
 
     async getByLabelEnterprise(body) {
         try {
-           console.log(body.label)
-            let res = await this.ImagesModule.find({label:{ $in: [body.label],}})
+            let res = await this.ImagesModule.findOne({label:{ $in: [body.label],}})
+            if(!res) return []
             return res
         } catch (error) {
             return new HttpException('Ocurrio un error al buscar imagenes' + error.message || error, HttpStatus.NOT_FOUND);

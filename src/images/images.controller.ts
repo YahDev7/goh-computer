@@ -33,7 +33,7 @@ export class ImagesController {
     }
 
     @RolesDecorator(Roles.COMUN)
-    @Get('/enterprise/bylabel')
+    @Post('/enterprise/bylabel')
     async getByLabelEnterprise(@Req() req, @Body() body) {
         try {
              let { enterprise_id } = req.user
