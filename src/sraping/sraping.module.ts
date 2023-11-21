@@ -1,4 +1,4 @@
-import { Module } from '@nestjs/common';
+/* import { Module } from '@nestjs/common';
 import { SrapingService } from './sraping.service';
 import { SrapingController } from './sraping.controller';
 
@@ -7,3 +7,4 @@ import { SrapingController } from './sraping.controller';
   controllers: [SrapingController]
 })
 export class SrapingModule {}
+ */

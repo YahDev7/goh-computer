@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+/* import { Injectable } from '@nestjs/common';
 import * as puppeteer from 'puppeteer'
 
 @Injectable()
@@ -15,13 +15,13 @@ export class SrapingService {
         //await page.screenshot({path:'example.png'});
      //   await page.click(`button[id="login"]`)
       // await page.click(`#loginBtn`)
-   /*      await new Promise(r=>setTimeout(r,3000))
-       let inputuser = await page.waitForSelector('input[id="okta-signin-username"]')
-       let inputpassword = await page.waitForSelector( 'input[id="#okta-signin-password"]')
+   //     await new Promise(r=>setTimeout(r,3000))
+     //  let inputuser = await page.waitForSelector('input[id="okta-signin-username"]')
+       //let inputpassword = await page.waitForSelector( 'input[id="#okta-signin-password"]')
 
-       inputuser.type("wiellatas@outlook.com")
-       inputpassword.type("Glklll") */
-       await new Promise(r=>setTimeout(r,3000))
+//       inputuser.type("wiellatas@outlook.com")
+  //     inputpassword.type("Glklll") 
+    //   await new Promise(r=>setTimeout(r,3000))
     let res=   await page.evaluate(()=>{
        let res= document.querySelector("#searchBox_Global_v2")
         return res
@@ -34,3 +34,4 @@ export class SrapingService {
         return "ok scrapper"
     }
 }
+ */

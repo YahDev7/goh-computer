@@ -1,4 +1,4 @@
-import { Controller, Get } from '@nestjs/common';
+/* import { Controller, Get } from '@nestjs/common';
 import { SrapingService } from './sraping.service';
 
 @Controller('sraping')
@@ -12,3 +12,4 @@ export class SrapingController {
        return this.ScrapperService.getDate()
     }
 }
+ */

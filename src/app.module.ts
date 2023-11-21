@@ -32,7 +32,6 @@ import { MailerModule } from '@nestjs-modules/mailer';
 import { join } from 'path';
 import { CorreoModule } from './correo/correo.module';
 import { AuthModule } from './auth/auth.module';
-import { SrapingModule } from './sraping/sraping.module';
 import { ImagesModule } from './images/images.module';
 
 @Module({ 
@@ -108,7 +107,6 @@ import { ImagesModule } from './images/images.module';
     ServiciosModule,
     CorreoModule,
     AuthModule,
-    SrapingModule,
     ImagesModule]
  /*  controllers: [AppController],
   providers: [AppService, EnterpriseService], */
