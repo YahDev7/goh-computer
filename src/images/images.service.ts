@@ -18,7 +18,7 @@ export class ImagesService {
 
     async getByEnterprise(body) {
         try {
-            let res = await this.ImagesModule.find()
+            let res = await this.ImagesModule.find({estado:"A"})
             return res
         } catch (error) {
             return new HttpException('Ocurrio un error al buscar imagenes' + error.message || error, HttpStatus.NOT_FOUND);
@@ -48,13 +48,24 @@ export class ImagesService {
     async saveByEnterprise(dataimg,body) {
         try {
            
-            let newBody= {public_id: dataimg.public_id,secure_url:dataimg.secure_url,...body}
+            let newBody= {public_id: dataimg.public_id,secure_url:dataimg.secure_url,...body,estado:"A"}
             let save = await this.ImagesModule.create(newBody)
             if (!save) throw { err: true, message: 'No se guardardo' }
             return save
 
         } catch (error) {
             return new HttpException('Ocurrio un error al guardar' + error.message || error, HttpStatus.NOT_FOUND);
+        }
+    }
+
+    async updateByEnterprise(id:ObjectId,body) {
+        try {
+            console.log(body)
+        const update=await this.ImagesModule.updateOne({_id:id}, { $set: { label:body } });
+            if(update.modifiedCount===0) throw new HttpException('ocurrio un error al eliminar',HttpStatus.NOT_FOUND); 
+        return {err:false,message:'Enterprise eliminado'}
+        } catch (error) {
+            throw new HttpException('Ocurrio un error al guardar' + error.message || error, HttpStatus.NOT_FOUND);
         }
     }
 

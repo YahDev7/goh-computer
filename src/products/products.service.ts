@@ -685,6 +685,24 @@ export class ProductsService {
     }
   }
 
+  async saveEnterpriseWithImg(body: ProductDto): Promise<Products | Object> {
+    try {
+      let { subcategoria_id, enterprise_id, usuario_id } = body
+      subcategoria_id = new ObjectId(subcategoria_id)
+      enterprise_id = new ObjectId(enterprise_id)
+      usuario_id = new ObjectId(usuario_id)
+
+
+      const save = await this.productssModule.create({ ...body, subcategoria_id, enterprise_id, usuario_id });
+      if (!save) throw { err: true, message: 'No se guardardo' }
+      return save
+      /* return {err:false,message:"Se guardo con éxito"} */
+    } catch (error) {
+      console.log(error)
+      return new HttpException('Ocurrio un error al guardar' + error.message || error, HttpStatus.NOT_FOUND);
+    }
+  }
+
   async saveEnterpriseService(body: ProductServiceDto): Promise<Products | Object> {
     try {
       let { subcategoria_id, enterprise_id, usuario_id } = body
@@ -704,6 +722,30 @@ export class ProductsService {
   }
 
   async updateEnterprise(id: ObjectId, body: UpdateProductDto): Promise<Products | Object> {
+    try {
+      let found = await this.productssModule.findOne({ _id: id});
+      if (!found) return new HttpException('No existe este product', HttpStatus.NOT_FOUND);
+      let { subcategoria_id, enterprise_id, usuario_id } = body
+
+      subcategoria_id = new ObjectId(subcategoria_id)
+      enterprise_id = new ObjectId(enterprise_id)
+      usuario_id = new ObjectId(usuario_id)
+      const update = await this.productssModule.updateOne({ _id: id }, {
+        $set: {
+          ...body, subcategoria_id,
+          enterprise_id,
+          usuario_id
+        }
+      });
+      if (update.modifiedCount === 0) return new HttpException('No se logro actualizar', HttpStatus.NOT_FOUND);
+
+      return { err: false, message: "Se actualizo con éxito" }
+    } catch (error) {
+      return new HttpException('Ocurrio un error al update, ' + error.message || error, HttpStatus.NOT_FOUND);
+    }
+  }
+
+  async updateEnterpriseImg(id: ObjectId, body: UpdateProductDto): Promise<Products | Object> {
     try {
       let found = await this.productssModule.findOne({ _id: id});
       if (!found) return new HttpException('No existe este product', HttpStatus.NOT_FOUND);

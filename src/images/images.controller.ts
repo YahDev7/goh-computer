@@ -1,4 +1,4 @@
-import { Body, Controller, Delete, Get, HttpCode, HttpException, HttpStatus, Param, Post, Req, UseGuards } from '@nestjs/common';
+import { Body, Controller, Delete, Get, HttpCode, HttpException, HttpStatus, Param, Post, Put, Req, UseGuards } from '@nestjs/common';
 import { ImagesService } from './images.service';
 import { RolesDecorator } from 'src/auth/decorators/roles.decorator';
 import { Roles } from 'src/constants/roles';
@@ -33,6 +33,19 @@ export class ImagesController {
     }
 
     @RolesDecorator(Roles.COMUN)
+    @Get('/enterprise/:id')
+    async getByIdEnterprise(@Req() req, @Param("id") id) {
+        try {
+             let { enterprise_id } = req.user
+            let resEnterprise = await this.EnterpriseService.getId(enterprise_id)
+            if (resEnterprise instanceof HttpException) throw resEnterprise 
+            return this.ImagesService.getByIdEnterprise(id)
+        } catch (error) {
+            throw new HttpException('Ocurrio un error al buscar imagenes ' + error.message || error, HttpStatus.NOT_FOUND);
+        }
+    }
+
+    @RolesDecorator(Roles.COMUN)
     @Post('/enterprise/bylabel')
     async getByLabelEnterprise(@Req() req, @Body() body) {
         try {
@@ -47,6 +60,42 @@ export class ImagesController {
         }
 
     }
+
+    @RolesDecorator(Roles.COMUN)
+    @Put('/update/enterprise/:id')
+    async UpdateEnterprise( @Body() body,@Req() req,@Param("id") id) {
+        try {
+            console.log(body)
+            
+            let { enterprise_id } = req.user
+
+            let resEnterprise = await this.EnterpriseService.getId(enterprise_id)
+            if (resEnterprise instanceof HttpException) throw resEnterprise 
+            return this.ImagesService.updateByEnterprise(id,body.label)
+
+        } catch (error) {
+            throw new HttpException('Ocurrio un error al buscar imagenes ' + error.message || error, HttpStatus.NOT_FOUND);
+
+        }
+
+    } 
+  /*   @RolesDecorator(Roles.COMUN)
+    @Put('/update/enterprise/:id')
+    async UpdateEnterprise(@Req() req, @Body() body,@Param("id") id) {
+        try {
+            console.log(JSON.parse(body))
+             let { enterprise_id } = req.user
+
+            let resEnterprise = await this.EnterpriseService.getId(enterprise_id)
+            if (resEnterprise instanceof HttpException) throw resEnterprise 
+            return this.ImagesService.updateByEnterprise(id,JSON.parse(body))
+
+        } catch (error) {
+            throw new HttpException('Ocurrio un error al buscar imagenes ' + error.message || error, HttpStatus.NOT_FOUND);
+
+        }
+
+    } */
 
   /*   @RolesDecorator(Roles.COMUN)
     @Post('/enterprise/save')

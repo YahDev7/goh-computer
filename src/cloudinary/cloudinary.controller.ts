@@ -68,12 +68,16 @@ export class CloudinaryController {
   @RolesDecorator(Roles.COMUN)
   @Post('upload/images/only')
   @UseInterceptors(FileInterceptor('file'))
-  async uploadOnlyImage(@UploadedFile() file: Express.Multer.File, @Req() req, @Body() body) {
+  async uploadOnlyImage(@UploadedFile() file: Express.Multer.File,@Req() req, @Body() body) {
     try {
-      let imgdata = await this.cloudinaryService.uploadOnly(file);
-      console.log(body.label)
-      let saveprod = await this.ImagesService.saveByEnterprise(imgdata, { label: body.label, enterprise_id: req.user.enterprise_id })
-      return saveprod
+      console.log(file,body)
+      if(file){
+        let imgdata = await this.cloudinaryService.uploadOnly(file);
+        console.log(imgdata)
+         let saveprod = await this.ImagesService.saveByEnterprise(imgdata, { label: JSON.parse(body.label), enterprise_id: req.user.enterprise_id })
+        return saveprod
+
+      } 
     } catch (error) {
       throw new HttpException('Ocurrio un error al buscar imagenes ' + error.message || error, HttpStatus.NOT_FOUND);
 

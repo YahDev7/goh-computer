@@ -44,6 +44,12 @@ export class ProductsController {
     }
 
     @RolesDecorator(Roles.COMUN)
+    @Post('/enterprise/save/img')
+    postEnterpriseWithImg(@Body() body: ProductDto) {
+        return this.productsService.saveEnterpriseWithImg(body)
+    }
+
+    @RolesDecorator(Roles.COMUN)
     @Post('/enterprise/save/service')
     postEnterpriseService(@Body() body: ProductServiceDto) {
         return this.productsService.saveEnterpriseService(body)
@@ -52,6 +58,11 @@ export class ProductsController {
     @Put('/enterprise/update/:id')
     putEnterprise(@Param('id') id: ObjectId, @Body() body: UpdateProductDto) {
         return this.productsService.updateEnterprise(id, body)
+    }
+    @RolesDecorator(Roles.COMUN)
+    @Put('/enterprise/update/img/:id')
+    putEnterpriseImg(@Param('id') id: ObjectId, @Body() body: UpdateProductDto) {
+        return this.productsService.updateEnterpriseImg(id, body)
     }
 
     @RolesDecorator(Roles.COMUN)
