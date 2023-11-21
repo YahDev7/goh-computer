@@ -2,6 +2,10 @@
 import {
   Body,
   Controller,
+  Delete,
+  HttpCode,
+  HttpException,
+  HttpStatus,
   Param,
   Post,
   Req,
@@ -15,12 +19,22 @@ import { CloudinaryService } from './cloudinary.service';
 import { FileInterceptor, FilesInterceptor } from '@nestjs/platform-express';
 import { JwtUserAuthGuard } from 'src/user/guards/guard.user';
 import { ObjectId } from 'mongodb';
+import { RolesGuard } from 'src/auth/guards/roles.guard';
+import { ProductsService } from 'src/products/products.service';
+import { RolesDecorator } from 'src/auth/decorators/roles.decorator';
+import { Roles } from 'src/constants/roles';
+import { ImagesService } from 'src/images/images.service';
 
-@UseGuards(JwtUserAuthGuard/* ,RolesGuard */)
+@UseGuards(JwtUserAuthGuard, RolesGuard)
 
 @Controller('image')
 export class CloudinaryController {
-  constructor(private readonly cloudinaryService: CloudinaryService) { }
+  constructor(
+    private readonly cloudinaryService: CloudinaryService,
+    private readonly ImagesService: ImagesService,
+    //private readonly ProductsService: ProductsService
+
+  ) { }
 
   /*  @Post('upload')
    @UseInterceptors(FileInterceptor('file'))
@@ -40,6 +54,7 @@ export class CloudinaryController {
 
       
     } */
+
   @Post('upload/product/:id')
   @UseInterceptors(FileInterceptor('file'))
   async uploadImage(@Param('id') id: ObjectId, @UploadedFile() file: Express.Multer.File, @Req() req) {
@@ -50,14 +65,50 @@ export class CloudinaryController {
 
   }
 
+  @RolesDecorator(Roles.COMUN)
+  @Post('upload/images/only')
+  @UseInterceptors(FileInterceptor('file'))
+  async uploadOnlyImage(@UploadedFile() file: Express.Multer.File,@Req() req, @Body() body) {
+    try {
+      console.log(file,body)
+      if(file){
+        let imgdata = await this.cloudinaryService.uploadOnly(file);
+        console.log(imgdata)
+         let saveprod = await this.ImagesService.saveByEnterprise(imgdata, { label: JSON.parse(body.label), enterprise_id: req.user.enterprise_id })
+        return saveprod
+
+      } 
+    } catch (error) {
+      throw new HttpException('Ocurrio un error al buscar imagenes ' + error.message || error, HttpStatus.NOT_FOUND);
+
+    }
+
+  }
+
 
   @Post('/product/delete')
   async deleteOneImg(@Body() body /* , @UploadedFile() file: Express.Multer.File, @Req() req */) {
-    let {public_id}=body
-  //  const token = req.headers.authorization.split(' ')[1];
+    let { public_id } = body
+    //  const token = req.headers.authorization.split(' ')[1];
 
     return this.cloudinaryService.deleteOneImg(public_id);
 
+  }
+
+  @Delete('/images/enterprise/:id')
+  async deleteImg(@Param("id") id) {
+    try {
+      let res_idPublic = await this.ImagesService.getByIdEnterprise(id)
+      if (res_idPublic instanceof HttpException) throw res_idPublic
+
+      let resdeleteimg = await this.ImagesService.deleteByEnterprise(id)
+      if (resdeleteimg instanceof HttpException) throw resdeleteimg
+
+      let resdelete = await this.cloudinaryService.deleteOneImg(res_idPublic["public_id"]);
+      return {err:false,message:resdelete}
+    } catch (error) {
+      throw new HttpException('Ocurrio un error al elimianr la img ' + error.message || error, HttpStatus.NOT_FOUND);
+    }
   }
 
   @Post('upload/billeteravirtual/:id')

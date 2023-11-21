@@ -7,6 +7,7 @@ import { Categoria, CategoriaSchema } from './schema/categoria.schema';
 import { JwtModule } from '@nestjs/jwt';
 import config from 'src/config';
 import { ConfigType } from '@nestjs/config';
+import { UserModule } from 'src/user/user.module';
 
 @Module({
   imports:[MongooseModule.forFeature([
@@ -24,7 +25,7 @@ import { ConfigType } from '@nestjs/config';
         }
       }
     },
-  }),EnterpriseModule],
+  }),EnterpriseModule,UserModule],
   providers: [CategoriaService],
   controllers: [CategoriaController],
   exports:[CategoriaService]

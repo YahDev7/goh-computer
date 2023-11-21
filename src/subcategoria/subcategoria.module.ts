@@ -9,6 +9,7 @@ import { SubCategoria, SubCategoriaSchema } from './schema/subcategoria.schema';
 import { JwtModule } from '@nestjs/jwt';
 import config from 'src/config';
 import { ConfigType } from '@nestjs/config';
+import { UserModule } from 'src/user/user.module';
 
 
 @Module({
@@ -29,7 +30,7 @@ import { ConfigType } from '@nestjs/config';
       }
     },
   })
-  ,EnterpriseModule],
+  ,EnterpriseModule,UserModule],
   providers: [SubcategoriaService],
   controllers: [SubcategoriaController],
   exports:[SubcategoriaService]

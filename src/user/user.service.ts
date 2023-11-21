@@ -34,10 +34,20 @@ export class UserService {
         }
     }
 
-    async getId(id: ObjectId): Promise<User | HttpException> {
+    async getUser(body) {
         try {
-            const found = await this.UserModule.findOne({ _id: id, estado: 'A' })
+            const found = await this.UserModule.findOne({ email:body.email, estado: 'A' })
 
+            if (!found) throw { err: true, message: 'error al buscar este user' }
+            return found;
+        } catch (error) {
+            return new HttpException('Ocurrio un error al buscar por id ' + error.message || error, HttpStatus.NOT_FOUND)
+        }
+    }
+
+    async getId(id: ObjectId)/* : Promise<User | HttpException> */ {
+        try {
+            const found = await this.UserModule.findOne({ _id:id, estado: 'A' })
             if (!found) throw { err: true, message: 'error al buscar este user' }
             return found;
         } catch (error) {
@@ -160,6 +170,7 @@ export class UserService {
     }
 
     async login(body: LoginUserDto) {
+        //ESTO NECESITO PASA
         try {
             let { email, password } = body
 
@@ -248,6 +259,18 @@ export class UserService {
     }
 
 
+    async CreateByenterprise(body: CreateUserDto): Promise<User | Object> {
+        try {
+
+            const insert = await this.UserModule.create(body);
+            if (!insert) throw { err: true, message: 'No se guardardo el usuario' }
+            return {err:false,message:"se creo con exito"}
+         
+        } catch (error) {
+            console.log(error)
+            return new HttpException('Ocurrio un error al guardar ' + error.message || error, HttpStatus.NOT_FOUND)
+        }
+    }
     async postByEnterprise(body: CreateUserDto, token): Promise<User | Object> {
         try {
             const {password } = body

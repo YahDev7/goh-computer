@@ -179,7 +179,6 @@ export class PromocionesService {
                     $match: {
                         estado: 'A',
                         enterprise_id: new ObjectId("6463b7176f62eabdc5d7329d")
-
                     }
                 },
                 {

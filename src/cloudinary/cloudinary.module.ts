@@ -10,6 +10,8 @@ import { ConfigType } from '@nestjs/config';
 import { MovimientoMModule } from 'src/movimiento-m/movimiento-m.module';
 import { CategoriaModule } from 'src/categoria/categoria.module';
 import { SubcategoriaModule } from 'src/subcategoria/subcategoria.module';
+import { UserModule } from 'src/user/user.module';
+import { ImagesModule } from 'src/images/images.module';
 
 @Module({
   imports:[
@@ -23,7 +25,7 @@ import { SubcategoriaModule } from 'src/subcategoria/subcategoria.module';
           }
         }
       },
-    }),ProductsModule,MovimientoMModule,CategoriaModule,SubcategoriaModule],
+    }),ProductsModule,MovimientoMModule,CategoriaModule,SubcategoriaModule,UserModule,ImagesModule],
   providers: [CloudinaryProvider, CloudinaryService],
   exports: [CloudinaryProvider, CloudinaryService],
   controllers: [CloudinaryController]

@@ -3,10 +3,10 @@ import { MovimientoMService } from './movimiento-m.service';
 import { MovimientoMDto, UpdateMovimientoMDto } from './dto/movimiento-m.dto';
 import { ObjectId } from 'mongodb';
 import { JwtUserAuthGuard } from 'src/user/guards/guard.user';
-import { RolesGuard } from 'src/user/guards/roles.guard';
 import { RolesDecorator } from 'src/user/decorators/roles.decorator';
 import { Roles } from 'src/constants/roles';
 import { Public } from 'src/user/decorators/public.decorator';
+import { RolesGuard } from 'src/auth/guards/roles.guard';
 @UseGuards(JwtUserAuthGuard, RolesGuard)
 
 
@@ -26,14 +26,14 @@ export class MovimientoMController {
     getId(@Param('id') id: string) {
         return this.MovimientoMService.getId(id)
     } */
-    @RolesDecorator(Roles.ADMIN)
+    @RolesDecorator(Roles.COMUN)
     @Get('/enterprise')
     async getByEnterprise(@Req() req) {
         const token = req.headers.authorization.split(' ')[1];
         return this.MovimientoMService.getByEnterprise(token)
 
     }
-    @RolesDecorator(Roles.ADMIN)
+    @RolesDecorator(Roles.COMUN)
     @Post('/enterprise')
     saveByEnterprise(@Body() body: UpdateMovimientoMDto, @Req() req) {
         const token = req.headers.authorization.split(' ')[1];
@@ -45,13 +45,13 @@ export class MovimientoMController {
          return this.MovimientoMService.getByEnterprise(id)
      } */
 
-    @RolesDecorator(Roles.ADMIN)
+    @RolesDecorator(Roles.COMUN)
     @Get('/customer/:id')
     async getByCustomer(@Param('id') id: ObjectId) {
         return this.MovimientoMService.getByCustomer(id)
     }
 
-    @RolesDecorator(Roles.ADMIN)
+    @RolesDecorator(Roles.COMUN)
     @Get('/enterprise/getone/:id')
     async getById(@Param('id') id: ObjectId, @Req() req) {
         const token = req.headers.authorization.split(' ')[1];
@@ -64,57 +64,57 @@ export class MovimientoMController {
     post(@Body() body: MovimientoMDto) {
         return this.MovimientoMService.save(body)
     }
-    @RolesDecorator(Roles.ADMIN)
+    @RolesDecorator(Roles.COMUN)
     @Get('ventas/total')
     getSumaVenta() {
         return this.MovimientoMService.totalVentas()
     }
-    @RolesDecorator(Roles.ADMIN)
+    @RolesDecorator(Roles.COMUN)
     @Get('Compras/total')
     getSumaCompra() {
         return this.MovimientoMService.totalCompras()
     }
-    @RolesDecorator(Roles.ADMIN)
+    @RolesDecorator(Roles.COMUN)
     @Get('ventas/totaldia')
     getSumaVentadia() {
         return this.MovimientoMService.totalVentasDia()
     }
-    @RolesDecorator(Roles.ADMIN)
+    @RolesDecorator(Roles.COMUN)
     @Get('ventas/totalmes/:meses')
     getSumaVentames(@Param("meses") meses) {
         return this.MovimientoMService.totalVentasMes(meses)
     }
 
-    @RolesDecorator(Roles.ADMIN)
+    @RolesDecorator(Roles.COMUN)
     @Get('compras/totaldia')
     getSumacompradia() {
         return this.MovimientoMService.totalComprasDia()
     }
-    @RolesDecorator(Roles.ADMIN)
+    @RolesDecorator(Roles.COMUN)
     @Get('compras/totalmes/:meses')
     getSumacomprames(@Param("meses") meses) {
         return this.MovimientoMService.totalComprasMes(meses)
     }
-    @RolesDecorator(Roles.ADMIN)
+    @RolesDecorator(Roles.COMUN)
     @Get('enterprise/ingresosMensuales')
     getingresosMensuales() {
         return this.MovimientoMService.ingresosMensuales()
     }
 
-    @RolesDecorator(Roles.ADMIN)
+    @RolesDecorator(Roles.COMUN)
     @Get('enterprise/servicios')
     gettotalVentasServicios() {
         return this.MovimientoMService.totalVentasServicios()
     }
 
 
-    @RolesDecorator(Roles.ADMIN)
+    @RolesDecorator(Roles.COMUN)
     @Get('enterprise/servicios/:mes')
     gettotalVentasServiciosMes(@Param("mes") mes) {
         return this.MovimientoMService.totalServiciosMes(mes)
     }
 
-    @RolesDecorator(Roles.ADMIN)
+    @RolesDecorator(Roles.COMUN)
     @Get('enterprise/servicios/dia')
     gettotalVentasServiciosDia() {
         return this.MovimientoMService.totalServiciosDia()

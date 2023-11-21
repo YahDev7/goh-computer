@@ -49,9 +49,6 @@ export class ProductServiceDto {
   unidad: string;
 
 
-  /*  @IsOptional()
-    @IsArray()
-   imagenes: Object[]; */
 }
 
 export class ProductDto {
@@ -166,9 +163,9 @@ export class ProductDto {
   @IsNumber()
   ventas: number;
 
-  /*  @IsOptional()
-    @IsArray()
-   imagenes: Object[]; */
+  @IsOptional()
+  @IsArray()
+ imagenes: Object[]; 
 }
 export class UpdateProductDto extends PartialType(ProductDto) { }
 export class UpdateProductServiceDto extends PartialType(ProductServiceDto) { }

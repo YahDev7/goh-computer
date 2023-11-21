@@ -13,10 +13,10 @@ export class Customer {
   @Prop()
   user_id: ObjectId;
 
-  @Prop({ required: true }) /* validar por dni */
+  @Prop({ required: true,default:"DNI" }) /* validar por dni */
   tipo_doc: string;
 
-  @Prop({ required: true }) /* validar por dni */
+  @Prop(/* { required: true } */) /* validar por dni */
   dni_ruc: string;
   
   @Prop({ required: true })
