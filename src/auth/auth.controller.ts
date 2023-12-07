@@ -20,7 +20,6 @@ export class AuthController {
     @RolesDecorator(Roles.ADMIN)
     @Post('/all')
     userall(@Request() req) {
-        console.log("ta bien", req.user)
         return 
     }
 }

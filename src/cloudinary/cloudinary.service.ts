@@ -151,7 +151,6 @@ uploadProductos(file: Express.Multer.File,token:string,id:ObjectId): Promise<Clo
    
     uploadfile.then((resultado) => {
       // Hacer algo con el resultado
-      console.log(resultado)
 
     let res ={
       nombre:resultado.public_id,

@@ -17,6 +17,5 @@ export class JwtStrategy extends PassportStrategy(Strategy,'jwtauth'){
 
     async validate(payload){ //aqui al momento nde validar que el JWT es valido se desencripta
         return payload
-        console.log(payload)
     }
 }

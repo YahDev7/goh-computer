@@ -1,4 +1,4 @@
-import { IsNotEmpty, IsNumber, IsOptional, IsString, MaxLength } from 'class-validator';
+import { IsArray, IsNotEmpty, IsNumber, IsOptional, IsString, MaxLength } from 'class-validator';
 import {PartialType} from '@nestjs/mapped-types'
 import { ObjectId } from 'mongodb';
 
@@ -19,7 +19,7 @@ export class SubCategoriaDto {
   @MaxLength(100)
   @IsNotEmpty()
   nombre: string;
-
+/* 
   @IsOptional()
   @IsString()
   @MaxLength(70)
@@ -28,7 +28,11 @@ export class SubCategoriaDto {
   @IsOptional()
   @IsString()
   @MaxLength(500)
-  url_imagen: string;
+  url_imagen: string; */
+
+  @IsOptional()
+  @IsArray()
+ imagen: Object[]; 
 
   @IsNotEmpty()
   @IsString()

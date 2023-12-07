@@ -13,7 +13,6 @@ export class AuthCustomerStrategy extends PassportStrategy(Strategy,'authCustome
 
     async validate(email:string,password:string){
         let user = await this.AuthService.validateUser(email,password)
-        console.log(user)
         if (user instanceof HttpException) throw new UnauthorizedException()
         
         return user

@@ -1,7 +1,6 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { HydratedDocument } from 'mongoose';
 import { ObjectId } from 'mongodb';
-import { string } from 'joi';
 
 export type SubCategoriaDocument = HydratedDocument<SubCategoria>;
 
@@ -19,14 +18,15 @@ export class SubCategoria {
   @Prop({ required: true })
   nombre: string;
 
-  @Prop()
-  imagen: string;
-
-  @Prop()
-  url_imagen: string;
+  @Prop({required:false})
+    imagen: Image[];
 
   @Prop({ required: true, default: 'A', length:2})
   estado: string;
 }
-
+interface Image {
+  public_id: string;
+  nombre?: string;
+  URL?: string;
+}
 export const SubCategoriaSchema = SchemaFactory.createForClass(SubCategoria);
