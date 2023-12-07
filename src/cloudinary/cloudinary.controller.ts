@@ -70,16 +70,14 @@ export class CloudinaryController {
   @UseInterceptors(FileInterceptor('file'))
   async uploadOnlyImage(@UploadedFile() file: Express.Multer.File,@Req() req, @Body() body) {
     try {
-      console.log(file,body)
       if(file){
         let imgdata = await this.cloudinaryService.uploadOnly(file);
-        console.log(imgdata)
          let saveprod = await this.ImagesService.saveByEnterprise(imgdata, { label: JSON.parse(body.label), enterprise_id: req.user.enterprise_id })
         return saveprod
 
       } 
     } catch (error) {
-      throw new HttpException('Ocurrio un error al buscar imagenes ' + error.message || error, HttpStatus.NOT_FOUND);
+      throw new HttpException('Ocurrio un error al guardar una img ' + error.message || error, HttpStatus.NOT_FOUND);
 
     }
 

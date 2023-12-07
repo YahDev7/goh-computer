@@ -12,7 +12,6 @@ export class AuthService {
 
     async validateUser(email:string,password:string){
         try {
-            console.log(email)
             const user =await this.UserService.getUser({email,password})
             if (user instanceof HttpException) throw user
     

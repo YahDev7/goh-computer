@@ -238,7 +238,6 @@ export class PromocionesService {
 
     async getByEnterpriseByIdWeb(id: ObjectId)/* : Promise<Promociones | HttpException> */ {
         try {
-            console.log(id)
             let res = await this.PromocionesModule.aggregate([
                 {
                     $match: {

@@ -1,4 +1,4 @@
-import { IsNotEmpty, IsNumber, IsOptional, IsString, MaxLength } from 'class-validator';
+import { IsArray, IsNotEmpty, IsNumber, IsOptional, IsString, MaxLength } from 'class-validator';
 import {PartialType} from '@nestjs/mapped-types'
 import { ObjectId } from 'mongodb';
 export class CategoriaDto {
@@ -12,7 +12,7 @@ export class CategoriaDto {
 //  @MaxLength(100)
   nombre: string;
 
-  @IsOptional()
+/*   @IsOptional()
   @IsString()
   @MaxLength(70)
   imagen: string;
@@ -20,7 +20,11 @@ export class CategoriaDto {
   @IsOptional()
   @IsString()
   @MaxLength(500)
-  url_imagen: string;
+  url_imagen: string; */
+
+  @IsOptional()
+  @IsArray()
+ imagen: Object[]; 
 
   @IsString()
   estado: string;
