@@ -33,6 +33,8 @@ import { join } from 'path';
 import { CorreoModule } from './correo/correo.module';
 import { AuthModule } from './auth/auth.module';
 import { ImagesModule } from './images/images.module';
+import { GuiaService } from './guia/guia.service';
+import { GuiaModule } from './guia/guia.module';
 
 @Module({ 
   imports: [
@@ -107,7 +109,8 @@ import { ImagesModule } from './images/images.module';
     ServiciosModule,
     CorreoModule,
     AuthModule,
-    ImagesModule]
+    ImagesModule,
+    GuiaModule]
  /*  controllers: [AppController],
   providers: [AppService, EnterpriseService], */
 })
