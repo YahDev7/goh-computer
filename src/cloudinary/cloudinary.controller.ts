@@ -68,15 +68,20 @@ export class CloudinaryController {
   @RolesDecorator(Roles.COMUN)
   @Post('upload/images/only')
   @UseInterceptors(FileInterceptor('file'))
-  async uploadOnlyImage(@UploadedFile() file: Express.Multer.File,@Req() req, @Body() body) {
+  async uploadOnlyImage(@UploadedFile() file: Express.Multer.File, @Req() req, @Body() body) {
     try {
-      if(file){
+      if (file) {
         let labelParse = JSON.parse(body.label)
-        let imgdata = await this.cloudinaryService.uploadOnly(file);
-         let saveprod = await this.ImagesService.saveByEnterprise(imgdata, { label: labelParse, enterprise_id: req.user.enterprise_id })
+
+        let bodytotal = {
+          label: labelParse,
+          enterprise_id: new ObjectId(req.user.enterprise_id)
+        }
+//        let imgdata = await this.cloudinaryService.uploadOnly(file);
+        let saveprod = await this.ImagesService.saveByEnterprise("imgdata", bodytotal)
         return saveprod
 
-      } 
+      }
     } catch (error) {
       console.log(error)
       throw new HttpException('Ocurrio un error al guardar una img ' + error.message || error, HttpStatus.NOT_FOUND);
@@ -105,7 +110,7 @@ export class CloudinaryController {
       if (resdeleteimg instanceof HttpException) throw resdeleteimg
 
       let resdelete = await this.cloudinaryService.deleteOneImg(res_idPublic["public_id"]);
-      return {err:false,message:resdelete}
+      return { err: false, message: resdelete }
     } catch (error) {
       throw new HttpException('Ocurrio un error al elimianr la img ' + error.message || error, HttpStatus.NOT_FOUND);
     }

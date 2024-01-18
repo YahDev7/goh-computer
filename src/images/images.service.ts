@@ -47,8 +47,9 @@ export class ImagesService {
 
     async saveByEnterprise(dataimg,body) {
         try {
-           
+           console.log(body)
             let newBody= {public_id: dataimg.public_id,secure_url:dataimg.secure_url,...body,estado:"A"}
+            return
             let save = await this.ImagesModule.create(newBody)
             if (!save) throw { err: true, message: 'No se guardardo' }
             return save
