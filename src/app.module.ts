@@ -35,6 +35,10 @@ import { AuthModule } from './auth/auth.module';
 import { ImagesModule } from './images/images.module';
 import { GuiaService } from './guia/guia.service';
 import { GuiaModule } from './guia/guia.module';
+import { QrService } from './qr/qr.service';
+import { QrModule } from './qr/qr.module';
+import { PasarelaPagosService } from './pasarela_pagos/pasarela_pagos.service';
+import { PasarelaPagosModule } from './pasarela_pagos/pasarela_pagos.module';
 
 @Module({ 
   imports: [
@@ -110,7 +114,9 @@ import { GuiaModule } from './guia/guia.module';
     CorreoModule,
     AuthModule,
     ImagesModule,
-    GuiaModule]
+    GuiaModule,
+    QrModule,
+    PasarelaPagosModule],
  /*  controllers: [AppController],
   providers: [AppService, EnterpriseService], */
 })

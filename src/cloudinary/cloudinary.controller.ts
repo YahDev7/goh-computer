@@ -71,12 +71,14 @@ export class CloudinaryController {
   async uploadOnlyImage(@UploadedFile() file: Express.Multer.File,@Req() req, @Body() body) {
     try {
       if(file){
+        let labelParse = JSON.parse(body.label)
         let imgdata = await this.cloudinaryService.uploadOnly(file);
-         let saveprod = await this.ImagesService.saveByEnterprise(imgdata, { label: JSON.parse(body.label), enterprise_id: req.user.enterprise_id })
+         let saveprod = await this.ImagesService.saveByEnterprise(imgdata, { label: labelParse, enterprise_id: req.user.enterprise_id })
         return saveprod
 
       } 
     } catch (error) {
+      console.log(error)
       throw new HttpException('Ocurrio un error al guardar una img ' + error.message || error, HttpStatus.NOT_FOUND);
 
     }
