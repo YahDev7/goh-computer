@@ -171,7 +171,7 @@ uploadProductos(file: Express.Multer.File,token:string,id:ObjectId): Promise<Clo
       const uploadStream = cloudinary.uploader.upload_stream(
         {
          folder: 'GOHComputer/Images' ,
-        allowed_formats: ['jpg', 'png'],
+        allowed_formats: ['jpg', 'png','jpeg'],
         max_allowed_size: 1000000, // 2MB en bytes
         },
         (error, result) => {
@@ -179,9 +179,11 @@ uploadProductos(file: Express.Multer.File,token:string,id:ObjectId): Promise<Clo
           resolve(result);
         },
       );
-
       streamifier.createReadStream(file.buffer).pipe(uploadStream);
     });
+    
+    
+
 /*     uploadfile.then((resultado) => {
       // Hacer algo con el resultado
       console.log(resultado)
