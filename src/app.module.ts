@@ -39,6 +39,8 @@ import { QrService } from './qr/qr.service';
 import { QrModule } from './qr/qr.module';
 import { PasarelaPagosService } from './pasarela_pagos/pasarela_pagos.service';
 import { PasarelaPagosModule } from './pasarela_pagos/pasarela_pagos.module';
+import { LibroReclaService } from './libro_recla/libro_recla.service';
+import { LibroReclaModule } from './libro_recla/libro_recla.module';
 
 @Module({ 
   imports: [
@@ -116,7 +118,8 @@ import { PasarelaPagosModule } from './pasarela_pagos/pasarela_pagos.module';
     ImagesModule,
     GuiaModule,
     QrModule,
-    PasarelaPagosModule],
+    PasarelaPagosModule,
+    LibroReclaModule]
  /*  controllers: [AppController],
   providers: [AppService, EnterpriseService], */
 })
