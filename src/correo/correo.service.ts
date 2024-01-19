@@ -22,4 +22,20 @@ export class CorreoService {
             }
         })
     }
+
+    async Mail_Libro_Reclamo(body) {
+        let {email,_id,nombres, apellidos}=body
+        console.log(_id,nombres, apellidos)
+        let res =await this.mailerService.sendMail({
+            to:email ,
+            from:`tecnologiagoh@gmail.com`,
+            subject: 'Codigo de Reclamo',
+           // html:`<h2>hola</h2>`,
+            template: 'libroReclamacion',
+            context:  {
+                _id,nombres,apellidos
+            }
+            
+        })
+    }
 }

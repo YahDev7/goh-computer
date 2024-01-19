@@ -4,6 +4,7 @@ import { CorreoController } from './correo.controller';
 
 @Module({
   providers: [CorreoService],
-  controllers: [CorreoController]
+  controllers: [CorreoController],
+  exports:[CorreoService]
 })
 export class CorreoModule {}

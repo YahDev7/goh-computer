@@ -1,0 +1,103 @@
+<body>
+  
+<h2 class=" font-family: Arial, sans-serif;">Hola {{nombres}}</h2>
+<p class=" font-family: Arial, sans-serif;">Tu codigo de Reclamacion es <strong>{{_id}}</strong></p>
+
+
+</body>
+
+<style>
+body {
+  font-family: Arial, sans-serif;
+}
+
+.cart {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+  background-color: #f2f2f2;
+  padding: 1rem;
+  border-radius: 8px;
+}
+
+.item {
+  display: flex;
+  align-items: center;
+  background-color: #fff;
+  border: 1px solid #ccc;
+  padding: 1rem;
+  border-radius: 8px;
+  width: 100%;
+}
+
+.item img {
+  width: 80px;
+  height: 80px;
+  object-fit: cover;
+  border-radius: 50%;
+  margin-right: 1rem;
+}
+
+.item .details {
+  flex-grow: 1;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.item h3 {
+  margin: 0;
+  font-size: 1.2rem;
+  font-weight: bold;
+  color: #333;
+  flex-basis: 100%;
+
+}
+
+.item p {
+  margin: 0;
+  color: #666;
+  flex-basis: 50%;
+  max-width: 50%;
+}
+
+.flex {
+  display: flex;
+}
+
+.justify-between {
+  justify-content: space-between;
+}
+
+
+
+.font-bold {
+  font-weight: bold;
+}
+
+.text-3xl {
+  font-size: 2rem;
+}
+
+
+
+@media (max-width: 700px) {
+  .item {
+    width: 100%;
+  }
+
+  .item .details {
+   flex-direction: column;
+  }
+
+  .item p {
+    flex-basis: 100%;
+    max-width: 100%;
+  }
+}
+
+  
+</style>
+
+
+
