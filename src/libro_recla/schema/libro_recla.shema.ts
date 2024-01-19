@@ -29,6 +29,9 @@ export class LibroRecla {
   @Prop({ required: true, minlength: 1,maxlength:255 })
   reclamo: string;
 
+  @Prop({ type: Date, default: Date.now })
+  fecha: Date;
+
   @Prop({ required: true, minlength: 1 })
   estado: string;
 }
