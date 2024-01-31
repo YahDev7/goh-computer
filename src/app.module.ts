@@ -33,18 +33,16 @@ import { join } from 'path';
 import { CorreoModule } from './correo/correo.module';
 import { AuthModule } from './auth/auth.module';
 import { ImagesModule } from './images/images.module';
-import { GuiaService } from './guia/guia.service';
 import { GuiaModule } from './guia/guia.module';
-import { QrService } from './qr/qr.service';
 import { QrModule } from './qr/qr.module';
-import { PasarelaPagosService } from './pasarela_pagos/pasarela_pagos.service';
 import { PasarelaPagosModule } from './pasarela_pagos/pasarela_pagos.module';
-import { LibroReclaService } from './libro_recla/libro_recla.service';
 import { LibroReclaModule } from './libro_recla/libro_recla.module';
+import { SendGridModule } from '@anchan828/nest-sendgrid';
 
 @Module({ 
   imports: [
-    MailerModule.forRootAsync({
+   
+ /*    MailerModule.forRootAsync({
       imports: [ConfigModule],
       useFactory: async (config: ConfigService) => ({
         transport: {
@@ -55,9 +53,7 @@ import { LibroReclaModule } from './libro_recla/libro_recla.module';
             pass: config.get('EMAIL_PASSWORD'),
           }, 
         },
-     /*    defaults: {
-          from: 'gohcomputertechnology@gmail.com'
-        }, */
+   
         template: {
           dir: join(__dirname, './templates'),
           adapter: new HandlebarsAdapter(),
@@ -67,7 +63,8 @@ import { LibroReclaModule } from './libro_recla/libro_recla.module';
         }
       }),
       inject: [ConfigService]
-    }), ConfigModule.forRoot(),
+    }),  */
+    ConfigModule.forRoot(),
     ConfigModule.forRoot({
     envFilePath:enviroments[process.env.NODE_ENV]||'./env/.env',
     load:[config],
@@ -82,6 +79,8 @@ import { LibroReclaModule } from './libro_recla/libro_recla.module';
      // DATABASE_PASSWORD:Joi.string().required(),
       JWTSECRET:Joi.string().required(),
     })
+  }), SendGridModule.forRoot({
+    apikey:process.env.APIKEYSENDGRIDGOH
   }),
   /* , TypeOrmModule.forRoot({
       type:'postgres',
