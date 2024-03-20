@@ -19,7 +19,6 @@ export class RolesGuard implements CanActivate {
       return true
     }
     const req=context.switchToHttp().getRequest()//manera de obtener el requesst en un componente
-   // console.log(req)
     const user =req.user; /* as PayLoadToken */; // el as es opcional
     
     const isAuth =roles.some((role)=>role===user.rol);

@@ -1,18 +1,20 @@
 import { Module } from '@nestjs/common';
 import { GuiaController } from './guia.controller';
 import { MongooseModule } from '@nestjs/mongoose';
-import { Guia, GuiaSchema } from './schema/schema.guia';
+import { GenGuia, GenGuiaSchema } from './schema/schema.guia';
 import { JwtModule } from '@nestjs/jwt';
 import config from 'src/config';
 import { ConfigType } from '@nestjs/config';
 import { JwtLoginStrategy } from 'src/customer/strategy/customer.strategy';
-import { GuiaService } from './guia.service';
+import { GuiaService } from './services/guia.service';
+import { EquipoService } from 'src/equipos/equipos.service';
+import { EquiposModule } from 'src/equipos/equipos.module';
 
 @Module({
    imports:[MongooseModule.forFeature([
     {
-      name:Guia.name,
-      schema:GuiaSchema,
+      name:GenGuia.name,
+      schema:GenGuiaSchema,
     }
   ]),
   JwtModule.registerAsync({
@@ -25,7 +27,7 @@ import { GuiaService } from './guia.service';
         }
       }
     },
-  })
+  }),EquiposModule
 ], 
 providers:[GuiaService,JwtLoginStrategy],
 controllers: [GuiaController],

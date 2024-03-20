@@ -38,6 +38,8 @@ import { QrModule } from './qr/qr.module';
 import { PasarelaPagosModule } from './pasarela_pagos/pasarela_pagos.module';
 import { LibroReclaModule } from './libro_recla/libro_recla.module';
 import { SendGridModule } from '@anchan828/nest-sendgrid';
+import { EquiposController } from './equipos/equipos.controller';
+import { EquiposModule } from './equipos/equipos.module';
 
 @Module({ 
   imports: [
@@ -118,7 +120,8 @@ import { SendGridModule } from '@anchan828/nest-sendgrid';
     GuiaModule,
     QrModule,
     PasarelaPagosModule,
-    LibroReclaModule]
+    LibroReclaModule,
+    EquiposModule]
  /*  controllers: [AppController],
   providers: [AppService, EnterpriseService], */
 })
