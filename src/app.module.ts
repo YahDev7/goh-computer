@@ -1,6 +1,6 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import {ConfigModule, ConfigService} from '@nestjs/config'
+import { ConfigModule, ConfigService } from '@nestjs/config'
 import { enviroments } from './eviroment';
 import { MongooseModule } from '@nestjs/mongoose';
 import * as Joi from 'joi';
@@ -40,50 +40,51 @@ import { LibroReclaModule } from './libro_recla/libro_recla.module';
 import { SendGridModule } from '@anchan828/nest-sendgrid';
 import { EquiposController } from './equipos/equipos.controller';
 import { EquiposModule } from './equipos/equipos.module';
+import { ComprobanteModule } from './comprobante/comprobante.module';
 
-@Module({ 
+@Module({
   imports: [
-   
- /*    MailerModule.forRootAsync({
-      imports: [ConfigModule],
-      useFactory: async (config: ConfigService) => ({
-        transport: {
-          host: config.get('EMAIL_HOST'),
-          secure: false,
-          auth: {
-            user: config.get('EMAIL_USER'),
-            pass: config.get('EMAIL_PASSWORD'),
-          }, 
-        },
-   
-        template: {
-          dir: join(__dirname, './templates'),
-          adapter: new HandlebarsAdapter(),
-          options: {
-            strict: true
-          }
-        }
-      }),
-      inject: [ConfigService]
-    }),  */
+
+    /*    MailerModule.forRootAsync({
+         imports: [ConfigModule],
+         useFactory: async (config: ConfigService) => ({
+           transport: {
+             host: config.get('EMAIL_HOST'),
+             secure: false,
+             auth: {
+               user: config.get('EMAIL_USER'),
+               pass: config.get('EMAIL_PASSWORD'),
+             }, 
+           },
+      
+           template: {
+             dir: join(__dirname, './templates'),
+             adapter: new HandlebarsAdapter(),
+             options: {
+               strict: true
+             }
+           }
+         }),
+         inject: [ConfigService]
+       }),  */
     ConfigModule.forRoot(),
     ConfigModule.forRoot({
-    envFilePath:enviroments[process.env.NODE_ENV]||'./env/.env',
-    load:[config],
-    isGlobal:true, //para que a todos los servicios sin tener la necesidad de llamar en cada archivo
-    validationSchema:Joi.object({//validar que variables de entorno tenego que tener al hacer deploy        
-      API_KEY:Joi.string().required(),
-      //DATABASE_HOST:Joi.string().required(),
-     // DATABASE_NAME:Joi.string().required(),
-      DATABASE_MONGODB:Joi.string().required(),
-      //DATABASE_PORT:Joi.number().required(),
-      //DATABASE_USERNAME:Joi.string().required(),
-     // DATABASE_PASSWORD:Joi.string().required(),
-      JWTSECRET:Joi.string().required(),
-    })
-  }), SendGridModule.forRoot({
-    apikey:process.env.APIKEYSENDGRIDGOH
-  }),
+      envFilePath: enviroments[process.env.NODE_ENV] || './env/.env',
+      load: [config],
+      isGlobal: true, //para que a todos los servicios sin tener la necesidad de llamar en cada archivo
+      validationSchema: Joi.object({//validar que variables de entorno tenego que tener al hacer deploy        
+        API_KEY: Joi.string().required(),
+        //DATABASE_HOST:Joi.string().required(),
+        // DATABASE_NAME:Joi.string().required(),
+        DATABASE_MONGODB: Joi.string().required(),
+        //DATABASE_PORT:Joi.number().required(),
+        //DATABASE_USERNAME:Joi.string().required(),
+        // DATABASE_PASSWORD:Joi.string().required(),
+        JWTSECRET: Joi.string().required(),
+      })
+    }), SendGridModule.forRoot({
+      apikey: process.env.APIKEYSENDGRIDGOH
+    }),
   /* , TypeOrmModule.forRoot({
       type:'postgres',
       host:process.env.DATABASE_HOST,
@@ -96,6 +97,7 @@ import { EquiposModule } from './equipos/equipos.module';
       logging: true,
       autoLoadEntities: true,
   }), */MongooseModule.forRoot(process.env.DATABASE_MONGODB),
+    ComprobanteModule,
     EnterpriseModule,
     CategoriaModule,
     SubcategoriaModule,
@@ -103,11 +105,11 @@ import { EquiposModule } from './equipos/equipos.module';
     CustomerModule,
     ProviderModule,
     CajaModule,
-   /*  EspecificacionesModule, */
-   /*  CompespModule, */
+    /*  EspecificacionesModule, */
+    /*  CompespModule, */
     ProductsModule,
     DocumentoModule,
-   /*  DepositoPedModule, */
+    /*  DepositoPedModule, */
     CarritoModule,
     MovimientoMModule,
     LoginModule,
@@ -121,8 +123,8 @@ import { EquiposModule } from './equipos/equipos.module';
     QrModule,
     PasarelaPagosModule,
     LibroReclaModule,
-    EquiposModule]
- /*  controllers: [AppController],
-  providers: [AppService, EnterpriseService], */
+    EquiposModule  ]
+  /*  controllers: [AppController],
+   providers: [AppService, EnterpriseService], */
 })
-export class AppModule {}
+export class AppModule { }

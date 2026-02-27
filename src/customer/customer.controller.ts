@@ -93,8 +93,9 @@ export class CustomerController {
     
     @RolesDecorator(Roles.COMUN)
     @Post('/enterprise')
-    async postEnterprise(@Body() body:CustomerDto,@Req() req){
+    async postEnterprise(@Body() body,@Req() req){
         const token = req.headers.authorization.split(' ')[1];
+        console.log(token);
         return this.customerService.postEnterprise(token,body)
     }
     @RolesDecorator(Roles.COMUN)

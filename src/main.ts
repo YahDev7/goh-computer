@@ -30,7 +30,7 @@ async function bootstrap() {
   //que funcione excluir una propiedad de mi validacion ejemp: PASSWORD "NO ME FUNCIONA"
 /*   const reflector = app.get(Reflector)
   app.useGlobalInterceptors(new ClassSerializerInterceptor(reflector)) */
-  
-  await app.listen(configService.get("PORT"));
+  //await app.listen(configService.get("PORT"));
+  await app.listen(4005);
 }
 bootstrap();

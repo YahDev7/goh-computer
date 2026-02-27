@@ -91,7 +91,7 @@ export class CustomerService {
         try {
             //const res=await this.verifyAll(body);
             //if(res.err) throw res;
-
+            
             let { enterprise_id, password } = body
             enterprise_id = new ObjectId(enterprise_id)
             password = await hash(password, 10)
@@ -238,12 +238,13 @@ export class CustomerService {
             return new HttpException('Ocurrio un error al buscar por id cutomer ' + error.message || error, HttpStatus.NOT_FOUND)
         }
     }
-    async postEnterprise(token, body: CustomerDto): Promise<Customer | Object> {
+    async postEnterprise(token, body/* : CustomerDto */)/* : Promise<Customer | Object> */ {
         try {
+            console.log(body)
+
             const decodedToken = this.jwtService.verify(token);
             let { enterprise_id, usuario_id } = decodedToken
             let { password } = body
-
             enterprise_id = new ObjectId(enterprise_id)
             password = await hash(password, 10)
 
