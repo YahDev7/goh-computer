@@ -84,6 +84,7 @@ export class ComprobanteService {
                         telefono: { $arrayElemAt: ['$cust.telefono', 0] },
                         estado: 1,
                         modelo: 1,
+                        marca:1,
                         imei: 1,
                         estado_recibido: 1,
                         contra_pin: 1,
@@ -91,11 +92,13 @@ export class ComprobanteService {
                         componentes_testeados: 1,
                         total: 1,
                         pagado: 1,
+                        pendiente:1,
                         metodo_pago: 1,
                         observaciones: 1,
                         inversion: 1,
                         tecnico: 1,
-                        fecha: 1
+                        fecha: 1,
+                        fecha_retiro:1
                     }
                 },
 
