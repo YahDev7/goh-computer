@@ -7,7 +7,7 @@ import { Public } from './decorators/public.decorator';
 import { RolesDecorator } from './decorators/roles.decorator';
 import { Roles } from 'src/constants/roles';
 import { RolesGuard } from './guards/roles.guard';
-@UseGuards(JwtUserAuthGuard,RolesGuard)
+//@UseGuards(JwtUserAuthGuard,RolesGuard)
 @Controller('user')
 export class UserController {
 
@@ -15,6 +15,7 @@ export class UserController {
         private userService:UserService
     ){}
     
+  
    /*  @RolesDecorator(Roles.ADMIN)
     @Get()
     async get(){
@@ -69,10 +70,11 @@ export class UserController {
         return this.userService.getByEnterprise(id)
     } */
 //    @RolesDecorator(Roles.ADMINCUSTOMER)
-    @RolesDecorator(Roles.ADMIN)
+ /*    @RolesDecorator(Roles.ADMIN) */
     @Get('enterprise')
     async getByEnterprise(@Req() req){
         const token = req.headers.authorization.split(' ')[1];
+        console.log(token)
         return this.userService.getByEnterprise(token)
     }
 
@@ -82,9 +84,10 @@ export class UserController {
         return this.userService.getByEnterpriseId(id,token)
     }
 
-    @RolesDecorator(Roles.ADMIN)
+//    @RolesDecorator(Roles.ADMIN)
     @Post('/enterprise')
     async postByEnterprise(@Body() body:CreateUserDto,@Req() req){
+        console.log(req.headers)
         const token = req.headers.authorization.split(' ')[1];
         return this.userService.postByEnterprise(body,token)
     }

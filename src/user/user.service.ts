@@ -201,13 +201,14 @@ export class UserService {
 
 
 
-
+//SE MODIFICO EL USUARIO_ID POR _ID
     async getByEnterprise(token): Promise<User[] | HttpException> {
         try {
             const decodedToken = this.jwtService.verify(token);
-            let { enterprise_id, usuario_id } = decodedToken
+            let { enterprise_id,_id } = decodedToken
             enterprise_id = new ObjectId(enterprise_id)
-            const found = await this.UserModule.findOne({ _id: usuario_id, estado: 'A' })
+            console.log(decodedToken)
+            const found = await this.UserModule.findOne({ _id, estado: 'A' })
             if (!found) throw { err: true, message: 'error al buscar este user' }
             if (decodedToken.enterprise_id !== found.enterprise_id.toString()) throw { err: true, message: 'unauthorizedr' }
 

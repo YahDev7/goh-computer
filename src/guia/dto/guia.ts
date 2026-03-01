@@ -5,18 +5,7 @@ import { ObjectId } from 'mongodb';
 
 
 
-export class RegisterCustomerDto {
-  
-   @IsNotEmpty()
-   equipos: object[];
 
-   @IsNotEmpty()
-   estado: string;
-
-   @IsNotEmpty()
-   customer_id: ObjectId;
- 
- }
 
 
 // export class UpdateCustomerDto extends PartialType(CustomerDto) {}

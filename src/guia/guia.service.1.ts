@@ -1,15 +1,14 @@
-import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
+/* import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
-import { Guia, GuiaDocument } from './schema/schema.guia';
 import { Model } from 'mongoose';
 import { ObjectId } from 'mongodb';
+import { Guia, GuiaDocument } from './schema/schema.guia.1';
 
 @Injectable()
 export class GuiaService {
   constructor(
     @InjectModel(Guia.name) private GuiaModule: Model<GuiaDocument>,
-    /*  @InjectRepository(Customer)
-     private CustomerModule:Repository<Customer>, */
+
 
   ) { }
 
@@ -111,14 +110,6 @@ export class GuiaService {
     }
   }
 
-  /*   async put(dataUser,body):Promise<Guia | Object> {
-        try {
-            let {enterprise_id,usuario_id}=dataUser
-            let insert = await this.GuiaModule.create({...body,enterprise_id,usuario_id})
-            if (!insert) throw { err: true, message: "ocurrio un error al guardar la guia" }
-            return insert
-        } catch (error) {
-            return new HttpException('Ocurrio un error al guardar ' + error.message || error, HttpStatus.NOT_FOUND)
-        }
-    } */
+
 }
+ */

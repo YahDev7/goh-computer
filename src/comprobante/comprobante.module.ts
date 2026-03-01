@@ -1,20 +1,18 @@
 import { Module } from '@nestjs/common';
-import { GuiaController } from './guia.controller';
+import { ComprobanteController } from './Comprobante.controller';
 import { MongooseModule } from '@nestjs/mongoose';
-import { GenGuia, GenGuiaSchema } from './schema/schema.guia';
+import { Comprobante, ComprobanteSchema } from './schema/schema.Comprobante';
 import { JwtModule } from '@nestjs/jwt';
 import config from 'src/config';
 import { ConfigType } from '@nestjs/config';
 import { JwtLoginStrategy } from 'src/customer/strategy/customer.strategy';
-import { GuiaService } from './services/guia.service';
-import { EquipoService } from 'src/equipos/equipos.service';
-import { EquiposModule } from 'src/equipos/equipos.module';
+import { ComprobanteService } from './services/Comprobante.service';
 
 @Module({
    imports:[MongooseModule.forFeature([
     {
-      name:GenGuia.name,
-      schema:GenGuiaSchema,
+      name:Comprobante.name,
+      schema:ComprobanteSchema,
     }
   ]),
   JwtModule.registerAsync({
@@ -27,10 +25,10 @@ import { EquiposModule } from 'src/equipos/equipos.module';
         }
       }
     },
-  }),EquiposModule
+  })
 ], 
-providers:[GuiaService,JwtLoginStrategy],
-controllers: [GuiaController],
-exports:[GuiaService]
+providers:[ComprobanteService,JwtLoginStrategy],
+controllers: [ComprobanteController],
+exports:[ComprobanteService]
 })
-export class GuiaModule {}
+export class ComprobanteModule {}
